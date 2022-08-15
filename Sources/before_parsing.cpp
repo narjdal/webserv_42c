@@ -121,7 +121,7 @@ std::vector <std::string > parse_config_file(std::vector <std::string > text_vec
     words = split_by_space(text_vector);
       for (std::vector<std::string>::iterator it = words.begin(); it != words.end(); ++it)
     {
-       // std::cout << *it << "|" <<  std::endl;
+       // std::cout << *it << "|" ;
     }
     if (words.size() == 0)
     {

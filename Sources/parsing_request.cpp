@@ -61,7 +61,13 @@ int get_request_method(std::vector<std::string > request)
     std::cout << method[0] << std::endl;
     return (2);
     }
- 
+      found = request[0].find("DELETE");
+     if(found != string::npos)
+    {
+    method = split(request[0]," ","DELETE");
+    std::cout << method[0] << std::endl;
+    return (3);
+    }
    // std::cout << method[0] << std::endl;
     return (0);
 }
@@ -119,14 +125,27 @@ std::string get_request_location(std::vector<std::string > request)
 {
     std::string location;
     std::vector <std::string > method;
-  
-      int location_length = 0;
+    std::vector <std::string > parsing_helper;
 
+  
+         if(request[0].find("?") != std::string::npos)
+         {
+          //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+          method = split_sboof(request[0]," ");
+           if(!method[1].empty())
+           {
+            parsing_helper = split_sboof(method[1],"?");
+            location = parsing_helper[0];
+           }
+         }
+       else
+       {
       method = split_sboof(request[0]," ");
         if(!method[1].empty())
         location = method[1];
         else
         location = "EMPTY CHECK REQUEST LOCA" ;
+       }
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);
 
@@ -137,6 +156,35 @@ std::string get_request_location(std::vector<std::string > request)
  
     
     return location;
+}
+std::string get_request_query(std::vector<std::string > request)
+{
+   std::string qwery;
+    std::vector <std::string > method;
+    std::vector <std::string > parsing_helper;
+
+  
+         if(request[0].find("?") != std::string::npos)
+         {
+          //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+          method = split_sboof(request[0]," ");
+           if(!method[1].empty())
+           {
+            parsing_helper = split_sboof(method[1],"?");
+            qwery = parsing_helper[1];
+           }
+         }
+     //   location_length = get_location_length(request[0]);
+      //  location.insert(0,request[0],found + 4,11);
+
+    
+ 
+  //  method = split(request[0]," ","POST");
+  //  std::cout << method[0] << std::endl;
+ 
+  //  std::cout << method[0] << std::endl;
+    
+    return qwery;
 }
 
 
@@ -151,7 +199,7 @@ std::string get_request_vrs(std::string first_line)
     {
         vrs_length = get_vrs_length(first_line,found);
         vrs.insert(0,first_line,found,vrs_length - 1);
-       std::cout << "GG =>  " << vrs_length << " " << vrs  << "|" << std::endl;
+       //std::cout << "GG =>  " << vrs_length << " " << vrs  << "|" << std::endl;
 
     }
     return vrs;
@@ -196,7 +244,7 @@ return (splited);
       length = full_request[i].size() - found;
       head.insert(0,full_request[i],0,found);
       tail.insert(0,full_request[i],found + 2,length - 4);
-      std::cout << "tail=" <<  tail <<"|" << std::endl;
+      //std::cout << "tail=" <<  tail <<"|" << std::endl;
     headers[head] = tail;
     head.clear();
     tail.clear();

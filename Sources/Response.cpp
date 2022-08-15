@@ -493,6 +493,6 @@ std::string Response::get_Response( Request rq )
     //TO FIXE HEADERS;
     std::string rep;
     rep = FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body;
-    std::cout << "get_Response :final body b4 return : " << this->_Body << std::endl;
+    //std::cout << "get_Response :final body b4 return : " << this->_Body << std::endl;
     return (rep);
 }

@@ -20,8 +20,7 @@ server::server(std::vector<std::string> text_vector)
    this->_redirections = extract_server_redirections(text_vector);
    this->_root = extract_server_root(text_vector);  
     //this->_location = extract_server_location(text_vector);
-  std::vector <cgi > tt;
-  this->_cgi = tt;
+  this->_cgi = extract_server_cgi(text_vector);
    // this->_cgi = extract_server_cgi(text_vector);
     this->_client_max_body_size = extract_server_max_body_size(text_vector);
     this->_autoindex = extract_server_autoindex(text_vector);
@@ -90,7 +89,12 @@ for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_n
         else if (this->_autoindex == false)
         std::cout << "autoindex off " << std::endl;
 */
-    
+  
+           std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
+
+    for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
+    std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
+
    int index = 0;
    number_of_locations = extract_number_of_locations(text_vector);
    while ( index  < number_of_locations)
@@ -181,7 +185,10 @@ server::~server()
     {
         return (this->_location.size());
     }
-   // unsigned int                 get_cgi_size() const;
+   unsigned int                 server::get_cgi_size() const
+   {
+    return (this->_cgi.size());
+   }
     long long int                server::get_client_max_body_size() const
     {
         return(this->_client_max_body_size);
@@ -197,7 +204,10 @@ server::~server()
     return(this->_cgi);
    }
 
-
+   cgi                          server::get_cgi(int i) const
+   {
+    return (this->_cgi[i]);
+   }
 
 
 

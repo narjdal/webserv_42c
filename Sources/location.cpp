@@ -344,7 +344,10 @@ location::location(std::vector<std::string> text_vector,int index)
     this->_index = extract_location_index(text_vector,index);
     this->_autoindex = extract_location_autoindex(text_vector,index);
     this->_upload_path = extract_location_upload_path(text_vector,index);
-
+/**
+ * @brief 
+ * 
+ *
    // std::cout << this->_locations_path << std::endl;
      std::cout << "-----------------------Location name  | Index :  " << index << " <<  ------------------"  << std::endl;
     std::cout << this->_name << std::endl;
@@ -371,7 +374,7 @@ location::location(std::vector<std::string> text_vector,int index)
         std::cout << "autoindex off " << std::endl;
    std::cout << "-----------------------Location _upload_path | Index :  " << index << " <<  ------------------"  << std::endl;
     std::cout << this->_upload_path << std::endl;
-      
+      */
          
 }
 

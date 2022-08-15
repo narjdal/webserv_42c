@@ -1,5 +1,6 @@
 
 #include "../Includes/tt.hpp"
+#include "../Includes/server.hpp"
 #include <vector>
 #include <sstream>
 
@@ -443,4 +444,52 @@ int extract_number_of_locations(std::vector <std::string> text_vector)
         i++;
     }
     return (count);
+}
+// TO FIXE ERRORS CASE : if no path is specified
+std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector)
+{
+    std::vector<cgi> vector_cgi;
+    cgi tmp;
+    std::vector<std::string > parser;
+    std::vector<std::string > cgi_path;
+
+    int i = 0;
+    int count = 0;
+    int vector_size = 0;
+    int accolade = 0;
+    while ( i < text_vector.size())
+    {  
+        
+    if(text_vector[i].find("cgi") != std::string::npos)
+          {
+            parser = split(text_vector[i]," ","cgi");
+            vector_size = vector_cgi.size();
+            if ( count == 0)// A verifier si il y a um seul cgi / config file ou plus
+           {
+           // std::cout << "HMMM WTF" << std::endl;
+            for(std::vector<std::string>::iterator it = parser.begin();it != parser.end();it++)
+               // std::cout << *it << std::endl;
+            tmp.set_cgi_name(parser[1]);
+          }
+         else  if (count == 1 )
+            {
+            cgi_path = split (text_vector[i ], " ","cgi_path");
+            tmp.set_cgi_path(cgi_path[1]);
+            //std::cout << " cgi_path size : " << cgi_path.size() <<  text_vector[i]<< std::endl;
+           // std::cout << "cgi name : " << tmp.get_cgi_name() << std::endl;
+           // std::cout << "cgi path : " << tmp.get_cgi_path() << std::endl;
+            vector_cgi.push_back(tmp);
+            tmp.set_cgi_name("");
+            tmp.set_cgi_path("error");
+            count = 0;
+            parser.clear();
+            cgi_path.clear();
+            }
+            if (vector_size == vector_cgi.size())
+            count++;
+          }
+
+        i++;
+    }
+    return(vector_cgi);
 }

@@ -34,8 +34,9 @@ Request::Request(std::vector<std::string > full_request)
     if(method == 2)
     this->rqmethod = "POST";
     if (method == 3)
-    this->rqmethod = "SMTH WRONG";
-    //std::cout << "---------------------------------------" << std::endl;
+    this->rqmethod = "DELETE";
+    std::cout << "------------------REQUEST FIRSDT LINE ---------------------" << std::endl;
+    std::cout << full_request[0] << std::endl;
     std::cout << "Request method => " << this->rqmethod << std::endl;
     //std::cout << "---------------------------------------" << std::endl;
     this->location = get_request_location(full_request);// HERE ERROR , if no location is sent , takes HTTP as location to fix
@@ -58,7 +59,9 @@ Request::Request(std::vector<std::string > full_request)
     std::cout << "---------------------------------------" << std::endl;
     this->body = get_request_body(full_request);
     std::cout << "Request body => " << this->body << std::endl;
-    //this->query = get_request_quwey(full_request);
+    std::cout << "---------------------------------------" << std::endl;
+    this->query = get_request_query(full_request);
+    std::cout << "Request qwuery => " << this->query << std::endl;
     this->body_len = this->body.size();
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "Request body_len => " << this->body_len << std::endl;
