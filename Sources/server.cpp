@@ -27,7 +27,10 @@ server::server(std::vector<std::string> text_vector)
     this->_autoindex = extract_server_autoindex(text_vector);
    //this->_name = split(text_vector[2]," ");
     //std::cout << test[0] << std::endl << test[1] << std::endl;
-  
+  /**
+   * @brief 
+   * 
+   *
     std::cout << "-----------------------Server Names : ------------------"  << std::endl;
 for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_name .end();it++)
          std::cout << *it << std::endl;
@@ -86,7 +89,7 @@ for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_n
         std::cout << "autoindex on " << std::endl;
         else if (this->_autoindex == false)
         std::cout << "autoindex off " << std::endl;
-
+*/
     
    int index = 0;
    number_of_locations = extract_number_of_locations(text_vector);

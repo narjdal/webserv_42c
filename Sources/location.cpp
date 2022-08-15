@@ -298,6 +298,8 @@ std::string extract_location_upload_path(std::vector<std::string> text_vector,in
 std::vector<std::string> parser;
 std::string location_path;
 std::vector<std::string> location_limit;
+
+//str = delim.c_str();
     int i = 0;
     int y = 0;
     int count = 0;
@@ -344,14 +346,13 @@ location::location(std::vector<std::string> text_vector,int index)
     this->_upload_path = extract_location_upload_path(text_vector,index);
 
    // std::cout << this->_locations_path << std::endl;
-      // std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
-   //  for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-     //    std::cout << *it2 << std::endl;
-   //std::cout << "-----------------------Location PATH  | Index :  " << index << " <<  ------------------"  << std::endl;
-   /**
-  * @brief 
-  * 
-  *
+     std::cout << "-----------------------Location name  | Index :  " << index << " <<  ------------------"  << std::endl;
+    std::cout << this->_name << std::endl;
+     std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
+     for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
+        std::cout << *it2 << std::endl;
+    std::cout << "-----------------------Location PATH  | Index :  " << index << " <<  ------------------"  << std::endl;
+  
     std::cout << this->_locations_path << std::endl;
    std::cout << "-----------------------Location allowed moethods | Index :  " << index << " <<  ------------------"  << std::endl;
      for (std::vector<std::string>::iterator it1 = this->_allow_methods.begin();it1 != this->_allow_methods.end();it1++)
@@ -371,7 +372,6 @@ location::location(std::vector<std::string> text_vector,int index)
    std::cout << "-----------------------Location _upload_path | Index :  " << index << " <<  ------------------"  << std::endl;
     std::cout << this->_upload_path << std::endl;
       
-*/
          
 }
 

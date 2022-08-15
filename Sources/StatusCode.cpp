@@ -353,8 +353,11 @@ std::string StatusCode(string location, int i)
     {
         for (std::map<std::string, std::string>::iterator it = ext.begin(); it != ext.end(); it++)
         {
+            
             if (it->second == location)
-                return (it->first);
+               {
+             return (it->first);
+        }
         }
         return (NULL);
     }

@@ -188,17 +188,15 @@ return (splited);
         if (full_request[i].compare("\n")  == 0)
         {
     std::cout << "------------------PPPPPPPPPPPPP------------"  << std::endl;
-
         return (headers); // to TEST
-
-
         }
       found = full_request[i].find(":");
         if(found != string::npos)
     {
       length = full_request[i].size() - found;
       head.insert(0,full_request[i],0,found);
-      tail.insert(0,full_request[i],found,length - 1);
+      tail.insert(0,full_request[i],found + 2,length - 4);
+      std::cout << "tail=" <<  tail <<"|" << std::endl;
     headers[head] = tail;
     head.clear();
     tail.clear();

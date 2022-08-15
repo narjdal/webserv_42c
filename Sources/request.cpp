@@ -51,17 +51,17 @@ Request::Request(std::vector<std::string > full_request)
     std::cout << "Number of Headers : " <<  headers.size() << std::endl;
 
     //for(std::map<std::string ,std::string > ::iterator it = this->headers.begin();it != this->headers.end();it++)
-  //  {
-     //   std::cout << it->first << it->second ;
+   // {
+     //   std::cout << it->second  << std::endl;
     //}
     std::cout << std::endl;
-    //std::cout << "---------------------------------------" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
     this->body = get_request_body(full_request);
-    //std::cout << "Request body => " << this->body << std::endl;
+    std::cout << "Request body => " << this->body << std::endl;
     //this->query = get_request_quwey(full_request);
     this->body_len = this->body.size();
-    //std::cout << "---------------------------------------" <<  headers.size() << std::endl;
-    //std::cout << "Request body_len => " << this->body_len << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Request body_len => " << this->body_len << std::endl;
 
 }
 Request::~Request()

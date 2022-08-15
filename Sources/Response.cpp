@@ -345,7 +345,9 @@ int     Response::check_POST( void )
 
 int     Response::Upload_file( std::string upload_path )
 {
+    if( this->_request.get_headrs()["Content-Type"].compare("text/plain") == 0)
     std::cout << "THE TYPE IS " << this->_request.get_headrs()["Content-Type"] << std::endl;
+
     std::string tmp = StatusCode(this->_request.get_headrs()["Content-Type"], 2);
     std::cout << "HIS EXTENSION IS " << tmp << std::endl;
 
@@ -354,7 +356,6 @@ int     Response::Upload_file( std::string upload_path )
     std::cout << "the hole file is " << tmp << std::endl;
     
     ofstream    FILE(tmp);
-
     FILE << this->_request.get_body();
 
     FILE.close();
@@ -488,7 +489,7 @@ std::string Response::get_Response( Request rq )
 
     int i = statuscode();
     std::cout << "ytyyy status code = " << i << std::endl;
-    errorsPages(i);
+    //errorsPages(i);
     //TO FIXE HEADERS;
     std::string rep;
     rep = FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body;
