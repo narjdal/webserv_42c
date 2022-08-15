@@ -51,6 +51,7 @@ private:
     bool        check_location( void );
     bool        check_path( void );
     int         check_methods( void );
+    int         check_request( void );
     
     //*************************
     int         check_GET( void );

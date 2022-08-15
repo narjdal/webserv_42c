@@ -141,10 +141,11 @@ std::string get_request_location(std::vector<std::string > request)
        else
        {
       method = split_sboof(request[0]," ");
-        if(!method[1].empty())
+
+        if(!method[1].empty() && method.size() > 2 )
         location = method[1];
         else
-        location = "EMPTY CHECK REQUEST LOCA" ;
+        location = "NO LOCATION"; // If empty SGV To fixe 
        }
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);

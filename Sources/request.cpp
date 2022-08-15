@@ -76,6 +76,7 @@ Request::~Request()
 
 std::string Request::get_method()
 {
+    std::cout << "INSIDE  GETTER FCT => "  << this->rqmethod << std::endl;
     return (this->rqmethod);
 }
 
@@ -100,4 +101,8 @@ std::string&    Request::get_body()
 int Request::get_body_len()
 {
     return(this->body_len);
+}
+std::string&    Request::get_query()
+{
+    return(this->query);
 }

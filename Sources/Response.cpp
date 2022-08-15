@@ -469,9 +469,26 @@ int    Response::check_methods( void )
     return (405);
 }
 
+int Response::check_request()
+{
+    //std::cout  << "INSIDE CHECK REQUEST " << this->_request.get_method() << std::endl;
+    //std::cout  << "INSIDE CHECK REQUEST " << this->_request.get_location() << std::endl;
+    std::string tmp;
+    tmp +=  this->_request.get_location() + this->_request.get_query();
+    //std::cout  << "INSIDE CHECK REQUEST " << tmp << " TMP SIZE : " << tmp.size() << std::endl;
+    int length = 0;
+    length = tmp.size();
+    if (tmp.size() > 2048)
+    return (414);
+    else
+    return (0);
+}
+
 int    Response::statuscode( void )
 {
-    if (this->_request.body_len == -1)
+      if (check_request() != 0)
+        return (check_request());
+    else if (this->_request.body_len == -1)
         return (400);
     else if (!check_location())
         return (404);

@@ -50,6 +50,7 @@ class Request
         std::string get_version();
         std::map<std::string, std::string> get_headrs();
         std::string& get_body();
+        std::string& get_query();
         int get_body_len();
 
 };
