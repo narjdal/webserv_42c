@@ -276,6 +276,7 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
 {
      std::vector<std::string> parser;
      std::vector <std::string> test;
+     std::vector <std::string > errors_pages;
  std::vector <std::vector<std::string> > server_error_pages;
  std::vector <std::vector<std::string> > correct_server_error_pages;
 
@@ -290,19 +291,25 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
         y = 0;
         while (y < parser.size())
         {
+           // i++;
             if (parser[y].compare("error_page") == 0)
             {
+
                 test = split (text_vector[i]," ","error_page");
            //correct_index.assign(server_index.begin() + 1,server_index.end());
+                errors_pages.assign(test.begin() + 1,test.end());
                 inside = 1;
-                server_error_pages.push_back(test);
+                server_error_pages.push_back(errors_pages);
                 test.clear();
             }
             y++;
         }
     i++;
     }
-   
+    //correct_server_error_pages.assign(correct_server_error_pages.begin(),server_error_pages.begin() + 1,server_error_pages.end());
+    //if(!server_error_pages.size())
+  // server_error_pages.assign(server_error_pages.begin() + 1,server_error_pages.end());
+
     return (server_error_pages);
 }
 
@@ -313,6 +320,7 @@ std::vector<std::vector<std::string > > extract_server_redirections(std::vector<
 {
      std::vector<std::string> parser;
      std::vector <std::string> test;
+     std::vector <std::string > redirections;
  std::vector <std::vector<std::string> > server_redirections;
   std::vector <std::string> correct_server_redirections;
     int i = 0;
@@ -329,9 +337,10 @@ std::vector<std::vector<std::string > > extract_server_redirections(std::vector<
             if (parser[y].compare("redirection") == 0)
             {
                 test = split (text_vector[i]," ","redirection");
+                redirections.assign(test.begin() + 1,test.end());
            //correct_index.assign(server_index.begin() + 1,server_index.end());
                 inside = 1;
-                server_redirections.push_back(test);
+                server_redirections.push_back(redirections);
                 test.clear();
             }
             y++;

@@ -343,8 +343,8 @@ void print_parsing_infos(server myserver)
          std::cout << *it4 << std::endl;
            std::cout << "-----------------------------------------------"  << std::endl;
          
-          for (std::vector<std::string>::iterator it5 = myserver.get_error_pages(2).begin();it5 != myserver.get_error_pages(2).end();it5++)
-         std::cout << *it5 << std::endl;
+          //for (std::vector<std::string>::iterator it5 = myserver.get_error_pages(2).begin();it5 != myserver.get_error_pages(2).end();it5++)
+        // std::cout << *it5 << std::endl;
         } 
         catch (const std::string & exception)
         {

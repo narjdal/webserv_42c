@@ -249,11 +249,11 @@ int     Response::file_GET( void )
         tmp = this->_location;
     else if (this->_location_type == 2)
         tmp = handle_index(this->_Serv.get_index(), this->_location);
-    std::cout << "loc:   =>" << tmp << "|" << std::endl;
+    //std::cout << "loc:   =>" << tmp << "|" << std::endl;
     this->_header->setHeader("Content-Type", (extension(tmp)));
     this->_Body = file_to_string(tmp);
     this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
-    std::cout << "INSIDE FILE GET body: => " <<  this->_Body << std::endl;
+   // std::cout << "INSIDE FILE GET body: => " <<  this->_Body << std::endl;
     return (200);
 }
 
@@ -488,7 +488,7 @@ std::string Response::get_Response( Request rq )
 
     int i = statuscode();
     std::cout << "ytyyy status code = " << i << std::endl;
-    //errorsPages(i);
+    errorsPages(i);
     //TO FIXE HEADERS;
     std::string rep;
     rep = FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body;
