@@ -22,7 +22,13 @@ class location;
 class cgi;
 class server
 {
-    
+    private :
+        bool        response_chuncked;
+
+    public:
+        bool        get_response_chunked() { return (response_chuncked);}
+        void        set_response_chunked( bool ld ) { response_chuncked = ld;}
+
 protected:
     std::vector<std::string>                _name;
     int                                     _listen_port;

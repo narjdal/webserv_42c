@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/14 15:32:20 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/16 13:28:50 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,22 @@ std::string     file_to_string(std::string location)
     std::ifstream fin(location.c_str());
     getline(fin, buffer, char(-1));
     fin.close();
-    //std::cout << "BUFFER => " << buffer << std::endl;
-      return buffer;
+
+    return buffer;
 }
 
 void     Response::errorsPages( int Status_Code)
 {
-    std::string tmp = "./sboof/errorpages/" + to_string(Status_Code) + "/" + to_string(Status_Code) + ".html";
-    this->_header->setHeader("Content-Type", (extension(tmp)));
-    this->_Body = file_to_string(tmp);
-    this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
+    if (Status_Code != 200)
+    {
+        std::string tmp = "./sboof/errorpages/" + to_string(Status_Code) + "/" + to_string(Status_Code) + ".html";
+        this->_header->setHeader("Content-Type", (extension(tmp)));
+        if (Status_Code == 201)
+            this->_Body = "<div class=\"error\"> <div class=\"error__title\">201</div> <div class=\"error__subtitle\">Created</div> <div class=\"error__description\">" + this->_Upload_Path + " </div> </div>" + file_to_string(tmp);
+        else
+            this->_Body = file_to_string(tmp);
+        this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
+    }
 }
 
 std::string RandomWord( void )
@@ -104,6 +110,43 @@ std::string RandomWord( void )
         StrWord.push_back('a' + (rand () % 26));
 
     return StrWord;
+}
+
+//*******************************************GETTERS********************************************//
+
+Header*     Response::get_Header()
+{
+    return (this->_header);
+}
+
+Request     Response::get_Request()
+{
+    return (this->_request);
+}
+
+server      Response::get_Server()
+{
+    return (this->_Serv);
+}
+
+std::string     Response::get_root( void )
+{
+    return (this->_location);
+}
+
+std::string     Response::get_Body( void )
+{
+    return (this->_Body);
+}
+
+std::string     Response::get_cgi_Path( void )
+{
+    return this->_Cgi_Path;
+}
+
+void            Response::set_Body(std::string str)
+{
+    this->_Body = str;
 }
 
 //***************************************MEMBER FUNCTIONS***************************************//
@@ -118,12 +161,22 @@ Response::Response(Request &request, server &Serv)
     this->_is_chanked = false;
     this->_location_index = -404;
     this->_location_type = -404;
+    this->_Bytes_Sent = 0;
+    this->_File_size = 0;
+    this->_is_cgi = false;
 }
 
 Response::~Response()
 {
     delete this->_header;
 }
+
+bool    Response::get_is_chunked( void )
+{
+    return (this->_is_chanked);    
+}
+
+//********************************************CHECKS********************************************//
 
 bool    Response::check_path()
 {
@@ -184,6 +237,38 @@ bool    Response::check_location()
     return (check_path());
 }
 
+//**********************************************CGI**********************************************//
+
+bool    Response::check_CGI( void )
+{
+    std::vector<std::string>   str = ft_split(this->_request.get_location(), ".");
+
+    for (int i = 0; i < this->_Serv.get_cgi_size(); i++)
+    {
+        if (this->_Serv.get_cgi(i).get_cgi_name() == "." + str.back())
+        {
+            this->_Cgi_Path = this->_Serv.get_cgi(i).get_cgi_path();
+            return (true);
+        }
+    }
+    return (false);
+}
+
+int     Response::CGI( void )
+{
+
+    Response_cgi    cgi;
+    std::string     root;
+    std::vector<std::string>    tmp = ft_split(this->_request.get_location(), "/");
+
+    root = (this->_location_index == -1) ? this->_Serv.get_root() : this->_Serv.get_location(this->_location_index).get_root();
+    root += tmp.back();
+    root = skip_slash(root);
+
+    this->_is_cgi = true;
+    return (cgi.execute(*this, this->_request, root));
+}
+
 //**********************************************GET**********************************************//
 
 std::string     autoindex_generator( std::string path, std::string req_loc)
@@ -241,30 +326,77 @@ std::string    handle_index( std::vector<std::string> vector, std::string root)
     return (NULL);
 }
 
+void    Response::check_chancked( void )
+{
+    std::ifstream in_file(this->_location.c_str(), ios::binary);
+
+    in_file.seekg(0, ios::end);
+    this->_File_size = in_file.tellg();
+
+    if ( this->_File_size > 1000 ) // CHANGE AFTER TO 1M
+    {
+        this->_is_chanked = true;
+        this->_Serv.set_response_chunked(true);
+    }
+    in_file.close();
+}
+
+int     Response::file_Is_chancked( void )
+{
+    if (this->_Bytes_Sent == 0)
+    {
+        this->_header->setHeader("Content-Type", (extension(this->_location)));
+        this->_header->setHeader("Content-Length", to_string(this->_File_size));
+        this->_FILE_chunk.open(this->_location.c_str(), ios::binary);
+    }
+
+    char* Data;
+    std::fstream::pos_type namepos = this->_Bytes_Sent;
+
+    this->_FILE_chunk.seekg(namepos);
+    Data = new char[1024];
+    this->_FILE_chunk.read(Data, 1024);
+    this->_Body = Data;
+    delete Data;
+    if (this->_Bytes_Sent < this->_File_size - 1024)
+        this->_Bytes_Sent += 1024;
+    else
+    {
+        this->_FILE_chunk.seekg(this->_Bytes_Sent, ios::end);
+        Data = new char[this->_File_size - this->_Bytes_Sent + 1];
+        this->_FILE_chunk.read(Data, this->_File_size - this->_Bytes_Sent);
+        Data[this->_File_size - this->_Bytes_Sent] = 0;
+        this->_Body = Data;
+        this->_is_chanked = false;
+        this->_FILE_chunk.close();
+        delete Data;
+    }
+    return (200);
+}
+
 int     Response::file_GET( void )
 {
     std::string     tmp;
-    std::cout << "I M IN FILE  GET  AND :   " << this->_location_type << std::endl;
+
     if (this->_location_type == 1)
+    {
         tmp = this->_location;
+        check_chancked();
+    }
     else if (this->_location_type == 2)
         tmp = handle_index(this->_Serv.get_index(), this->_location);
-    //std::cout << "loc:   =>" << tmp << "|" << std::endl;
+    // if (this->_is_chanked == true)
+        // return (file_Is_chancked());
     this->_header->setHeader("Content-Type", (extension(tmp)));
     this->_Body = file_to_string(tmp);
     this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
-   // std::cout << "INSIDE FILE GET body: => " <<  this->_Body << std::endl;
     return (200);
 }
 
 int     Response::cgi_GET( void )
 {
-    if (this->_Serv.get_cgi().size() > 0)
-    {
-        std::cout << " I M IN CGI" << std::endl;
-        // CGI FUNCTION
-        return (200);
-    }
+    if (check_CGI())
+        return (CGI());
     else
         return (file_GET());
 }
@@ -273,7 +405,6 @@ int     Response::handle_GET_Dir( void )
 {
     std::vector<std::string> tmp;
 
-    std::cout << "I M IN HANDLE GET DIR : AND  loca index is :  " << this->_location_index << std::endl;
     if (this->_location_index == -1)
         tmp = this->_Serv.get_index();
     else
@@ -287,7 +418,6 @@ int     Response::handle_GET_Dir( void )
 
 int     Response::check_GET( void )
 {
-    std::cout << "I M IN CHECK GET and : " << this->_location_type << std::endl;
     if (this->_location_type == 1)
         return (cgi_GET());
     else
@@ -306,12 +436,8 @@ int     Response::check_GET( void )
 
 int     Response::cgi_POST( void )
 {
-    if (this->_Serv.get_cgi().size() > 0)
-    {
-        std::cout << " I M IN CGI" << std::endl;
-        // CGI FUNCTION
-        return (200);
-    }
+    if (check_CGI())
+        return (CGI());
     else
         return (403);
 }
@@ -345,19 +471,9 @@ int     Response::check_POST( void )
 
 int     Response::Upload_file( std::string upload_path )
 {
-    if( this->_request.get_headrs()["Content-Type"].compare("text/plain") == 0)
-    std::cout << "THE TYPE IS " << this->_request.get_headrs()["Content-Type"] << std::endl;
-
-    std::string tmp = StatusCode(this->_request.get_headrs()["Content-Type"], 2);
-    std::cout << "HIS EXTENSION IS " << tmp << std::endl;
-
-   // tmp.clear();
-    tmp = upload_path + RandomWord() + "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
-    std::cout << "the hole file is " << tmp << std::endl;
-    
-    ofstream    FILE(tmp);
+    this->_Upload_Path = upload_path + RandomWord() + "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
+    ofstream    FILE(this->_Upload_Path);
     FILE << this->_request.get_body();
-
     FILE.close();
     return (201);
 }
@@ -379,21 +495,14 @@ int     Response::file_DELETE( void )
 {
     std::string tmp = "rm " + this->_location;
     if (system(tmp.c_str()))
-    {
-        std::cout << " IM IN A ZBI" << std::endl;
         return (500);
-    }
     return (204);
 }
 
 int     Response::cgi_DELETE( void )
 {
-    if (this->_Serv.get_cgi().size() > 0)
-    {
-        std::cout << " I M IN CGI" << std::endl;
-        // CGI FUNCTION
-        return (204);
-    }
+    if (check_CGI())
+        return (CGI()); // 204 !!
     else
         return (file_DELETE());
 }
@@ -417,22 +526,24 @@ int     Response::handle_DELETE_Dir( void )
         else
             tmp = this->_Serv.get_location(this->_location_index).get_index();
         if (tmp.size() > 0)
-            return (204); // CGI FUNCTION
+        {
+            if (check_CGI())
+                return (CGI()); // 204 !!
+        }
         else
             return (403);
     }
     else
         return (DELETE_all_Folder());
+    return (500);
 }
 
 int     Response::check_DELETE( void )
 {
-    std::cout << "I M IN !!! and : " << this->_location_type << std::endl;
     if (this->_location_type == 1) // file
         return (cgi_DELETE());
     else if (this->_location_type == 2) // directory
     {
-            std::cout << "I M IN" << std::endl;
         if (this->_location[this->_location.size() - 1] != '/')
             return (409);
         else
@@ -459,7 +570,6 @@ int    Response::check_methods( void )
         {
             for (int i = 0; i < 3; i++)
             {
-                std::cout << "inside check methods" << std::endl;
                 if (this->_request.get_method() == methods[i])
                     return ((this->*funct[i])());
             }
@@ -469,26 +579,9 @@ int    Response::check_methods( void )
     return (405);
 }
 
-int Response::check_request()
-{
-    //std::cout  << "INSIDE CHECK REQUEST " << this->_request.get_method() << std::endl;
-    //std::cout  << "INSIDE CHECK REQUEST " << this->_request.get_location() << std::endl;
-    std::string tmp;
-    tmp +=  this->_request.get_location() + this->_request.get_query();
-    //std::cout  << "INSIDE CHECK REQUEST " << tmp << " TMP SIZE : " << tmp.size() << std::endl;
-    int length = 0;
-    length = tmp.size();
-    if (tmp.size() > 2048)
-    return (414);
-    else
-    return (0);
-}
-
 int    Response::statuscode( void )
 {
-      if (check_request() != 0)
-        return (check_request());
-    else if (this->_request.body_len == -1)
+    if (this->_request.body_len == -1)
         return (400);
     else if (!check_location())
         return (404);
@@ -496,20 +589,13 @@ int    Response::statuscode( void )
         return (check_methods());
 }
 
-std::string Response::get_Response()
+std::string Response::get_Response( void )
 {
     FirstLine   FirstLine(this->_request);
 
-    this->_Body = "<html><body><h1>SBOOF</h1></body></html>";
-    this->_header->setHeader("Content-Length", std::to_string(this->_Body.size()));
-    this->_header->setHeader("Content-Type", "text/html");
-
     int i = statuscode();
-    std::cout << "ytyyy status code = " << i << std::endl;
-    //errorsPages(i);
-    //TO FIXE HEADERS;
-    std::string rep;
-    rep = FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body;
-    //std::cout << "get_Response :final body b4 return : " << this->_Body << std::endl;
-    return (rep);
+    errorsPages(i);
+    if (this->_is_cgi && (i == 200))
+        return (this->_Body);
+    return (FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body);
 }

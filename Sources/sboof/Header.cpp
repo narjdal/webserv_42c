@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 00:01:09 by amaach            #+#    #+#             */
-/*   Updated: 2022/07/23 16:07:20 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/16 13:28:30 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,15 @@ std::string     Header::getHeader(void)
     header = this->_FirstLine;
     header += "Date: " + this->_Date + " \r\n";
     header += "Server: " + this->_Server + "\r\n";
-    std::map <std::string,std::string > tmp_headers;
     for (map<string,string>::iterator it = this->_Header.begin(); it != this->_Header.end(); it++)
     {
         header += it->first + ": " + it->second + "\r\n";
     }
     header += "\r\n";
     return(header); // return the header as string to send
+}
+
+std::map<std::string, std::string>  Header::getHeaderMap( void )
+{
+    return (this->_Header);    
 }

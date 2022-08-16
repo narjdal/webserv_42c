@@ -23,12 +23,14 @@ INCS = 	Includes/tt.hpp\
 
 INCS_SBOOF = Includes/sboof/Firstline.hpp\
 			 Includes/sboof/Response.hpp\
-			 Includes/sboof/Header.hpp
+			 Includes/sboof/Header.hpp\
+			 Includes/sboof/Response_cgi.hpp
 
 SRCS_SBOOF = /sboof/Firstline.cpp\
 	/sboof/Response.cpp\
 	Sources/sboof/StatusCode.cpp\
 	Sources/sboof/Header.cpp\
+	Sources/sboof/Response_cgi.cpp\
 	
 SRCS_CLIENT = Sources/client.cpp
 

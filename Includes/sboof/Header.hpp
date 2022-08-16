@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 23:25:36 by amaach            #+#    #+#             */
-/*   Updated: 2022/07/21 17:03:29 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/16 13:30:15 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ class   Header
         Header(server sev, Request req);
         ~Header();
 
-        void            setFirstLine(std::string FirstLine );
-        void            setHeader(std::string Key, std::string Value);
-        std::string     getHeader(  );
+        void                                setFirstLine(std::string FirstLine );
+        void                                setHeader(std::string Key, std::string Value);
+        std::string                         getHeader( void );
+        std::map<std::string, std::string>  getHeaderMap( void );
 
 };
