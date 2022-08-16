@@ -496,7 +496,7 @@ int    Response::statuscode( void )
         return (check_methods());
 }
 
-std::string Response::get_Response( Request rq )
+std::string Response::get_Response()
 {
     FirstLine   FirstLine(this->_request);
 

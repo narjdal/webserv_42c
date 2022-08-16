@@ -42,7 +42,7 @@ private:
 public:
     Response(Request &request, server &Serv);
     ~Response();
-    std::string get_Response(Request rq );
+    std::string get_Response();
     
 private:
  

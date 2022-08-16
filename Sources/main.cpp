@@ -295,7 +295,7 @@ void init_server(server myserver)
 
        //  std::cout << "WHAT THE FUCK IS HAPPENING " << std::endl;
        Response response(parsed_request,myserver);
-      std::string sboof_response(response.get_Response(parsed_request));
+      std::string sboof_response(response.get_Response());
         //printf("------------------ FINAL RESPONSE -------------------");
        std::cout << sboof_response << std::endl;
        
