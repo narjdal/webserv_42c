@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Response.hpp"
+#include "../../Includes/sboof/Response.hpp"
 
 
 
@@ -351,7 +351,7 @@ int     Response::Upload_file( std::string upload_path )
     std::string tmp = StatusCode(this->_request.get_headrs()["Content-Type"], 2);
     std::cout << "HIS EXTENSION IS " << tmp << std::endl;
 
-    tmp.clear();
+   // tmp.clear();
     tmp = upload_path + RandomWord() + "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
     std::cout << "the hole file is " << tmp << std::endl;
     

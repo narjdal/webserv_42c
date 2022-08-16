@@ -7,6 +7,8 @@ CFLAGS =
 RM = rm
 RMFLAGS = -rf
 
+SRCS_SBOOF_DIR = Sources/sboof/
+INC_SBOOF_DIR = Includes/sboof/
 INC_DIR = Includes/
 SRC_DIR = Sources/
 OBJ_DIR = obj/
@@ -14,16 +16,19 @@ OBJ_DIR = obj/
 INCS = 	Includes/tt.hpp\
 		Includes/server.hpp\
 		Includes/location.hpp\
-		Includes/Firstline.hpp\
-		Includes/Response.hpp\
 		Includes/request.hpp\
-		Includes/Header.hpp\
 		Includes/Cgi.hpp\
 		Includes/parsing.hpp
 
 
+INCS_SBOOF = Includes/sboof/Firstline.hpp\
+			 Includes/sboof/Response.hpp\
+			 Includes/sboof/Header.hpp
 
-		
+SRCS_SBOOF = /sboof/Firstline.cpp\
+	/sboof/Response.cpp\
+	Sources/sboof/StatusCode.cpp\
+	Sources/sboof/Header.cpp\
 	
 SRCS_CLIENT = Sources/client.cpp
 
@@ -34,21 +39,19 @@ SRCS = \
 	Sources/server.cpp\
 	Sources/request.cpp\
 	Sources/location.cpp\
-	Sources/Firstline.cpp\
-	Sources/Response.cpp\
-	Sources/Header.cpp\
 	Sources/Cgi.cpp\
 	Sources/before_parsing.cpp\
-	Sources/StatusCode.cpp
 
 
 	
 
 
 
-vpath %.cpp $(SRC_DIR)
+vpath %.cpp $(SRC_DIR) %.cpp $(SRCS_SBOOF_DIR)
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
+OBJS_SBOOF = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS_SBOOF:.cpp=.o)))
+
 
 
 # ============================================================================ #
@@ -86,14 +89,14 @@ re : fclean all
 $(OBJ_DIR) :
 	@mkdir $(OBJ_DIR)
 
-$(OBJ_DIR)/%.o : %.cpp $(INCS) | $(OBJ_DIR)
+$(OBJ_DIR)/%.o : %.cpp $(INCS) $(INCS_SBOOF) | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -I $(INC_DIR) -c $< -o $@
 	@printf "$(LF)🚧 $(FG_TEXT)Create $(FG_TEXT_PRIMARY)$@ $(FG_TEXT)from $(FG_TEXT_PRIMARY)$<"
 
-$(NAME) : $(OBJS) $(INCS)
+$(NAME) : $(OBJS)  $(OBJS_SBOOF) $(INCS) $(INCS_SBOOF)
 	@printf "$(LF)🚀 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@'s Object files $(FG_TEXT)!"
 	@printf "$(CRLF)📚 $(FG_TEXT)Create $(FG_TEXT_PRIMARY)$@$(FG_TEXT)!\n"
-	@$(CC) $(CFLAGS) -I $(INC_DIR) $(OBJS) -o $@
+	@$(CC) $(CFLAGS) -I $(INC_DIR) $(OBJS) $(OBJS_SBOOF) -o $@
 	@printf "$(LF)🎉 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@ $(FG_TEXT)!\n$(NO_COLOR)"
 
 
