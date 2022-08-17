@@ -54,6 +54,10 @@ It extracts the first connection request on the queue of pending connections for
  */
 #define PORT 8080
 
+void test_leaks()
+{
+    system("leaks webserv");
+}
 
 char *get_first_line(char *buffer)
 {
@@ -268,6 +272,8 @@ void init_server(server myserver)
     }
     while(1)
     {
+ //test_leaks();
+
          std::string server_reponse = "HTTP/1.1 ";
         printf("\n+++++++ Waiting for new connection ++++++++\n\n");
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
@@ -310,10 +316,7 @@ void init_server(server myserver)
     shutdown(server_fd, SHUT_RDWR);
 
 }
-void test_leaks()
-{
-    system("leaks webserv");
-}
+
 void print_parsing_infos(server myserver)
 {
      std::cout << "-----------------------Server Names : ------------------"  << std::endl;
@@ -375,6 +378,39 @@ void print_parsing_infos(server myserver)
         std::cout << "autoindex off " << std::endl;
 
 }
+int number_of_servers(std::vector <std::string > words)
+{
+    int i = 0;
+    int count = 0;
+    int accolade = 0;
+    while ( i < words.size())
+    {
+          if (words[i] == "server" && accolade == 0)
+             count++;
+        if (words[i] == "{")
+        ++accolade;
+        if (words[i] == "}")
+        --accolade;
+      
+        i++;
+        
+    }
+    std::cout << "NUMBER OF SERVERS => " << count << std::endl;
+    return (count);
+}
+server fill_server(std::vector <std::string > text_vector,int nb_of_servers)
+{
+    server server(text_vector,nb_of_servers);
+
+    //if(!check_server())
+    // {
+    //     std::cout << " Error !  Config file not well formated ! Server missing some infos " std::endl;
+    //     exit (1);
+    // }
+    return (server);
+
+}
+
 int main(int ac,char **av)
 {
    
@@ -384,8 +420,12 @@ int main(int ac,char **av)
         std::ifstream indata;
         indata.open(av[1]);
         std::string text;
+        server s;
         std::vector<std::string> text_vector;
         std::vector <std::string > words;
+        std::vector <server> multi_server;
+        int nb_of_servers = 0;
+        int count  = 0;
         if (!indata)
         {
             std::cerr << "error :file could not be opened ! " << std::endl;
@@ -396,17 +436,39 @@ int main(int ac,char **av)
             text_vector.push_back(text);
            // std::cout << text << std::endl;
         }
-        parse_config_file(text_vector);
-        server myserver(text_vector);
+        words = parse_config_file(text_vector);
+       nb_of_servers =  number_of_servers(words);
+    int length = 1;
+    std::cout << "=>"<<  nb_of_servers << std::endl;
+        while ( length <= nb_of_servers )
+        {
+        server myserver(text_vector,length);
+        multi_server.push_back(myserver);
+        length++;
+        }
+        //server tt(text_vector,4);
+
+      
+
+        // server myserver4(text_vector,5);
+        // server myserver5(text_vector,6);
+        // server myserver6(text_vector,7);
+        // server myserver7(text_vector,8);
+
+
+        // while ( count < nb_of_servers)
+        // {  
+        //     s = fill_server(text_vector,count);
+        //     multi_server.push_back(s);
+        // }
         //print_parsing_infos(myserver);
        //for (std::vector<std::string>::iterator it = text_vector.begin();it != text_vector.end();it++)
         // std::cout << *it << std::endl;
    // std::cout << av[1] << std::endl;
-       init_server(myserver);
+       init_server(multi_server[0]);
     }
     
   // closing the connected socket
- // test_leaks();
   // closing the listening socket
         return 0; 
 

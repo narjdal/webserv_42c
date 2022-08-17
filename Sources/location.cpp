@@ -1,6 +1,7 @@
 #include "../Includes/location.hpp"
 #include "../Includes/tt.hpp"
 #include <sstream>
+// ADD ERR DOUBLON
 location::location()
 {
 
@@ -75,15 +76,22 @@ std::string name;
 
 
 
-std::string extract_location_path(std::vector<std::string> text_vector,int index)
+std::string extract_location_path(std::vector<std::string> text_vector,int index,int nb_server)
 {
 std::vector<std::string> parser;
 std::string location_path;
     int i = 0;
     int y = 0;
     int count = 0;
+    int find_right_server = 0;
     while ( i < text_vector.size())
     {  
+           if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
             if ( count == index )
@@ -93,68 +101,121 @@ std::string location_path;
             }
         count++;
         }
+        }
     i++;
     }
     return (location_path);
 }
 
-std::vector<std::string> extract_location_allowed_methods(std::vector<std::string> text_vector,int index)
+std::vector<std::string> extract_location_allowed_methods(std::vector<std::string> text_vector,int index,int nb_server)
 {
 std::vector<std::string> parser;
 std::vector<std::string> allowed_methods;
 std::vector <std::string > correct_methods;
+int find_right_server = 0;
     int i = 0;
     int y = 0;
     int count = 0;
     while ( i < text_vector.size())
     {  
+      if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+        }
+        if ( find_right_server == nb_server)
+        {
+
           if(text_vector[i].find("location") != std::string::npos)
         {
+                     //std::cout << "W*-----------------W : " << count << " " << index << std::endl;
+
             if ( count == index )
                 {
+
                     y = i;
-                    while ( y < text_vector.size())
-                    {
+        while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
+             {
              parser = split(text_vector[y]," ","allow_methods");
+            if(parser.size()> 0)
+            {
                 if (!parser.empty())
                 {
                     correct_methods.assign(parser.begin() + 1,parser.end());
                     break;
                 }
+            }
+            // tmp = parser;
+            //  tmp.erase(tmp.begin());
+            //  if(tmp.size() > 0)
+            //  {
+            //     std
+            // //  location_path = tmp[0];
+            //  }
+            //  else
+        //      {
+        //        std::cout << "upload path is defined byut no value is put in it ! location index : " << index << " server index " << nb_server << std::endl;
+        //    return(location_path);
+          //  }
+                 //
+                   // {
+               
             y++;
             }
                 }
         count++;
+       
+        }
         }
     i++;
     }
     return (correct_methods);
 }
-std::string extract_location_root(std::vector<std::string> text_vector,int index)
+std::string extract_location_root(std::vector<std::string> text_vector,int index,int nb_server)
 {
 std::vector<std::string> parser;
 std::string location_path;
+std::vector <std::string > tmp;
     int i = 0;
     int y = 0;
     int count = 0;
+    int find_right_server = 0;
    while ( i < text_vector.size())
     {  
+                      if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
             if ( count == index )
                 {
                     y = i;
-                    while ( y < text_vector.size())
+                 while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
              parser = split(text_vector[y]," ","root");
-                if (!parser.empty())
-                {
-                    return (parser[1]);
-                }
+             if(!parser.empty())
+             {
+
+             
+             tmp = parser;
+             tmp.erase(tmp.begin());
+             if (tmp.size() > 0)
+             {
+                return (tmp[0]);
+             }
+             else
+             {
+                std::cout << " root is defined but no value is put in it !  returning(./)for now  location index : " << index << " server index : " << nb_server << std::endl;
+                return("./");
+             }
+             }
             y++;
             }
                 }
         count++;
+        }
         }
     i++;
     }
@@ -162,53 +223,68 @@ std::string location_path;
     return (location_path);
 }
 
-long long int extract_location_max_body_size(std::vector<std::string> text_vector,int index)
+long long int extract_location_max_body_size(std::vector<std::string> text_vector,int index,int nb_server)
 {
-
+// TO ADD IS NUMBER HERE + SAME FOR SERVER
 std::vector<std::string> parser;
 std::vector<std::string> location_limit;
 std::string location_path;
+std::vector<std::string > tmp;
  std::stringstream ss;
     int i = 0;
     int y = 0;
     int count = 0;
     int num = 0;
     int inside = 0;
+    int find_right_server = 0;
    while ( i < text_vector.size())
     {  
+                      if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
+
           if(text_vector[i].find("location") != std::string::npos)
         {
             if ( count == index )
                 {
                     y = i;
-                    while ( y < text_vector.size())
+                    while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
        
              parser = split(text_vector[y]," ","client_max_body_size");
-             if ( y != i)
-              {
-                location_limit = split(text_vector[y]," ","location");
-               if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
-                break;
-                    }
              inside = 1;
                 if (!parser.empty())
                 {
-                ss << parser[1];
+                    tmp = parser;
+                    tmp.erase(tmp.begin());
+                    if(tmp.size() > 0)
+                    {
+                ss << tmp[0];
                 ss >> num;
+                //std::cout << "COUCOU AKI" << std::endl;
                     return (num);
+                    }
+                    else
+                    {
+                        std::cout << "location client max body size defined but nothing is put in it ! location index : " << index << " server index : " << nb_server << std::endl;
+                    return (-1);
+                    }
                 }
             y++;
             }
                 }
         count++;
         }
+        }
     i++;
     }
-    //std::cerr << " No client_max_body_size  !" << std::endl;
+    std::cerr << " No client_max_body_size  !" << std::endl;
     return (num);
 }
-std::vector<std::string> extract_location_index(std::vector<std::string> text_vector,int index)
+std::vector<std::string> extract_location_index(std::vector<std::string> text_vector,int index,int nb_server)
 {
 
   std::vector<std::string> parser;
@@ -220,22 +296,24 @@ std::vector<std::string> location_limit;
     int y = 0;
     int inside = 0;
     int count = 0;
-
+    int find_right_server = 0;
    while ( i < text_vector.size())
     {  
+         if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
+
           if(text_vector[i].find("location") != std::string::npos)
         {
             if ( count == index )
                 {
                     y = i;
-                    while ( y < text_vector.size())
+                    while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
-            if ( y != i)
-              {
-                location_limit = split(text_vector[y]," ","location");
-               if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
-                break;
-                    }
+
              parser = split(text_vector[y]," ","index");
                 if (!parser.empty())
                 {
@@ -247,12 +325,13 @@ std::vector<std::string> location_limit;
                 }
         count++;
         }
+        }
     i++;
     }
    // std::cout << " No Index in location !" << std::endl;
     return (server_index);
 }
-bool extract_location_autoindex(std::vector<std::string > text_vector,int index)
+bool extract_location_autoindex(std::vector<std::string > text_vector,int index,int nb_server)
 {
 
  std::vector<std::string> parser;
@@ -261,39 +340,61 @@ bool extract_location_autoindex(std::vector<std::string > text_vector,int index)
     int inside = 0;
     bool autoindex = false;
     int count = 0;
+    int find_right_server = 0;
 std::vector<std::string> location_limit;
+std::vector <std::string > tmp;
    while ( i < text_vector.size())
     {  
+         if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
             if ( count == index )
                 {
                     y = i;
-                    while ( y < text_vector.size())
+           while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
-            if ( y != i)
-              {
-                location_limit = split(text_vector[y]," ","location");
-               if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
-                break;
-                    }
              parser = split(text_vector[y]," ","autoindex");
-                if (!parser.empty() && parser[1].compare("on") == 0)
-                {
+             if(!parser.empty())
+             {
+
+             
+             tmp = parser;
+             tmp.erase(tmp.begin());
+             if (tmp.size() > 0)
+             {
+                    if(tmp[0].compare("on") == 0)
                     return (true);
-                }
-            y++;
+                    else
+                    return (false);
+             }
+             else
+             {
+                std::cout << "autoindex is defined but no value is put in it ! return false for now , location " << index << " server : " << nb_server << std::endl;
+                return(false);
+             }
+                
             }
+            y++;
+
+            //     return(false);
+                }
                 }
         count++;
         }
+        }
     i++;
     }
+             std::cout << " No autoindex found " << std::endl;
 
     return (false);
 }
 
-std::string extract_location_upload_path(std::vector<std::string> text_vector,int index)
+std::string extract_location_upload_path(std::vector<std::string> text_vector,int index,int nb_server)
 {
 std::vector<std::string> parser;
 std::string location_path;
@@ -303,57 +404,82 @@ std::vector<std::string> location_limit;
     int i = 0;
     int y = 0;
     int count = 0;
+    int find_right_server = 0;
+    std::vector<std::string > tmp;
    while ( i < text_vector.size())
     {  
+          if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if ( find_right_server == nb_server)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
+             //std::cout << "BRRRRRRRR" << std::endl;
+
             if ( count == index )
                 {
+            // std::cout << "HHHHHHHHHH" << std::endl;
+
                     y = i;
-                    while ( y < text_vector.size())
-                    {
-                 if ( y != i)
-              {
-                location_limit = split(text_vector[y]," ","location");
-               if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
-                break;
-                    }
+            //        
+            //         {
+            //      if ( y != i)
+            //   {
+            //     location_limit = split(text_vector[y]," ","location");
+            //    if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
+            //     break;
+            //         }
+             while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
+             {
              parser = split(text_vector[y]," ","upload_path");
-                if (!parser.empty())
-                {
-                    return (parser[1]);
-                }
+            if(parser.size()> 0)
+            {
+            tmp = parser;
+             tmp.erase(tmp.begin());
+             if(tmp.size() > 0)
+             {
+             location_path = tmp[0];
+             }
+             else
+             {
+               std::cout << "upload path is defined byut no value is put in it ! location index : " << index << " server index " << nb_server << std::endl;
+           return(location_path);
+             }
+             }
+             //std::cout << "PLEASE WOORK FFS" << std::endl;
+           
             y++;
             }
                 }
-        count++;
+              count++;
+                }
+        
         }
     i++;
     }
-    //std::cerr << " No upload_path found in location !" << std::endl;
     return (location_path);
 }
 
-location::location(std::vector<std::string> text_vector,int index)
+location::location(std::vector<std::string> text_vector,int index,int nb_server)
 {
-    this->_name = extract_location_path(text_vector,index);
-    this->_locations_path = extract_location_path(text_vector,index);
-    this->_allow_methods = extract_location_allowed_methods(text_vector,index);
-    this->_root = extract_location_root(text_vector,index);
-    this->_client_max_body_size = extract_location_max_body_size(text_vector,index);
-    this->_index = extract_location_index(text_vector,index);
-    this->_autoindex = extract_location_autoindex(text_vector,index);
-    this->_upload_path = extract_location_upload_path(text_vector,index);
-/**
- * @brief 
- * 
- *
+    this->_name = extract_location_path(text_vector,index, nb_server);
+     this->_locations_path = extract_location_path(text_vector,index,nb_server);
+    this->_allow_methods = extract_location_allowed_methods(text_vector,index,nb_server);
+     this->_root = extract_location_root(text_vector,index,nb_server);
+    this->_client_max_body_size = extract_location_max_body_size(text_vector,index,nb_server);
+    this->_index = extract_location_index(text_vector,index,nb_server);
+    this->_autoindex = extract_location_autoindex(text_vector,index,nb_server);
+    this->_upload_path = extract_location_upload_path(text_vector,index,nb_server);
+     std::cout << "----------------------------********************************* ------------------"  << std::endl;
+
    // std::cout << this->_locations_path << std::endl;
      std::cout << "-----------------------Location name  | Index :  " << index << " <<  ------------------"  << std::endl;
     std::cout << this->_name << std::endl;
-     std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-        std::cout << *it2 << std::endl;
+//      std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
+//      for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
+//         std::cout << *it2 << std::endl;
     std::cout << "-----------------------Location PATH  | Index :  " << index << " <<  ------------------"  << std::endl;
   
     std::cout << this->_locations_path << std::endl;
@@ -367,14 +493,15 @@ location::location(std::vector<std::string> text_vector,int index)
      std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
      for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
          std::cout << *it2 << std::endl;
-        std::cout << "-----------------------Server  AutoIndex    : ------------------"  << std::endl;
+        std::cout << "-----------------------location  AutoIndex    : ------------------"  << std::endl;
         if (this->_autoindex == true)
-        std::cout << "autoindex on " << std::endl;
+        std::cout << "autoindex on  location : " << index  << " server : " << nb_server << std::endl;
         else if (this->_autoindex == false)
-        std::cout << "autoindex off " << std::endl;
+        std::cout << "autoindex off  location :" << index << " server : " << nb_server << std::endl;
+//         
    std::cout << "-----------------------Location _upload_path | Index :  " << index << " <<  ------------------"  << std::endl;
     std::cout << this->_upload_path << std::endl;
-      */
+      
          
 }
 

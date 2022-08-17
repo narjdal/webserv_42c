@@ -1,9 +1,22 @@
 
 #include "../Includes/tt.hpp"
 #include "../Includes/server.hpp"
+#include "../Includes/sboof/Response.hpp"
 #include <vector>
 #include <sstream>
 
+
+bool isnumber(const std::string& str)
+{
+	for (size_t i = 0; i < str.length(); i++)
+	{
+		char current = str[i];
+		if (current >= '0' && current <= '9')
+			continue;
+		return false;
+	}
+	return true;
+}
 // for string delimiter
 std::vector<std::string> split (std::string s, std::string delimiter,char *compare) {
     size_t pos_start = 0, pos_end, delim_len = delimiter.length();
@@ -43,43 +56,79 @@ std::vector<std::string> split (std::string s, std::string delimiter,char *compa
  * 
  * @param text_vector 
  * @return std::vector<std::string > 
- * STILL BUG , ACCEPTS MULTIPLE SERVER_NAMES 
+ * STILL BUG , ACCEPTS MULTIPLE SERVER_NAMES  SENSIBLE A LA CASSE SPACE DE FOU
+ * 
  */
-std::vector<std::string > extract_server_names(std::vector<std::string> text_vector)
+std::string removespace(std::string s)
+{
+    //traversing the string
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (s[i] == ' ')
+        {
+            //using in-built function to erase element
+            s.erase(s.begin() + i);
+            i--;
+        }
+    }
+    return (s);
+}
+std::vector<std::string > extract_server_names(std::vector<std::string> text_vector,int index)
 {
  std::vector<std::string> parser;
  std::vector <std::string> server_names;
+ std::vector <std::string> correct_names;
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
-        // std::cout << "|" <<  text_vector[i] << std::endl;
-        parser = split(text_vector[i]," ","server_names");
+        // if (index == 2)
+        // std::cout << "=> " << text_vector[i].size()  << " " << text_vector[i] << " " << std::endl;
+        if(text_vector[i].compare("server") == 0)
+     {
+                //std::cerr << "E*********************************** !" << std::endl;
+           count++;
+    }
+        if ( count == index)
+        {
+              //  std::cerr << "E------------------------------------- !" << std::endl;
+
+        parser = ft_split(text_vector[i]," ");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("server_names") == 0)
+            parser[y] = removespace(parser[y]);
+       // std::cout << " WW SALUT KEIP" << count << text_vector[i] << " | " << parser[y]  << " " << y << std::endl;
+        // if (parser[y].compare("server_names" )== 0)
+        // std::cout << "WHY THE FUCK " << std::endl;
+            if (parser[y] == "server_names")
             {
-
+                
+                if(index == 2)
                 if (inside == 1)
              {
                 std::cerr << "ERROR ! Too many server_names in config files !" << std::endl;
-            exit(1);
+                exit(1);
             }
+            //std::cout << "HELLO HELLO HELLO " << std::endl;
                 server_names = split (text_vector[i]," ","server_names");
-             
-                inside = 1;
+        // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " " << std::endl;
+        // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " "  << std::endl;
+        server_names.erase(server_names.begin());
+          return (server_names);
             }
             y++;
         }
+        }
     i++;
     }
-    std::vector <std::string> correct_names(server_names.begin() + 1,server_names.end());
+   
     return (correct_names);
 }
 
-int extract_server_port(std::vector<std::string> text_vector)
+int extract_server_port(std::vector<std::string> text_vector,int index)
 {
  std::vector<std::string> parser;
  std::vector <std::string> server_names;
@@ -89,35 +138,66 @@ int extract_server_port(std::vector<std::string> text_vector)
     int i = 0;
     int y = 0;
     int inside = 0;
-    int num = 0;
+    int num = -1;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+          if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         parser = split(text_vector[i]," ","listen");
         y = 0;
         while (y < parser.size())
         {
+       // std::cout << "SIZE = " << parser.size() << std::endl;
+
             if (parser[y].compare("listen") == 0)
             {
+
                 if (inside == 1)
              {
                 std::cerr << "ERROR ! Too many Port in config files !" << std::endl;
             exit(1);
             }
-                delimitier = parser[1].find(':');
-                parser[1].erase(parser[1].begin(),parser[1].end() - delimitier + 3); 
-                ss << parser[1];
+             if( parser[y + 1].find(":") != std::string::npos)
+             {
+                 std::vector<std::string > port;
+                 port = ft_split(parser[1],":");
+               //std::cerr << "=>  !" <<  port.size()  << " " << parser[1] << "=>  " << port[1] << std::endl;
+
+                if(!port[1].empty() && isnumber(port[1]))
+                num = std::stoi(port[1]);
+                else
+                {
+                    std::cout << "Error ! Port not defined or is not a number !" << std::endl;
+                    exit(1);
+                }
+                // // delimitier = parser[1].find(':');
+                // // parser[1].erase(parser[1].begin(),parser[1].end() - delimitier + 3); 
+                // if(port.size == 1)
+                // {
+                //     std::cout << "Something went Wrong in config file ! No port" << std::endl;
+                //     exit(1);
+                // }
+               // ss << port[1];
             }
+            }
+            
             y++;
+        }
         }
     i++;
     }
-ss >> num;
+//ss >> num;
     return (num);
 }
 
 
 
-std::string extract_server_host(std::vector<std::string> text_vector)
+std::string extract_server_host(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
  std::vector <std::string> tmp;
@@ -127,22 +207,45 @@ std::string server_host;
     int y = 0;
     int inside = 0;
     int delimitier = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
-      
+          if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         parser = split(text_vector[i]," ","listen");
         y = 0;
         while (y < parser.size())
         {
+
             if (parser[y].compare("listen") == 0)
             {
-                delimitier = parser[1].find(':');
-                parser[1].erase(delimitier);
-                server_host  =  parser[1].c_str();
-                //parser[1].erase(std::remove(parser[1].begin(),parser[1].end(),':',parser[1].end()));
-                inside = 1;
+
+                  if (inside == 1)
+             {
+                std::cerr << "ERROR ! Too many host or port  in config files ! " << std::endl;
+            exit(1);
             }
+                //std::cout << "INSIDE HOST" << std::endl;
+             if( parser[y + 1].find(":") != std::string::npos)
+             {
+                //s////td::cout << "INSIDE HOST" << std::endl;
+                 std::vector<std::string > port;
+                 port = ft_split(parser[1],":");
+                 if (!port[0].empty())
+                server_host = port[0];
+              
+             }
+               else
+                server_host = parser[y + 1];
+
+        }
             y++;
+
+        }
         }
     i++;
     }
@@ -151,15 +254,28 @@ std::string server_host;
 }
 
 
-std::string extract_server_root(std::vector<std::string> text_vector)
+std::string extract_server_root(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
  std::vector <std::string> server_names;
+ std::vector <std::string > tmp;
+ std::string root;
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+             if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
+                 if(text_vector[i].find("location") != std::string::npos)
+                 {
+                    return (root);
+                 }
         parser = split(text_vector[i]," ","");
         y = 0;
         while (y < parser.size())
@@ -167,20 +283,32 @@ std::string extract_server_root(std::vector<std::string> text_vector)
             if (parser[y].compare("root") == 0)
             {   
                 server_names = split (text_vector[i]," ","root");
-
+                tmp = server_names;
+                tmp.erase(tmp.begin());
+                if (tmp.size() > 0)
+                {
+                    root = tmp[0];
+                    return (root);
+                }
+                else
+                {
+                    std::cout << "root is defined but nothing is put in it !  server : " << index << std::endl;
+                }
+               
                 inside = 1;
             }
             y++;
         }
+        }
     i++;
     }
-    return (server_names[1]);
+    return (root);
 
 }
 
 
 
-std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_vector)
+std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
  std::vector <std::string> allowed_methods;
@@ -188,8 +316,15 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+           if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         if(text_vector[i].find("location") != std::string::npos)
         return (correct_methods);
         parser = split(text_vector[i]," ","allow_methods");
@@ -204,6 +339,7 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
             }
             y++;
         }
+        }
     i++;
     }
 
@@ -211,7 +347,7 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
 }
 
 
-std::vector<std::string> extract_server_index(std::vector<std::string> text_vector)
+std::vector<std::string> extract_server_index(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
  std::vector <std::string> server_index;
@@ -219,8 +355,15 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+           if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         if(text_vector[i].find("location") != std::string::npos)
         return (correct_index);
         parser = split(text_vector[i]," ","index");
@@ -235,6 +378,7 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
             }
             y++;
         }
+        }
     i++;
     }
    
@@ -242,15 +386,23 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
 
 }
 
-std::string extract_server_upload_path(std::vector<std::string> text_vector)
+std::string extract_server_upload_path(std::vector<std::string> text_vector,int index)
 {
 std::vector<std::string> parser;
  std::vector <std::string> server_upload_path;
+ std::string upload_path;
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+                 if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
          if (inside == 1)
@@ -263,17 +415,19 @@ std::vector<std::string> parser;
             if (parser[y].compare("upload_path") == 0)
             {   
                 server_upload_path = split (text_vector[i]," ","upload_path");
-
+                if(!server_upload_path.empty())
+                upload_path = server_upload_path[1];
                 inside = 1;
             }
             y++;
         }
+        }
     i++;
     }
-    return (server_upload_path[1]);
+    return (upload_path);
 }
 
-std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<std::string> text_vector)
+std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
      std::vector <std::string> test;
@@ -284,8 +438,15 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
+            if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
        // if(text_vector[i].find("location") != std::string::npos)
         //return (correct_index);
         parser = split(text_vector[i]," ","error_page");
@@ -299,11 +460,13 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
                 test = split (text_vector[i]," ","error_page");
            //correct_index.assign(server_index.begin() + 1,server_index.end());
                 errors_pages.assign(test.begin() + 1,test.end());
+                
                 inside = 1;
                 server_error_pages.push_back(errors_pages);
                 test.clear();
             }
             y++;
+        }
         }
     i++;
     }
@@ -317,7 +480,7 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
 
 
 
-std::vector<std::vector<std::string > > extract_server_redirections(std::vector<std::string> text_vector)
+std::vector<std::vector<std::string > > extract_server_redirections(std::vector<std::string> text_vector,int index)
 {
      std::vector<std::string> parser;
      std::vector <std::string> test;
@@ -327,10 +490,18 @@ std::vector<std::vector<std::string > > extract_server_redirections(std::vector<
     int i = 0;
     int y = 0;
     int inside = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
        // if(text_vector[i].find("location") != std::string::npos)
         //return (correct_index);
+
+            if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         parser = split(text_vector[i]," ","redirection");
         y = 0;
         while (y < parser.size())
@@ -346,17 +517,20 @@ std::vector<std::vector<std::string > > extract_server_redirections(std::vector<
             }
             y++;
         }
+        }
     i++;
     }
    
     return (server_redirections);
 }
 
-long long int extract_server_max_body_size(std::vector<std::string> text_vector)
+long long int extract_server_max_body_size(std::vector<std::string> text_vector,int index)
 {
 
  std::vector<std::string> parser;
  std::vector <std::string> server_names;
+ std::vector <std::string > tmp;
+std::string test;
  std::stringstream ss;
 
  int delimitier = 0;
@@ -364,37 +538,66 @@ long long int extract_server_max_body_size(std::vector<std::string> text_vector)
     int y = 0;
     int inside = 0;
     int num = 0;
+    int count = 0;
     while ( i < text_vector.size())
     {  
         
+         if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
           if(text_vector[i].find("location") != std::string::npos)
         {
-         if (inside == 1)
-         {
-            ss >> num;
+
         return ( num);
-         }
         }
         parser = split(text_vector[i]," ","client_max_body_size");
+
         y = 0;
         while (y < parser.size())
         {
             if (parser[y].compare("client_max_body_size") == 0)
             {
-       
-                ss << parser[1];
-              //  std::cout << "parser 1 => " << parser[1] << std::endl;
-                inside = 1 ;
+                tmp = parser;
+                tmp.erase(tmp.begin());
+             if(tmp.size() > 0)
+            {
+                num = std::stoi(tmp[0]);
+                return(num);
+            }
+            else if(tmp.size() == 0)
+            {
+                std::cout << "client_max_body_size is defined but no value is put in it ! server index : " << index << std::endl; 
+                num = -1;
+            }
+      
+
+
+            //     if (!parser[1].empty() &&  isnumber(parser[1]))
+            //    {
+            //     std::cout << "hh" << std::endl;
+
+            //    }
+            //    else
+            //    std::cout << "WWWWWWWWWWWWWW C VIDE  EXTRACT SERVER BODY SIZE"<< std::endl;
+
+                
             }
             y++;
         }
+        }
     i++;
     }
-ss >> num;
+
+if (inside == 0)
+num = -1;
+//std::cout << "EXITING HERE AT RETURN-------------=>>>>>>>>>>>>>>>" << index  << std::endl;
     return (num);
 }
 
-bool extract_server_autoindex(std::vector<std::string > text_vector)
+bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
 {
 
  std::vector<std::string> parser;
@@ -403,9 +606,16 @@ bool extract_server_autoindex(std::vector<std::string > text_vector)
     int y = 0;
     int inside = 0;
     bool autoindex = false;
+    std::vector<std::string> tmp;
+    int count = 0;
     while ( i < text_vector.size())
     {  
-        
+                 if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
         parser = split(text_vector[i]," ","autoindex");
         if(text_vector[i].find("location") != std::string::npos)
             inside = 1 ;
@@ -416,33 +626,56 @@ bool extract_server_autoindex(std::vector<std::string > text_vector)
             {
                 if ( inside == 0)
             {
-            if (parser[1].compare("on") == 0)
-                   autoindex = true;
+                tmp = parser;
+                tmp.erase(tmp.begin());
+    //std::cout << "TMP SIZE" << tmp.size()  <<"index : " << index << std::endl;
+             if(tmp.size() > 0)
+             {
+               if(tmp[0].compare("on") == 0)
+               autoindex = true;
+             }
+            else if(tmp.size() == 0)
+            {
+                std::cout << "autoindex is defined but no value is put in it ! server index : " << index << std::endl; 
+            }
             }
             }
             y++;
         }
+        }
     i++;
+    
+        }
+    return (autoindex);
+  
     }
 
-    return (autoindex);
-}
 
-int extract_number_of_locations(std::vector <std::string> text_vector)
+
+int extract_number_of_locations(std::vector <std::string> text_vector,int index)
 {
 
     int i = 0;
     int y = 0;
     int inside = 0;
     int count = 0;
+    int find_right_server = 0;
     bool autoindex = false;
     while ( i < text_vector.size())
     {  
-        
+           if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if (find_right_server == index)
+        {
     if(text_vector[i].find("location") != std::string::npos)
             count++;
-        i++;
     }
+        i++;
+
+}
+std::cout << "Number of locations  :" << count << " Server Index : " << index << std::endl;
     return (count);
 }
 // TO FIXE ERRORS CASE : if no path is specified

@@ -24,7 +24,7 @@ public:
     ~location();
     location (const location &obj);
     location &operator=(location const &copy);
-    location(std::vector<std::string > text_vector,int index);
+    location(std::vector<std::string > text_vector,int index,int nb_server);
     std::string                 get_upload_path() const;
     std::string                 get_name() const;
     std::string                 get_locations_path() const;

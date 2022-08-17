@@ -105,3 +105,4 @@ private:
 std::string     StatusCode(string location, int i);
 std::string     file_to_string(std::string location);
 std::string     RandomWord( void );
+std::vector<std::string>     ft_split(std::string s1, std::string delim);

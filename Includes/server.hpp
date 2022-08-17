@@ -47,7 +47,7 @@ protected:
 public:
     server();
     ~server();
-    server(std::vector<std::string > text_vector);
+    server(std::vector<std::string > text_vector,int index);
 
     std::string                  get_name(int) const;
     unsigned int                 get_name_size() const;

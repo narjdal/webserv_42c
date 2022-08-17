@@ -6,35 +6,38 @@ server::server()
 
 }
 
-server::server(std::vector<std::string> text_vector)
+server::server(std::vector<std::string> text_vector,int helper)
 {
    
    int number_of_locations = 0;
-   this->_name = extract_server_names(text_vector);
-    this->_listen_port = extract_server_port(text_vector);
-    this->_listen_host = extract_server_host(text_vector);
-   this->_allowed_methods = extract_allowed_methods(text_vector);
-   this->_index = extract_server_index(text_vector);
-   this->_upload_path = extract_server_upload_path(text_vector);
-   this->_error_pages = extract_server_errors_page(text_vector);
-   this->_redirections = extract_server_redirections(text_vector);
-   this->_root = extract_server_root(text_vector);  
-    //this->_location = extract_server_location(text_vector);
-  this->_cgi = extract_server_cgi(text_vector);
-   // this->_cgi = extract_server_cgi(text_vector);
-    this->_client_max_body_size = extract_server_max_body_size(text_vector);
-    this->_autoindex = extract_server_autoindex(text_vector);
+    this->_autoindex = false;
+   this->_name = extract_server_names(text_vector,helper);
+   
+   this->_listen_port = extract_server_port(text_vector,helper);;
+   // this->_listen_port = extract_server_port(text_vector,helper);
+    this->_listen_host = extract_server_host(text_vector,helper);
+    this->_allowed_methods = extract_allowed_methods(text_vector,helper);
+        this->_index = extract_server_index(text_vector,helper);
+   this->_upload_path = extract_server_upload_path(text_vector,helper);
+   this->_error_pages = extract_server_errors_page(text_vector,helper);
+   this->_redirections = extract_server_redirections(text_vector,helper);
+   this->_root = extract_server_root(text_vector, helper);  
+//     //this->_location = extract_server_location(text_vector);
+//   this->_cgi = extract_server_cgi(text_vector);
+//    // this->_cgi = extract_server_cgi(text_vector);
+    this->_client_max_body_size = extract_server_max_body_size(text_vector,helper);
+   this->_autoindex = extract_server_autoindex(text_vector,helper);
    //this->_name = split(text_vector[2]," ");
     //std::cout << test[0] << std::endl << test[1] << std::endl;
-  /**
-   * @brief 
-   * 
-   *
+     std::cout << "----------------------------************S************* ------------------"  << std::endl;
+
     std::cout << "-----------------------Server Names : ------------------"  << std::endl;
 for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_name .end();it++)
          std::cout << *it << std::endl;
+       
          std::cout << "-----------------------Server Port : ------------------"  << std::endl;
          std::cout << this->_listen_port << std::endl;
+
            std::cout << "-----------------------Server Host : ------------------"  << std::endl;
          std::cout << this->_listen_host << std::endl;
             std::cout << "-----------------------Server root : ------------------"  << std::endl;
@@ -50,29 +53,44 @@ for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_n
      std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
         try
         {
-        for (std::vector<std::string>::iterator it3 = this->_error_pages[0].begin();it3 != this->_error_pages[0].end();it3++)
+            int length = 0;
+            while (length < this->_error_pages.size())
+            {
+                   for (std::vector<std::string>::iterator it3 = this->_error_pages[length].begin();it3 != this->_error_pages[length].end();it3++)
          std::cout << *it3 << std::endl;
            std::cout << "-----------------------------------------------"  << std::endl;
+           length++;
+            }
+     
 
-        for (std::vector<std::string>::iterator it4 = this->_error_pages[1].begin();it4 != this->_error_pages[1].end();it4++)
-         std::cout << *it4 << std::endl;
-           std::cout << "-----------------------------------------------"  << std::endl;
+        // for (std::vector<std::string>::iterator it4 = this->_error_pages[1].begin();it4 != this->_error_pages[1].end();it4++)
+        //  std::cout << *it4 << std::endl;
+        //    std::cout << "-----------------------------------------------"  << std::endl;
          
-          for (std::vector<std::string>::iterator it5 = this->_error_pages.at(2).begin();it5 != this->_error_pages.at(2).end();it5++)
-         std::cout << *it5 << std::endl;
-        } 
+        //   for (std::vector<std::string>::iterator it5 = this->_error_pages.at(2).begin();it5 != this->_error_pages.at(2).end();it5++)
+        //  std::cout << *it5 << std::endl;
+        // } 
+        }
         catch (const std::string & exception)
         {
             std::cout << "error pages exception !" << std::endl;
         }
        try {
            std::cout << "-----------------------Server  redirections  pages  : ------------------"  << std::endl;
-         for (std::vector<std::string>::iterator it3 = this->_redirections[0].begin();it3 != this->_redirections[0].end();it3++)
+           int length = 0;
+            while (length < this->_redirections.size())
+            {
+                   for (std::vector<std::string>::iterator it3 = this->_redirections[length].begin();it3 != this->_redirections[length].end();it3++)
          std::cout << *it3 << std::endl;
            std::cout << "-----------------------------------------------"  << std::endl;
+           length++;
+            }
+        //  for (std::vector<std::string>::iterator it3 = this->_redirections[0].begin();it3 != this->_redirections[0].end();it3++)
+        //  std::cout << *it3 << std::endl;
+        //    std::cout << "-----------------------------------------------"  << std::endl;
      
-        for (std::vector<std::string>::iterator it4 = this->_redirections[1].begin();it4 != this->_redirections[1].end();it4++)
-         std::cout << *it4 << std::endl;
+        // for (std::vector<std::string>::iterator it4 = this->_redirections[1].begin();it4 != this->_redirections[1].end();it4++)
+        //  std::cout << *it4 << std::endl;
          
          // for (std::vector<std::string>::iterator it5 = this->_redirections.at(2).begin();it5 != this->_redirections.at(2).end();it5++)
          //std::cout << *it5 << std::endl;
@@ -85,21 +103,21 @@ for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_n
         std::cout << this->_client_max_body_size << std::endl;
         std::cout << "-----------------------Server  AutoIndex    : ------------------"  << std::endl;
         if (this->_autoindex == true)
-        std::cout << "autoindex on " << std::endl;
+        std::cout << "autoindex on ! server : " << helper  << std::endl;
         else if (this->_autoindex == false)
-        std::cout << "autoindex off " << std::endl;
-*/
-  
-           std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
+        std::cout << "autoindex off  ! server : " << helper << std::endl;
 
-    for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
-    std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
+  
+    //        std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
+
+    // for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
+    // std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
 
    int index = 0;
-   number_of_locations = extract_number_of_locations(text_vector);
+   number_of_locations = extract_number_of_locations(text_vector,helper);
    while ( index  < number_of_locations)
    {
-   location  mylocation(text_vector,index);
+   location  mylocation(text_vector,index,helper);
   //  std::cout << "=> HM"<< mylocation.get_locations_path() << std::endl;
     this->_location.push_back(mylocation);
     index++;
