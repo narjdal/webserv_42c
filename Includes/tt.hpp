@@ -35,7 +35,7 @@ std::string get_request_location(std::vector<std::string > request);
 std::string get_request_vrs(std::string first_line);
 std::map <std::string, std::string> get_request_headers(std::vector <std::string > full_request);
  std::string get_request_body(std::vector < std::string > full_request);
-std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector);
+std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int index);
 std::vector<std::string > splitv2(std::string line,std::string delim);
 std::string get_request_query(std::vector<std::string > request);
 std::vector <std::string > split_by_space(std::vector <std::string > text_vector);

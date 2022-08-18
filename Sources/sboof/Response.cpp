@@ -91,13 +91,14 @@ void     Response::errorsPages( int Status_Code)
 {
     if (Status_Code != 200)
     {
-        std::string tmp = "./sboof/errorpages/" + to_string(Status_Code) + "/" + to_string(Status_Code) + ".html";
+        std::string tmp = "./errorpages/" + to_string(Status_Code) + "/" + to_string(Status_Code) + ".html";
         this->_header->setHeader("Content-Type", (extension(tmp)));
         if (Status_Code == 201)
             this->_Body = "<div class=\"error\"> <div class=\"error__title\">201</div> <div class=\"error__subtitle\">Created</div> <div class=\"error__description\">" + this->_Upload_Path + " </div> </div>" + file_to_string(tmp);
         else
             this->_Body = file_to_string(tmp);
         this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
+        //  std::cout << "INSISDe ERROORS PAGE REDIRECT "<< this->_Body << std::endl;
     }
 }
 
@@ -387,6 +388,7 @@ int     Response::file_GET( void )
         tmp = handle_index(this->_Serv.get_index(), this->_location);
     // if (this->_is_chanked == true)
         // return (file_Is_chancked());
+        std::cout << " THE FILE IS : " << std::endl;
     this->_header->setHeader("Content-Type", (extension(tmp)));
     this->_Body = file_to_string(tmp);
     this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
@@ -597,5 +599,6 @@ std::string Response::get_Response( void )
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
         return (this->_Body);
+        std::cout << FirstLine.First_Line(i) + this->_header->getHeader() << std::endl;
     return (FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body);
 }

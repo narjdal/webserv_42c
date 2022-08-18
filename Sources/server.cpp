@@ -23,7 +23,7 @@ server::server(std::vector<std::string> text_vector,int helper)
    this->_redirections = extract_server_redirections(text_vector,helper);
    this->_root = extract_server_root(text_vector, helper);  
 //     //this->_location = extract_server_location(text_vector);
-//   this->_cgi = extract_server_cgi(text_vector);
+ this->_cgi = extract_server_cgi(text_vector,helper);
 //    // this->_cgi = extract_server_cgi(text_vector);
     this->_client_max_body_size = extract_server_max_body_size(text_vector,helper);
    this->_autoindex = extract_server_autoindex(text_vector,helper);
@@ -108,10 +108,10 @@ for (std::vector<std::string>::iterator it = this->_name .begin();it != this->_n
         std::cout << "autoindex off  ! server : " << helper << std::endl;
 
   
-    //        std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
+           std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
 
-    // for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
-    // std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
+    for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
+    std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
 
    int index = 0;
    number_of_locations = extract_number_of_locations(text_vector,helper);
@@ -231,3 +231,14 @@ server::~server()
 
 
 
+
+
+sockaddr_in                  server::get_sock_ader()
+{
+    sockaddr_in sockaddr;
+
+    sockaddr.sin_family = AF_INET;
+    sockaddr.sin_addr.s_addr = inet_addr(get_listen_host().c_str());
+    sockaddr.sin_port = htons(get_listen_port());
+    return sockaddr;
+}

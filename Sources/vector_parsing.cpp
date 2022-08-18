@@ -6,6 +6,7 @@
 #include <sstream>
 
 
+
 bool isnumber(const std::string& str)
 {
 	for (size_t i = 0; i < str.length(); i++)
@@ -679,7 +680,7 @@ std::cout << "Number of locations  :" << count << " Server Index : " << index <<
     return (count);
 }
 // TO FIXE ERRORS CASE : if no path is specified
-std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector)
+std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int index)
 {
     std::vector<cgi> vector_cgi;
     cgi tmp;
@@ -690,9 +691,16 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector)
     int count = 0;
     int vector_size = 0;
     int accolade = 0;
+    int find_right_server = 0;
     while ( i < text_vector.size())
     {  
         
+           if(text_vector[i].compare("server") == 0)
+     {
+           find_right_server++;
+    }
+        if (find_right_server == index)
+        {
     if(text_vector[i].find("cgi") != std::string::npos)
           {
             parser = split(text_vector[i]," ","cgi");
@@ -721,6 +729,7 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector)
             if (vector_size == vector_cgi.size())
             count++;
           }
+        }
 
         i++;
     }

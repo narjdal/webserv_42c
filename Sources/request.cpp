@@ -76,7 +76,7 @@ Request::~Request()
 
 std::string Request::get_method()
 {
-    std::cout << "INSIDE  GETTER FCT => "  << this->rqmethod << std::endl;
+    // std::cout << "INSIDE  GETTER FCT => "  << this->rqmethod << std::endl;
     return (this->rqmethod);
 }
 

@@ -8,6 +8,7 @@
 #include "../Includes/request.hpp"
 #include <vector>
 #include <iterator>
+#include <errno.h>
 /**
  * @brief 
  * 
@@ -231,9 +232,71 @@ int check_url_length(std::string first_line,int method)
   //  std::cout << first_line.length() << std::endl;
     return (0);
 }
-void init_server(server myserver)
+int getnextline(int fd, string &line)
 {
-     int server_fd,new_socket,valread;
+    char delim;
+    char nl = 0;
+    int enf = 0;
+
+    // std::cout << "fd : " << fd << "delin : " << delim << "   => " <<   recv(fd, &delim, 1, 0)<< std::endl;
+    // std::cout << strerror(errno) << errno << std::endl;
+    // size_t size;
+    // if((size == recv(fd, &delim, 1, 0)) == -1)
+    // {
+    //     std::cout << " recv :" << strerror(errno) << std::endl;
+    // }
+    while ((enf += recv(fd, &delim, 1, 0))> 0 && delim != 0)
+    {
+
+        // std::cout << "??????" << std::endl;
+        // std::cout << "inside gnl " << std::endl;
+        if (delim == 13)
+        {
+            if ((enf += recv(fd, &nl, 1, 0)) > 0 && (nl == '\n' || nl == 0))
+               {
+                // std::cout << "Operation wouuld nlock !" << std::endl;
+                 break;}
+            line.push_back(delim); 
+            line.push_back(nl); 
+        }
+        else
+            line.push_back(delim); 
+    }
+    return (nl == 0||delim == 0 || line.size() == 0 ? 0 : enf);
+}
+
+
+int get_highest_fd(std::vector <int > fds)
+{
+    int high_fd = 0;
+    for ( int i = 0;i < fds.size();i++)
+    {
+        if (high_fd < fds[i])
+        high_fd = fds[i];
+    }
+    return (high_fd);
+}
+
+void is_socket_ready(std::vector<int > fds,std::vector <server> multi_server , int server_index)
+{
+    
+
+       fd_set set;
+       FD_CLR(fds[server_index],&set);
+
+    struct timeval      time;
+	time.tv_sec = 3;
+	time.tv_usec = 0;
+	FD_ZERO(&set);
+    FD_SET(fds[server_index],&set);
+    select(fds[server_index] + 1 ,&set,NULL,NULL,&time);
+  
+}
+
+
+void init_server(server myserver,std::vector<server> multi_server,std::vector<int > fds)
+{
+int server_fd,new_socket,valread;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
@@ -242,80 +305,132 @@ void init_server(server myserver)
     std::string hello = "Hello from the server";
     std::vector<std::string > full_request;
   
-    char *first_line = NULL;
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) <= 0) 
-{
-        std::cerr<< "(“cannot create socket”);  " << std::endl;
-        exit(EXIT_FAILURE);
-}
+//     char *first_line = NULL;
+//     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) <= 0) 
+// {
+//         std::cerr<< "(“cannot create socket”);  " << std::endl;
+//         exit(EXIT_FAILURE);
+// }
     
-  if (setsockopt(server_fd, SOL_SOCKET,
-                   SO_REUSEADDR , &opt,
-                   sizeof(opt))) {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
+//   if (setsockopt(server_fd, SOL_SOCKET,
+//                    SO_REUSEADDR , &opt,
+//                    sizeof(opt))) {
+//         perror("setsockopt");
+//         exit(EXIT_FAILURE);
+//     }
     
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(myserver.get_listen_port());
-     memset(address.sin_zero, '\0', sizeof address.sin_zero);
-     if (bind(server_fd, (struct sockaddr*)&address,
-             sizeof(address))
-        < 0) {
-        std::cerr << ("bind failed") << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    if (listen(server_fd, 3) < 0) {
-        std::cerr << ("listen") << std::endl;
-        exit(EXIT_FAILURE);
-    }
+//     address.sin_family = AF_INET;
+//     address.sin_addr.s_addr = INADDR_ANY;
+//     address.sin_port = htons(myserver.get_listen_port());
+//     fcntl(server_fd,F_SETFL,O_NONBLOCK);
+//     //  memset(address.sin_zero, '\0', sizeof address.sin_zero);
+//      if (bind(server_fd, (struct sockaddr*)&address,
+//              sizeof(address))
+//         < 0) {
+//         std::cerr << ("bind failed") << std::endl;
+//         exit(EXIT_FAILURE);
+//     }
+//     if (listen(server_fd, 3) < 0) {
+//         std::cerr << ("listen") << std::endl;
+//         exit(EXIT_FAILURE);
+//     }
     while(1)
     {
+          int valread = 0;
+  int new_socket = 0;
  //test_leaks();
-
-         std::string server_reponse = "HTTP/1.1 ";
-        printf("\n+++++++ Waiting for new connection ++++++++\n\n");
-        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
+ for ( int i = 0;i < fds.size() ; i++)
+{   
+        struct sockaddr_in sockaddr = {0};
+             sockaddr = multi_server[i].get_sock_ader();
+               int addrlen = sizeof(sockaddr);
+           struct timeval      time;
+	time.tv_sec = 1;
+	time.tv_usec = 0;
+        fd_set set;
+    //  is_socket_ready(fds,multi_server,i);
+    FD_ZERO(&set);
+    FD_SET(fds[i],&set);
+    select(get_highest_fd(fds) + 1 ,&set,NULL,NULL,&time);
+     if(FD_ISSET(fds[i],&set))
+    {
+        std::cout << "Data is coming ! Accepting ... "<<  i << std::endl;
+        if ((new_socket = accept(fds[i], (struct sockaddr *)&sockaddr, (socklen_t*)&addrlen))<0)
         {
             perror("In accept");
             exit(EXIT_FAILURE);
         }
+         fd_set read_set2;
+   
+        // for (int i = 0;j  = getnextline(server_fd,line) > 0;i++)
+        // {
+
+        // }
         int final_reponse_length = 0;
         char buffer[30000] = {0};
+    FD_ZERO(&read_set2);
+    FD_SET(new_socket,&read_set2);
+    select (new_socket + 1,&read_set2,NULL,NULL,&time);
+    if (FD_ISSET(new_socket,&read_set2))
+    {
+        std::cout << "Data is coming ! ... "<< std::endl;
         valread = read( new_socket , buffer, 30000);
         int method = 0;
-       // getline(new_socket,server_reponse);
-      // printf("%s\n",buffer );
+    //    getline(new_socket,server_reponse);
+    //   printf("%s\n",buffer );
        int length = strlen(buffer);
-
+        std::vector <std::string > full_request;
         full_request = parsing_request(buffer);
         Request parsed_request(full_request);
        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
 
-      //printf("%s\n",buffer );
-
+    //   printf("%s\n",buffer );
+        
         std::cout << "---------------------------MAIN-------------------"  << std::endl;
         printf("------------------ message -------------------");
         printf("------------------ CREATING SBOOF RESPONSE HERE  -------------------");
-
+    
        //  std::cout << "WHAT THE FUCK IS HAPPENING " << std::endl;
-       Response response(parsed_request,myserver);
+       Response response(parsed_request,multi_server[i]);
       std::string sboof_response(response.get_Response());
-        //printf("------------------ FINAL RESPONSE -------------------");
-       std::cout << sboof_response << std::endl;
+        printf("------------------ FINAL RESPONSE -------------------");
+    //    std::cout << sboof_response << std::endl;
+
+        // std::string sboof_response;
        
-       
-       // printf("------------------ MINE  -------------------");
-        //std::cout << final_reponse << std::endl;
-        write(new_socket ,sboof_response.c_str(), sboof_response.size());
+       printf("------------------ MINE  -------------------");
+     int datalen = sboof_response.size();
+    int pp = 0;
+    //    while ( datalen > 0) 
+    //    {
+        if(pp = send(new_socket ,sboof_response.c_str(),sboof_response.size(),0) == -1)
+        {
+            std::cout << "error : Response to client !" << std::endl;
+            exit(1);
+        }
+        if ( pp   == -1)
+            std::cout << " smth wrong happend in send " << std::endl;
+        datalen -= pp;
+      
+     //  }
         printf("------------------Hello message sent-------------------");
-    }
+        std::cout << "++++++Responding SERVER :  ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
+       
+       FD_CLR(fds[i],&read_set2);
         close(new_socket);
-
-    shutdown(server_fd, SHUT_RDWR);
-
+    }
+    }
+    else
+    {
+        std::cout << "++++++ Waiting for new connection ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
+    }
+       FD_CLR(fds[i],&set);
 }
+    }
+    }
+    // shutdown(server_fd, SHUT_RDWR);
+
+
 
 void print_parsing_infos(server myserver)
 {
@@ -410,6 +525,74 @@ server fill_server(std::vector <std::string > text_vector,int nb_of_servers)
     return (server);
 
 }
+int is_binded_server(vector<server> ss, int i)
+{
+    server serv = ss[i];
+
+    for (int j = 0; j < i; j++)
+    {
+        if(ss[j].get_listen_port() == -1)
+        {
+            std::cout << " Listen port not well defined !" << std::endl;
+            return(1);
+        }
+        if (serv.get_listen_port()== ss[j].get_listen_port() && serv.get_listen_host()== ss[j].get_listen_host())
+            return 0;
+    }
+    return 1;
+}
+void servers (std::vector <server> ss,std::vector <int> &fds)
+{
+    int fd = 0;
+    int set = 1;
+    int opt = 1;
+    for ( int i = 0;i < ss.size();i++)
+    {
+        if (is_binded_server(ss,i))
+        {
+            if(ss[i].get_listen_port() == -1)
+          {  std::cout << " Listen port not well defined !" << std::endl;
+            break;}
+            struct sockaddr_in sockaddr = {0};
+             sockaddr = ss[i].get_sock_ader();
+        int socket_fd = 0;
+    if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) <= 0) 
+        std::cerr<< "(“cannot create socket”);  " << std::endl;            
+         if (setsockopt(socket_fd, SOL_SOCKET,
+                   SO_REUSEADDR , &opt,
+                   sizeof(opt))) {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+    
+    sockaddr.sin_family = AF_INET;
+    sockaddr.sin_addr.s_addr = INADDR_ANY;
+    sockaddr.sin_port = htons(ss[i].get_listen_port());
+    fcntl(socket_fd,F_SETFL,O_NONBLOCK);
+     memset(sockaddr.sin_zero, '\0', sizeof sockaddr.sin_zero);
+    std::cout  << " " << ss[i].get_listen_host()<< "------------" << ss[i].get_listen_port() << std::endl;
+     if (bind(socket_fd, (struct sockaddr*)&sockaddr,
+             sizeof(sockaddr))
+        < 0) {
+        std::cout << ("bind failed")  << strerror(errno)<< std::endl;
+        // exit(EXIT_FAILURE);
+    }
+    std::cout << " BEFORE LISTEN" << std::endl;
+    if (listen(socket_fd, 255) < 0) {
+        std::cerr << ("listen") << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    fds.push_back(socket_fd);
+    // test_fds.insert(std::make_pair(socket_fd,"garbage"));
+        std::cout << ("Adding a new fd ...")  << socket_fd << std::endl;
+    
+        }
+        else
+        {
+            std::cout << "Smth wrong !server not binded !" << std::endl;
+        }
+    }
+}
 
 int main(int ac,char **av)
 {
@@ -447,9 +630,18 @@ int main(int ac,char **av)
         length++;
         }
         //server tt(text_vector,4);
-
-      
-
+    std::vector<int > fds;
+    std::vector<server> tmp;
+    // std::map < int , std::string > test_fds;
+    // tmp =multi_server; // Only temporary otherwiese binds failed on server 0 cause already bind 
+    // tmp.erase(tmp.begin());
+      servers(multi_server,fds);
+    //   int kk = 0;
+    // std::sort(fds.begin(),fds.end(),greater<int>());
+      for (int kk = 0;kk < fds.size();kk++)
+      std::cout <<  "fds => " <<fds[kk] << " "<< kk <<  std::endl;
+    // for(std::map<int,std::string>::iterator it = test_fds.begin();it != test_fds.end();it++)
+    // std::cout << it->first << std::endl;
         // server myserver4(text_vector,5);
         // server myserver5(text_vector,6);
         // server myserver6(text_vector,7);
@@ -465,7 +657,7 @@ int main(int ac,char **av)
        //for (std::vector<std::string>::iterator it = text_vector.begin();it != text_vector.end();it++)
         // std::cout << *it << std::endl;
    // std::cout << av[1] << std::endl;
-       init_server(multi_server[0]);
+       init_server(multi_server[0],multi_server,fds);
     }
     
   // closing the connected socket
