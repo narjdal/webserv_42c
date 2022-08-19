@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <sstream>
+#include "../Includes/sboof/Response.hpp"
 #include <iterator>
 
 int check_errors(int ac,char **av)
@@ -73,6 +74,7 @@ void specified_words(std::string word)
         && word != "client_max_body_size" && word != "location" && word != "cgi"
         && word != "{" && word != "}" && word != "listen")
         {
+            // if(err)
             std::cout << err << std::endl;
             exit(1);    
         }
@@ -130,7 +132,7 @@ std::vector <std::string > parse_config_file(std::vector <std::string > text_vec
         exit(1);
     }
     check_file_accolade(words);
-   // check_syntax_error(text_vector);
+//    check_syntax_error(words);
    /**
     * 
     * 
@@ -150,4 +152,34 @@ std::vector <std::string > parse_config_file(std::vector <std::string > text_vec
         */
   //  }
 return (words);
+}
+
+void check_words_config_file(std::vector<std::string > text_vector)
+{
+    int i = 0;
+    std::vector <std::string> tmp;
+    std::vector <std::string > first_word;
+    for(std::vector<std::string>::iterator it = text_vector.begin();it != text_vector.end();it++)
+    {
+        // tmp = ft_split(*it," ");
+        tmp.push_back(*it);
+        first_word = split_by_space(tmp);
+        // std::cout << first_word.size() << first_word[0] << std::endl;
+         specified_words(first_word[0]);
+        tmp.clear();
+        first_word.clear();
+        // if(!tmp[0].empty())
+        // std::cout << tmp.at(0) << std::endl;
+        // std::cout << *it << std::endl;
+    }
+    // while (i < text_vector.size())
+    // {
+    //     tmp = ft_split(text_vector[i]," ");
+    //     std::cout << text_vector[i] << std::endl;
+    //     if(!tmp[0].empty())
+    //     std::cout << tmp[0] << std::endl;
+    //     tmp.clear();
+    //     // specified_words(tmp[0]);
+    //     i++;
+    // }
 }

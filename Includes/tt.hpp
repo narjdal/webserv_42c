@@ -49,3 +49,4 @@ void print_parsing_infos(server myserver);
 int number_of_servers(std::vector <std::string > words);
 int is_binded_server(std::vector<server> ss, int i);
 int is_server_inside(server srv,std::vector <server> ss );
+void check_words_config_file(std::vector<std::string > text_vector);

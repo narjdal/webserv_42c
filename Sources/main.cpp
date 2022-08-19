@@ -320,7 +320,6 @@ int main(int ac,char **av)
 
         if(check_errors(ac,av) == 0)
         {
-    
         std::ifstream indata;
         indata.open(av[1]);
      
@@ -334,8 +333,10 @@ int main(int ac,char **av)
         while(getline(indata,text))
         {
             text_vector.push_back(text);
+            // std::cout << "  "  << text << std::endl;
         }
         words = parse_config_file(text_vector);
+        check_words_config_file(text_vector);
      multi_server = fill_server(text_vector,number_of_servers(words));
     std::vector<int > fds;
       servers(multi_server,fds);
