@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/19 21:55:12 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/19 22:00:54 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -630,13 +630,13 @@ void    help_show_data_serv(server ser)
     {
         std::map<std::string, std::string> tmp = ser.get_error_pages();
         for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
-            std::cout << "The Error page N" << &it << " : " << it->first << " and his path : " << it->second << std::endl;
+            std::cout << "The Error page : " << it->first << " and his path : " << it->second << std::endl;
     }
 
     std::cout << "The root : " << ser.get_root() << std::endl;
     std::cout << "The client max body size : " << ser.get_client_max_body_size() << std::endl;
     std::cout << "The auto index : " << bool(ser.get_autoindex()) << std::endl;
-    std::cout << "*****************ROOT********************" << std::endl << std::endl;
+    std::cout << "****************/ROOT********************" << std::endl << std::endl;
     std::cout << "***************location******************" << std::endl;
     
     {
@@ -655,7 +655,7 @@ void    help_show_data_serv(server ser)
         }
     }
 
-    std::cout << "***************location******************" << std::endl << std::endl;
+    std::cout << "**************/location******************" << std::endl << std::endl;
     std::cout << "*****************cgi*********************" << std::endl;
     
     {
@@ -668,7 +668,7 @@ void    help_show_data_serv(server ser)
         }
     }
     
-    std::cout << "*****************cgi*********************" << std::endl << std::endl;
+    std::cout << "****************/cgi*********************" << std::endl << std::endl;
     
     
     
