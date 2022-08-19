@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/19 21:47:25 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/19 21:55:12 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -618,36 +618,56 @@ void    help_show_data_serv(server ser)
         std::cout << "The name N" << i << " : " << ser.get_name(i) << std::endl;
     std::cout << "The listen_port : " << ser.get_listen_port() << std::endl;
     std::cout << "The listen_host : " << ser.get_listen_host() << std::endl;
-    for (std::vector<std::string>::iterator i = ser.get_allowed_methods().begin(); i != ser.get_allowed_methods().end(); i++)
-        std::cout << "The allowed_methods : " << *i << std::endl;
+
+    {
+        std::vector<std::string> tmp = ser.get_allowed_methods();
+        for (std::vector<std::string>::iterator i = tmp.begin(); i != tmp.end(); i++)
+            std::cout << "The allowed_methods : " << *i << std::endl;
+    }
+    
     std::cout << "The upload_path : " << ser.get_upload_path() << std::endl;
-    for (std::map<std::string, std::string>::iterator it = ser.get_error_pages().begin(); it != ser.get_error_pages().end(); it++)
-        std::cout << "The Error page N" << &it << " : " << it->first << " and his path : " << it->second << std::endl;
+    
+    {
+        std::map<std::string, std::string> tmp = ser.get_error_pages();
+        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+            std::cout << "The Error page N" << &it << " : " << it->first << " and his path : " << it->second << std::endl;
+    }
+
     std::cout << "The root : " << ser.get_root() << std::endl;
     std::cout << "The client max body size : " << ser.get_client_max_body_size() << std::endl;
     std::cout << "The auto index : " << bool(ser.get_autoindex()) << std::endl;
     std::cout << "*****************ROOT********************" << std::endl << std::endl;
     std::cout << "***************location******************" << std::endl;
-    for (std::vector<location>::iterator it = ser.get_location().begin(); it != ser.get_location().end(); it++)
+    
     {
-        std::cout << "The name : " << it->get_name() << std::endl;
-        std::cout << "The location path : " << it->get_locations_path() << std::endl;
-        for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
-            std::cout << "The allowed_methods : " << *itv << std::endl;
-        std::cout << "The root : " << it->get_root() << std::endl;
-        std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
-        std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
-        std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
-        std::cout << "*****************************************" << std::endl;
+        std::vector<location> tmp = ser.get_location();
+        for (std::vector<location>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            std::cout << "The name : " << it->get_name() << std::endl;
+            std::cout << "The location path : " << it->get_locations_path() << std::endl;
+            for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
+                std::cout << "The allowed_methods : " << *itv << std::endl;
+            std::cout << "The root : " << it->get_root() << std::endl;
+            std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
+            std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
+            std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
+            std::cout << "*****************************************" << std::endl;
+        }
     }
+
     std::cout << "***************location******************" << std::endl << std::endl;
     std::cout << "*****************cgi*********************" << std::endl;
-    for (std::vector<cgi>::iterator it = ser.get_cgi().begin(); it != ser.get_cgi().end(); it++)
+    
     {
-        std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
-        std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
-        std::cout << "*****************************************" << std::endl;
+        std::vector<cgi> tmp = ser.get_cgi();
+        for (std::vector<cgi>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
+            std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
+            std::cout << "*****************************************" << std::endl;
+        }
     }
+    
     std::cout << "*****************cgi*********************" << std::endl << std::endl;
     
     
