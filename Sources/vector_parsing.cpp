@@ -451,13 +451,14 @@ std::vector<std::string> parser;
     return (upload_path);
 }
 
-std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index)
+std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index,std::map<std::string,std::string > default_errors_page)
 {
     int i = 0;
     int count = 0;
     std::map <std::string,std::string > errors_page;
     std::vector<std::string > parser;
     std::vector < std::string >test;
+    errors_page = default_errors_page;
     int inside = 1;
     int y = 0;
        while ( i < text_vector.size())
@@ -484,7 +485,8 @@ std::map <std::string,std::string > extract_server_errors_page1(std::vector<std:
                 // errors_pages.assign(test.begin() + 1,test.end())
                 if (test.size()  == 3)
                 {
-                    errors_page[test[1],test[2]];
+                    errors_page[test[1]] = test[2];
+                //    errors_page.insert(std::make_pair<std::string,std::string>({test[1],test[2]}));
                 std::cout << "erros_page:1 " << test[1] << " " <<  test[2] << std::endl;
             }
             else if ( test.size() < 3)

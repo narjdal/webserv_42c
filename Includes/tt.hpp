@@ -42,7 +42,7 @@ std::vector<std::string > splitv2(std::string line,std::string delim);
 std::string get_request_query(std::vector<std::string > request);
 std::vector <std::string > split_by_space(std::vector <std::string > text_vector);
 bool isnumber(const std::string& str);
-std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index);
+std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index,std::map<std::string,std::string> default_error_pages);
 //********************** get_config_infos.cpp **************************///
  std::vector<server> fill_server(std::vector <std::string > text_vector,int nb_of_servers);
 void print_parsing_infos(server myserver);

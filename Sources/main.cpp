@@ -165,6 +165,12 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
         valread = read( new_socket , buffer, 30000);
         full_request = parsing_request(buffer);
         Request parsed_request(full_request);
+        if(parsed_request.get_location() == "/favicon.ico")
+            {
+                // std::cout << " Ignoring this request ... ( this line will be removed " << std::endl;
+                close(new_socket);
+                break;
+            }
        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
         std::cout << buffer << std::endl;
         std::cout << "---------------------------MAIN-------------------"  << std::endl;

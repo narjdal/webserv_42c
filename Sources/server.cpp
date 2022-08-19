@@ -60,12 +60,31 @@ int check_listen_host(std::string tmp)
     return (0);
     
 }
+std::map<std::string, std::string>  fill_error_page( void )
+{
+    std::map<std::string, std::string> tmp;
+
+    tmp["204"] = "./errorpages/204/204.html";
+    tmp["301"] = "./errorpages/301/301.html";
+    tmp["400"] = "./errorpages/400/400.html";
+    tmp["403"] = "./errorpages/403/403.html";
+    tmp["404"] = "./errorpages/404/404.html";
+    tmp["405"] = "./errorpages/405/405.html";
+    tmp["413"] = "./errorpages/413/413.html";
+    tmp["414"] = "./errorpages/414/414.html";
+    tmp["500"] = "./errorpages/500/500.html";
+    tmp["501"] = "./errorpages/501/501.html";
+
+    return (tmp);
+}
+
 server::server(std::vector<std::string> text_vector,int helper)
 {
    
    int number_of_locations = 0;
     this->_autoindex = false;
     this->_listen_port = -1;
+    std::map <std::string,std::string> default_error_pages;
    this->_name = extract_server_names(text_vector,helper);
    
    this->_listen_port = extract_server_port(text_vector,helper);;
@@ -75,7 +94,8 @@ server::server(std::vector<std::string> text_vector,int helper)
         this->_index = extract_server_index(text_vector,helper);
    this->_upload_path = extract_server_upload_path(text_vector,helper);
 //    this->_error_pages = extract_server_errors_page(text_vector,helper);
-   this->_error_pages = extract_server_errors_page1(text_vector,helper);
+default_error_pages= fill_error_page();
+   this->_error_pages = extract_server_errors_page1(text_vector,helper,default_error_pages);
    this->_redirections = extract_server_redirections(text_vector,helper);
    this->_root = extract_server_root(text_vector, helper);  
 //     //this->_location = extract_server_location(text_vector);

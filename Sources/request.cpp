@@ -41,11 +41,16 @@ Request::Request(std::vector<std::string > full_request)
     this->rqmethod = "POST";
     if (method == 3)
     this->rqmethod = "DELETE";
+    this->location = get_request_location(full_request);// HERE ERROR , if no location is sent , takes HTTP as location to fix
+    if(this->location == "/favicon.ico")
+    {
+        std::cout << " location is " << this->location << " ignoring ... this line will be removed" << std::endl;
+        return ;
+    }
     std::cout << "------------------REQUEST FIRSDT LINE ---------------------" << std::endl;
     std::cout << full_request[0] << std::endl;
     std::cout << "Request method => " << this->rqmethod << std::endl;
     //std::cout << "---------------------------------------" << std::endl;
-    this->location = get_request_location(full_request);// HERE ERROR , if no location is sent , takes HTTP as location to fix
     std::cout << "Request Location=> " << this->location << std::endl;
     
     std::cout << "---------------------------------------" << std::endl;
