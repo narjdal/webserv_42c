@@ -43,6 +43,7 @@ SRCS = \
 	Sources/location.cpp\
 	Sources/Cgi.cpp\
 	Sources/before_parsing.cpp\
+	Sources/get_config_infos.cpp
 
 
 	

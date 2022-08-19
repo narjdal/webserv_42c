@@ -1,11 +1,32 @@
 #include "../Includes/server.hpp"
 #include "../Includes/tt.hpp"
 #include "../Includes/location.hpp"
-server::server()
+
+server::server():
+    _name(),
+    _listen_port(-1),
+    _listen_host(),
+    _allowed_methods(),
+    _index(),
+    _error_pages(),
+    _redirections(),
+    _root(""),
+    _client_max_body_size(-1),
+    _autoindex(false),
+    response_chuncked(false)
 {
 
 }
 
+
+server::server (const server &src)
+{
+    if (this != &src)
+    {
+        *this = src;
+    }
+
+}
 int check_listen_host(std::string tmp)
 {
     int i = 0;

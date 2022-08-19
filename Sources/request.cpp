@@ -1,7 +1,13 @@
 #include "../Includes/request.hpp"
 #include "../Includes/tt.hpp"
 #include <map>
-Request::Request()
+Request::Request():
+            rqmethod(),
+            location(),
+            vrs(),
+            headers(),
+            body(),
+            body_len(-1)
 {
 
 }
@@ -51,10 +57,10 @@ Request::Request(std::vector<std::string > full_request)
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "Number of Headers : " <<  headers.size() << std::endl;
 
-    //for(std::map<std::string ,std::string > ::iterator it = this->headers.begin();it != this->headers.end();it++)
-   // {
-     //   std::cout << it->second  << std::endl;
-    //}
+    for(std::map<std::string ,std::string > ::iterator it = this->headers.begin();it != this->headers.end();it++)
+   {
+       std::cout << it->first << ":" <<  it->second  << std::endl;
+    }
     std::cout << std::endl;
     std::cout << "---------------------------------------" << std::endl;
     this->body = get_request_body(full_request);

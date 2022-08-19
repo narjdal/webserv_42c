@@ -51,7 +51,7 @@ public:
     server();
     ~server();
     server(std::vector<std::string > text_vector,int index);
-
+    server (const server &src);
     std::string                  get_name(int) const;
     unsigned int                 get_name_size() const;
     std::string                  get_listen_host() const;

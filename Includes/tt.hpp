@@ -4,6 +4,7 @@
 #include "Cgi.hpp"
 #include "parsing.hpp"
 #include <sys/socket.h>
+#include "../Includes/server.hpp"
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,7 @@
 #include <vector>
 
 class cgi;
+class server;
 std::vector<std::string > extract_server_names(std::vector<std::string> text_vector,int helper);
 int extract_server_port(std::vector<std::string> text_vector,int helper);
 std::string extract_server_root(std::vector<std::string> text_vector,int helper);
@@ -41,3 +43,9 @@ std::string get_request_query(std::vector<std::string > request);
 std::vector <std::string > split_by_space(std::vector <std::string > text_vector);
 bool isnumber(const std::string& str);
 std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index);
+//********************** get_config_infos.cpp **************************///
+ std::vector<server> fill_server(std::vector <std::string > text_vector,int nb_of_servers);
+void print_parsing_infos(server myserver);
+int number_of_servers(std::vector <std::string > words);
+int is_binded_server(std::vector<server> ss, int i);
+int is_server_inside(server srv,std::vector <server> ss );

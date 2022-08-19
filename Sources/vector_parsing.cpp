@@ -178,7 +178,7 @@ int extract_server_port(std::vector<std::string> text_vector,int index)
                //std::cerr << "=>  !" <<  port.size()  << " " << parser[1] << "=>  " << port[1] << std::endl;
 
                 if(!port[1].empty() && isnumber(port[1]))
-                num = std::stoi(port[1]);
+                    num = std::stoi(port[1]);
                 else
                 {
                     std::cout << "Error ! Port not defined or is not a number !" << std::endl;

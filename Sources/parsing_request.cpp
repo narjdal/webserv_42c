@@ -1,6 +1,7 @@
 
 #include "../Includes/request.hpp"
 #include "../Includes/tt.hpp"
+
 std::vector<std::string> parsing_request(char* buffer)
 {
     int i  = 0;
@@ -145,7 +146,7 @@ std::string get_request_location(std::vector<std::string > request)
         if(!method[1].empty() && method.size() > 2 )
         location = method[1];
         else
-        return location ; // If empty SGV To fixe 
+        return "/" ; // If empty SGV To fixe 
        }
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);
@@ -186,7 +187,7 @@ std::string get_request_query(std::vector<std::string > request)
          {
           while ( count > 0)
           {
-            
+
           }
           //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
           method = split_sboof(request[0]," ");
@@ -247,6 +248,7 @@ return (splited);
     int i = 0;
     std::map<std::string ,std::string > headers;
     std::vector <std::string > get_headers;
+    std::vector <std::string > tmp;
     std::string head;
     std::string tail;
     int length = 0;
@@ -263,15 +265,45 @@ return (splited);
       found = full_request[i].find(":");
         if(found != string::npos)
     {
+      // tmp = split(full_request[i]," ",":");
       length = full_request[i].size() - found;
       head.insert(0,full_request[i],0,found);
       tail.insert(0,full_request[i],found + 2,length - 4);
-      //std::cout << "tail=" <<  tail <<"|" << std::endl;
+    // std::cout << " TMP SIZE => " << tmp.size() << std::endl;
+      // if(!tmp[0].empty())
+      // head = tmp[0];
+      // if(!tmp[1].empty())
+      // {
+      // tail = tmp[1];
+      // }
+      if(head == "Host")
+      {
+        size_t found_delim = 0;
+        found_delim = tail.find(":");
+        std::string new_tail;
+        if ( found_delim != std::string::npos)
+        {
+          tmp = split_sboof(tail,":");
+          // std::cout << "REMOVING THE PORT ..." << tmp[0]<<  std::endl;
+          tail.clear();
+          tail = tmp[0];
+          // new_tail.insert(0,tail,found);
+          // tail.clear();
+          // tail = new_tail;
+          // std::cout << tail << " N| " << new_tail << std::endl;
+          // new_tail.clear();
+        }
+
+      }
+      // std::cout << "head= "<< head <<" tail=" <<  tail  <<"|" << std::endl;
+
     headers[head] = tail;
     head.clear();
     tail.clear();
 
-    }  
+    }
+    else
+    return (headers);  
 
         i++;
     }
