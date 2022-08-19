@@ -117,8 +117,16 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
                 server_names = split (text_vector[i]," ","server_names");
         // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " " << std::endl;
         // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " "  << std::endl;
-        server_names.erase(server_names.begin());
+        if(!server_names.empty() && server_names.size() > 1 )
+        {
+            server_names.erase(server_names.begin());
           return (server_names);
+        }
+        else 
+        {
+            std::cout << " Config file error :  No servernames found ! , IDX " << index << std::endl;
+            exit(1);
+        }
             }
             y++;
         }
@@ -185,6 +193,7 @@ int extract_server_port(std::vector<std::string> text_vector,int index)
                 // }
                // ss << port[1];
             }
+           inside = 1;
             }
             
             y++;
@@ -307,7 +316,19 @@ std::string extract_server_root(std::vector<std::string> text_vector,int index)
 
 }
 
-
+int    specified_methods(std::string &tmp)
+{
+    std::string err;
+    err = "Error: ";
+    err += tmp;
+    err += " is not a valid word";
+    if (tmp != "DELETE" && tmp != "POST" && tmp != "GET")
+        {
+            std::cout << "Method not allowed in config file !" << tmp  << std::endl;
+            exit(1);    
+        }
+        return (0);
+}
 
 std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_vector,int index)
 {
@@ -336,6 +357,8 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
             {
                 allowed_methods = split (text_vector[i]," ","allow_methods");
                 correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
+                for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
+                specified_methods(*it);
                 inside = 1;
             }
             y++;
@@ -428,19 +451,16 @@ std::vector<std::string> parser;
     return (upload_path);
 }
 
-std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<std::string> text_vector,int index)
+std::map <std::string,std::string > extract_server_errors_page1(std::vector<std::string > text_vector,int index)
 {
-     std::vector<std::string> parser;
-     std::vector <std::string> test;
-     std::vector <std::string > errors_pages;
- std::vector <std::vector<std::string> > server_error_pages;
- std::vector <std::vector<std::string> > correct_server_error_pages;
-
     int i = 0;
-    int y = 0;
-    int inside = 0;
     int count = 0;
-    while ( i < text_vector.size())
+    std::map <std::string,std::string > errors_page;
+    std::vector<std::string > parser;
+    std::vector < std::string >test;
+    int inside = 1;
+    int y = 0;
+       while ( i < text_vector.size())
     {  
             if(text_vector[i].compare("server") == 0)
      {
@@ -459,11 +479,27 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
             {
 
                 test = split (text_vector[i]," ","error_page");
+
            //correct_index.assign(server_index.begin() + 1,server_index.end());
-                errors_pages.assign(test.begin() + 1,test.end());
+                // errors_pages.assign(test.begin() + 1,test.end())
+                if (test.size()  == 3)
+                {
+                    errors_page[test[1],test[2]];
+                std::cout << "erros_page:1 " << test[1] << " " <<  test[2] << std::endl;
+            }
+            else if ( test.size() < 3)
+            {
+                std::cout << " Config file : No Error code  or error link  ! !,IDX :" << index  << std::endl;
+                exit(1);
+            }
+            else if (test.size() > 3)
+            {
+                std::cout << "Config file : Error too many links or errors code !, IDX :" << index << std::endl;
+                exit(1);
+            }
                 
                 inside = 1;
-                server_error_pages.push_back(errors_pages);
+                // server_error_pages.push_back(errors_pages);
                 test.clear();
             }
             y++;
@@ -475,8 +511,58 @@ std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<s
     //if(!server_error_pages.size())
   // server_error_pages.assign(server_error_pages.begin() + 1,server_error_pages.end());
 
-    return (server_error_pages);
+    return (errors_page);
 }
+// }
+// std::vector<std::vector<std::string > > extract_server_errors_page(std::vector<std::string> text_vector,int index)
+// {
+//      std::vector<std::string> parser;
+//      std::vector <std::string> test;
+//      std::vector <std::string > errors_pages;
+//  std::vector <std::vector<std::string> > server_error_pages;
+//  std::vector <std::vector<std::string> > correct_server_error_pages;
+
+//     int i = 0;
+//     int y = 0;
+//     int inside = 0;
+//     int count = 0;
+//     while ( i < text_vector.size())
+//     {  
+//             if(text_vector[i].compare("server") == 0)
+//      {
+//            count++;
+//     }
+//         if ( count == index)
+//         {
+//        // if(text_vector[i].find("location") != std::string::npos)
+//         //return (correct_index);
+//         parser = split(text_vector[i]," ","error_page");
+//         y = 0;
+//         while (y < parser.size())
+//         {
+//            // i++;
+//             if (parser[y].compare("error_page") == 0)
+//             {
+
+//                 test = split (text_vector[i]," ","error_page");
+//            //correct_index.assign(server_index.begin() + 1,server_index.end());
+//                 errors_pages.assign(test.begin() + 1,test.end());
+                
+//                 inside = 1;
+//                 server_error_pages.push_back(errors_pages);
+//                 test.clear();
+//             }
+//             y++;
+//         }
+//         }
+//     i++;
+//     }
+//     //correct_server_error_pages.assign(correct_server_error_pages.begin(),server_error_pages.begin() + 1,server_error_pages.end());
+//     //if(!server_error_pages.size())
+//   // server_error_pages.assign(server_error_pages.begin() + 1,server_error_pages.end());
+
+//     return (server_error_pages);
+// }
 
 
 

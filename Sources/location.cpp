@@ -472,35 +472,35 @@ location::location(std::vector<std::string> text_vector,int index,int nb_server)
     this->_index = extract_location_index(text_vector,index,nb_server);
     this->_autoindex = extract_location_autoindex(text_vector,index,nb_server);
     this->_upload_path = extract_location_upload_path(text_vector,index,nb_server);
-     std::cout << "----------------------------********************************* ------------------"  << std::endl;
+//      std::cout << "----------------------------********************************* ------------------"  << std::endl;
 
-   // std::cout << this->_locations_path << std::endl;
-     std::cout << "-----------------------Location name  | Index :  " << index << " <<  ------------------"  << std::endl;
-    std::cout << this->_name << std::endl;
+//    // std::cout << this->_locations_path << std::endl;
+//      std::cout << "-----------------------Location name  | Index :  " << index << " <<  ------------------"  << std::endl;
+//     std::cout << this->_name << std::endl;
+// //      std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
+// //      for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
+// //         std::cout << *it2 << std::endl;
+//     std::cout << "-----------------------Location PATH  | Index :  " << index << " <<  ------------------"  << std::endl;
+  
+//     std::cout << this->_locations_path << std::endl;
+//    std::cout << "-----------------------Location allowed moethods | Index :  " << index << " <<  ------------------"  << std::endl;
+//      for (std::vector<std::string>::iterator it1 = this->_allow_methods.begin();it1 != this->_allow_methods.end();it1++)
+//          std::cout << *it1 << std::endl;
+//      std::cout << "-----------------------Location Root | Index :  " << index << " <<  ------------------"  << std::endl;
+//     std::cout << this->_root << std::endl;
+//          std::cout << "-----------------------Location Max Body Size | Index :  " << index << " <<  ------------------"  << std::endl;
+//     std::cout << this->_client_max_body_size << std::endl;
 //      std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
 //      for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-//         std::cout << *it2 << std::endl;
-    std::cout << "-----------------------Location PATH  | Index :  " << index << " <<  ------------------"  << std::endl;
-  
-    std::cout << this->_locations_path << std::endl;
-   std::cout << "-----------------------Location allowed moethods | Index :  " << index << " <<  ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it1 = this->_allow_methods.begin();it1 != this->_allow_methods.end();it1++)
-         std::cout << *it1 << std::endl;
-     std::cout << "-----------------------Location Root | Index :  " << index << " <<  ------------------"  << std::endl;
-    std::cout << this->_root << std::endl;
-         std::cout << "-----------------------Location Max Body Size | Index :  " << index << " <<  ------------------"  << std::endl;
-    std::cout << this->_client_max_body_size << std::endl;
-     std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-         std::cout << *it2 << std::endl;
-        std::cout << "-----------------------location  AutoIndex    : ------------------"  << std::endl;
-        if (this->_autoindex == true)
-        std::cout << "autoindex on  location : " << index  << " server : " << nb_server << std::endl;
-        else if (this->_autoindex == false)
-        std::cout << "autoindex off  location :" << index << " server : " << nb_server << std::endl;
-//         
-   std::cout << "-----------------------Location _upload_path | Index :  " << index << " <<  ------------------"  << std::endl;
-    std::cout << this->_upload_path << std::endl;
+//          std::cout << *it2 << std::endl;
+//         std::cout << "-----------------------location  AutoIndex    : ------------------"  << std::endl;
+//         if (this->_autoindex == true)
+//         std::cout << "autoindex on  location : " << index  << " server : " << nb_server << std::endl;
+//         else if (this->_autoindex == false)
+//         std::cout << "autoindex off  location :" << index << " server : " << nb_server << std::endl;
+// //         
+//    std::cout << "-----------------------Location _upload_path | Index :  " << index << " <<  ------------------"  << std::endl;
+//     std::cout << this->_upload_path << std::endl;
       
          
 }

@@ -145,7 +145,7 @@ std::string get_request_location(std::vector<std::string > request)
         if(!method[1].empty() && method.size() > 2 )
         location = method[1];
         else
-        location = "NO LOCATION"; // If empty SGV To fixe 
+        return location ; // If empty SGV To fixe 
        }
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);
@@ -158,15 +158,36 @@ std::string get_request_location(std::vector<std::string > request)
     
     return location;
 }
+int get_number_of_query(std::string first_line)
+{
+  int i = 0;
+
+  int count = 0;
+  while (first_line[i])
+  {
+    if (first_line[i] == '?')
+    count++;
+    i++;
+  }
+  return (count);
+}
 std::string get_request_query(std::vector<std::string > request)
 {
    std::string qwery;
     std::vector <std::string > method;
     std::vector <std::string > parsing_helper;
 
-  
+  int count = 0;
+   count = get_number_of_query(request[0]);
+          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+         std::cout << " NUMBER OF ??" << count << std::endl;
+
          if(request[0].find("?") != std::string::npos)
          {
+          while ( count > 0)
+          {
+            
+          }
           //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
           method = split_sboof(request[0]," ");
            if(!method[1].empty())

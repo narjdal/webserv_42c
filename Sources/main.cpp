@@ -360,7 +360,7 @@ int server_fd,new_socket,valread;
             perror("In accept");
             exit(EXIT_FAILURE);
         }
-         fd_set read_set2;
+         fd_set write_set;
    
         // for (int i = 0;j  = getnextline(server_fd,line) > 0;i++)
         // {
@@ -368,10 +368,10 @@ int server_fd,new_socket,valread;
         // }
         int final_reponse_length = 0;
         char buffer[30000] = {0};
-    FD_ZERO(&read_set2);
-    FD_SET(new_socket,&read_set2);
-    select (new_socket + 1,&read_set2,NULL,NULL,&time);
-    if (FD_ISSET(new_socket,&read_set2))
+    FD_ZERO(&write_set);
+    FD_SET(new_socket,&write_set);
+    select (new_socket + 1,&write_set,NULL,NULL,&time);
+    if (FD_ISSET(new_socket,&write_set))
     {
         std::cout << "Data is coming ! ... "<< std::endl;
         valread = read( new_socket , buffer, 30000);
@@ -384,7 +384,7 @@ int server_fd,new_socket,valread;
         Request parsed_request(full_request);
        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
 
-    //   printf("%s\n",buffer );
+      printf("%s\n",buffer );
         
         std::cout << "---------------------------MAIN-------------------"  << std::endl;
         printf("------------------ message -------------------");
@@ -403,22 +403,27 @@ int server_fd,new_socket,valread;
     int pp = 0;
     //    while ( datalen > 0) 
     //    {
-        if(pp = send(new_socket ,sboof_response.c_str(),sboof_response.size(),0) == -1)
+        
+        if((pp = send(new_socket ,sboof_response.c_str(),sboof_response.size(),0) == -1))
         {
             std::cout << "error : Response to client !" << std::endl;
-            exit(1);
+            close(new_socket);
         }
         if ( pp   == -1)
-            std::cout << " smth wrong happend in send " << std::endl;
+            {
+                close(new_socket);
+                std::cout << " smth wrong happend in send " << std::endl;}
         datalen -= pp;
       
      //  }
+     std::cout << multi_server[i].get_listen_host() << std::endl;
         printf("------------------Hello message sent-------------------");
         std::cout << "++++++Responding SERVER :  ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
        
-       FD_CLR(fds[i],&read_set2);
         close(new_socket);
     }
+       FD_CLR(fds[i],&write_set);
+
     }
     else
     {
@@ -453,13 +458,13 @@ void print_parsing_infos(server myserver)
      std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
         try
         {
-        for (std::vector<std::string>::iterator it3 = myserver.get_error_pages(0).begin();it3 != myserver.get_error_pages(0).end();it3++)
-         std::cout << *it3 << std::endl;
+        for (std::map<std::string,std::string >::iterator it3 = myserver.get_error_pages().begin();it3 != myserver.get_error_pages().end();it3++)
+         std::cout << it3->first << it3->second << std::endl;
            std::cout << "-----------------------------------------------"  << std::endl;
 
-        for (std::vector<std::string>::iterator it4 = myserver.get_error_pages(1).begin();it4 != myserver.get_error_pages(1).end();it4++)
-         std::cout << *it4 << std::endl;
-           std::cout << "-----------------------------------------------"  << std::endl;
+        // for (std::vector<std::string>::iterator it4 = myserver.get_error_pages(1).begin();it4 != myserver.get_error_pages(1).end();it4++)
+        //  std::cout << *it4 << std::endl;
+        //    std::cout << "-----------------------------------------------"  << std::endl;
          
           //for (std::vector<std::string>::iterator it5 = myserver.get_error_pages(2).begin();it5 != myserver.get_error_pages(2).end();it5++)
         // std::cout << *it5 << std::endl;

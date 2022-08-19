@@ -98,7 +98,6 @@ void     Response::errorsPages( int Status_Code)
         else
             this->_Body = file_to_string(tmp);
         this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
-        //  std::cout << "INSISDe ERROORS PAGE REDIRECT "<< this->_Body << std::endl;
     }
 }
 
@@ -234,7 +233,7 @@ bool    Response::check_location()
         loc += *it;
     this->_location = loc;
     this->_location = skip_slash(this->_location);
-
+ std::cout << std::endl << "loc :" << this->_location << std::endl;
     return (check_path());
 }
 
@@ -321,6 +320,7 @@ std::string    handle_index( std::vector<std::string> vector, std::string root)
     for(std::vector<std::string>::iterator it = vector.begin(); it != vector.end(); it++)
     {
         tmp = root + *it;
+        std::cout << "tmp=> " << tmp << std::endl;
         if (open(tmp.c_str(), O_RDONLY) != -1)
             return (tmp);
     }
@@ -333,7 +333,7 @@ void    Response::check_chancked( void )
 
     in_file.seekg(0, ios::end);
     this->_File_size = in_file.tellg();
-
+    std::cout << "inside check_chanked" << std::endl;
     if ( this->_File_size > 1000 ) // CHANGE AFTER TO 1M
     {
         this->_is_chanked = true;
@@ -385,10 +385,12 @@ int     Response::file_GET( void )
         check_chancked();
     }
     else if (this->_location_type == 2)
-        tmp = handle_index(this->_Serv.get_index(), this->_location);
+  {    
+        std::cout << " B4 handle iiii" << std::endl;
+
+      tmp = handle_index(this->_Serv.get_index(), this->_location);}
     // if (this->_is_chanked == true)
         // return (file_Is_chancked());
-        std::cout << " THE FILE IS : " << std::endl;
     this->_header->setHeader("Content-Type", (extension(tmp)));
     this->_Body = file_to_string(tmp);
     this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
@@ -400,7 +402,8 @@ int     Response::cgi_GET( void )
     if (check_CGI())
         return (CGI());
     else
-        return (file_GET());
+{    std::cout << " going to file get" << std::endl;
+        return (file_GET());}
 }
 
 int     Response::handle_GET_Dir( void )
@@ -599,6 +602,5 @@ std::string Response::get_Response( void )
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
         return (this->_Body);
-        std::cout << FirstLine.First_Line(i) + this->_header->getHeader() << std::endl;
     return (FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body);
 }

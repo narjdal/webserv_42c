@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <map>
 
 
 class location;
@@ -36,7 +37,9 @@ protected:
     std::vector<std::string>                _allowed_methods;
     std::vector<std::string>                _index;
     std::string                             _upload_path;
-    std::vector<std::vector<std::string> >  _error_pages;
+    // std::vector<std::vector<std::string> >  _error_pages;
+    std::map <std::string ,std::string >      _error_pages;
+    std::map <std::string, std::string >      _redirections1;
     std::vector<std::vector<std::string> >  _redirections;
     std::string                             _root;
     std::vector<location>                   _location;
@@ -57,8 +60,10 @@ public:
     unsigned int                 get_allowed_methods_size() const;
     std::vector<std::string>     get_index() const;
     unsigned int                 get_index_size() const;
-    std::vector<std::string>     get_error_pages(int i) const;
-    std::vector<std::vector<std::string> >     get_error_pages() const{return _error_pages;};
+    // std::vector<std::string>     get_error_pages(int i) const;
+    // std::vector<std::vector<std::string> >     get_error_pages() const{return _error_pages;};/
+    std::map<std::string,std::string >     get_error_pages() const{return _error_pages;};
+
     unsigned int                 get_error_pages_size() const;
     unsigned int                 get_redirections_size() const;
     std::vector<std::string>     get_redirections(int i) const;

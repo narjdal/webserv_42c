@@ -53,7 +53,7 @@ void check_file_accolade(std::vector <std::string > words)
         --count;
         i++;
     }
-    std::cout << "INSIDE ACCOLADE COUNT" << count << std::endl;
+    // std::cout << "INSIDE ACCOLADE COUNT" << count << std::endl;
     if (count != 0)
     {
         std::cout << "Error:File Not Well Formated (accolade)" << std::endl;
@@ -122,7 +122,7 @@ std::vector <std::string > parse_config_file(std::vector <std::string > text_vec
     words = split_by_space(text_vector);
       for (std::vector<std::string>::iterator it = words.begin(); it != words.end(); ++it)
     {
-        std::cout << *it << "|" ;
+        // std::cout << *it << "|" ;
     }
     if (words.size() == 0)
     {
