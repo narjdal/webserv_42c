@@ -122,7 +122,8 @@ void check_syntax_error(std::vector <std::string > text_vector)
 std::vector <std::string > split_by_space(std::vector <std::string > text_vector)
 {
     std::vector <std::string > _words;
-      for (std::vector<std::string>::iterator it = text_vector.begin(); it != text_vector.end(); ++it)
+    std::vector<std::string> tmp = text_vector;
+      for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end(); ++it)
     {
         std::string line = *it;
         std::stringstream ss(line);
@@ -179,7 +180,8 @@ void check_words_config_file(std::vector<std::string > text_vector)
     std::vector <std::string> tmp;
     std::vector <std::string > first_word;
     int inside = 0;
-    for(std::vector<std::string>::iterator it = text_vector.begin();it != text_vector.end();it++)
+    std::vector<std::string> tmp_iterator = text_vector;
+    for(std::vector<std::string>::iterator it = tmp_iterator.begin();it != tmp_iterator.end();it++)
     {
         // tmp = ft_split(*it," ");
         tmp.push_back(*it);
@@ -187,7 +189,7 @@ void check_words_config_file(std::vector<std::string > text_vector)
         // std::cout << first_word.size() << first_word[0] << std::endl;
          if(first_word[0] == "location" || inside == 1)
          {
-            std::cout << " THIS IS GOOOOOOOOOOD" << first_word[0] << std::endl;
+            // std::cout << " THIS IS GOOOOOOOOOOD" << first_word[0] << std::endl;
             specified_wordsv2(first_word[0]);
             inside = 1;
          }

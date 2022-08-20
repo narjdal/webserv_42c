@@ -737,12 +737,13 @@ std::string test;
         return ( num);
         }
         parser = split(text_vector[i]," ","client_max_body_size");
-
         y = 0;
         while (y < parser.size())
         {
             if (parser[y].compare("client_max_body_size") == 0)
             {
+        std::cout << " MAX BODY SIZE " << text_vector[i] << std::endl;
+
                 tmp = parser;
                 tmp.erase(tmp.begin());
              if(tmp.size() > 0)

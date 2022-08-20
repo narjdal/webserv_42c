@@ -463,14 +463,6 @@ std::vector<std::string> location_limit;
             // std::cout << "HHHHHHHHHH" << std::endl;
 
                     y = i;
-            //        
-            //         {
-            //      if ( y != i)
-            //   {
-            //     location_limit = split(text_vector[y]," ","location");
-            //    if(location_limit.size() > 0 && location_limit[0].compare("location") == 0)
-            //     break;
-            //         }
              while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
              {
              parser = split(text_vector[y]," ","upload_path");
