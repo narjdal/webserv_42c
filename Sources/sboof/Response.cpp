@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 19:10:38 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 21:14:10 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -480,11 +480,9 @@ int     Response::check_POST( void )
 
 int     Response::Upload_file( std::string upload_path )
 {
-    std::cout << "I M IN \n And the little uload_path : " << upload_path << std::endl;
     this->_Upload_Path = upload_path + RandomWord() + "_Upload";
     if (this->_request.get_headrs()["Content-Type"].size() > 0)
         this->_Upload_Path += "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
-    std::cout << "THE UPLOAD PATH SENT : " << this->_Upload_Path << std::endl;
     ofstream    FILE(this->_Upload_Path);
     FILE << this->_request.get_body();
     FILE.close();
@@ -679,15 +677,15 @@ void    help_show_data_serv(server ser)
     std::cout << "**************/location******************" << std::endl << std::endl;
     std::cout << "*****************cgi*********************" << std::endl;
     
-    {
-        std::vector<cgi> tmp = ser.get_cgi();
-        for (std::vector<cgi>::iterator it = tmp.begin(); it != tmp.end(); it++)
-        {
-            std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
-            std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
-            std::cout << "*****************************************" << std::endl;
-        }
-    }
+    // {
+    //     std::vector<cgi> tmp = ser.get_cgi();
+    //     for (std::vector<cgi>::iterator it = tmp.begin(); it != tmp.end(); it++)
+    //     {
+    //         std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
+    //         std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
+    //         std::cout << "*****************************************" << std::endl;
+    //     }
+    // }
     
     std::cout << "****************/cgi*********************" << std::endl << std::endl;
     
