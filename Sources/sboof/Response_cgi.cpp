@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 13:05:36 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 17:57:27 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
     envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
     envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
     envp_vect.push_back("REMOTE_PORT=0");
+    if (request.get_headrs()["Cookie"].size() > 0)
+        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);   
 	if (request.get_body_len() > 0)
     {
         envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
@@ -151,6 +153,21 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
     return 200; 
 }
 
+std::string ft_toupper_headers( std::string str)
+{
+    std::string     tmp;
+
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == char("-"))
+            tmp.push_back(char("_"));
+        else
+            tmp.push_back(toupper(str[i]));
+    }
+
+    return (tmp);
+}
+
 void        Response_cgi::set_header(Response & response)
 {
     (void) response;
@@ -160,7 +177,10 @@ void        Response_cgi::set_header(Response & response)
     {
         std::string                 LINE;
         size_t                      header_index;
+        std::map<std::string, std::string> tmp = response.get_Request().get_headrs();
 
+        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+            this->_FILEINLINE += "HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\n";
         while (getline (FILE, LINE))
             this->_FILEINLINE += LINE + "\n";
         header_index = this->_FILEINLINE.find_first_of("\n\n", 0, 2);
