@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 21:14:10 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 21:38:02 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ std::string    handle_index( std::vector<std::string> vector, std::string root)
         if (open(tmp.c_str(), O_RDONLY) != -1)
             return (tmp);
     }
-    return (NULL);
+    return ("");
 }
 
 void    Response::check_chancked( void )
@@ -394,6 +394,7 @@ int     Response::file_GET( void )
       tmp = handle_index(this->_Serv.get_index(), this->_location);
     if (tmp.empty())
         return 404;
+    std::cout << " I M IN BIIITCH " << std::endl;
     // if (this->_is_chanked == true)
         // return (file_Is_chancked());
     this->_header->setHeader("Content-Type", (extension(tmp)));
