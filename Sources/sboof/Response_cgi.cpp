@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 17:57:27 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 18:02:16 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void        Response_cgi::set_header(Response & response)
         std::map<std::string, std::string> tmp = response.get_Request().get_headrs();
 
         for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
-            this->_FILEINLINE += "HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\n";
+            this->_FILEINLINE += "HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\r\n";
         while (getline (FILE, LINE))
             this->_FILEINLINE += LINE + "\n";
         header_index = this->_FILEINLINE.find_first_of("\n\n", 0, 2);
