@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 18:02:16 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 18:58:19 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,8 +159,8 @@ std::string ft_toupper_headers( std::string str)
 
     for (int i = 0; i < str.size(); i++)
     {
-        if (str[i] == char("-"))
-            tmp.push_back(char("_"));
+        if (str[i] == '-')
+            tmp.push_back('_');
         else
             tmp.push_back(toupper(str[i]));
     }
