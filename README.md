@@ -14,7 +14,7 @@ EXIT IF SMTH ENPTY
 CHECK REQ
 CHECK LOC
  RE-CHECK ALLOWED METHODS 
- 
+
 SGV RESPONSE:
 
 Request Location : http://localhost:150/ Sgv if : index defined in config file for example index index00002.html
@@ -22,4 +22,9 @@ Request Location : http://localhost:150/ Sgv if : index defined in config file f
                                                 index0002.html exist on the machine -> fine 
                                                      No index defined : fine 
                                                     
+
+if ( keyword index == index.html)
+    pas de fichier sur la machine -> √
+    if (keyword index == index)
+    pas de fichier sur la machine -> SGV 
                                                 
