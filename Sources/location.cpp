@@ -157,6 +157,11 @@ int find_right_server = 0;
                     correct_methods.push_back(*it2);
                     i++;
                  }
+                 if(correct_methods.empty())
+                 {
+                    std::cout << " Error ! Allowed methdos defined in location but no value is put in it ! " << std::endl;
+                    exit(1);
+                 }
                 // tmp.push_back(text_vector[y]);
                 // if (!allowed_methods.empty() && allowed_methods.size() > 1)
                 // {
@@ -186,8 +191,8 @@ int find_right_server = 0;
                 // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
                 for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
              { 
-                    std::cout << "it :" << *it << std::endl;
-                    //  specified_methods(*it);
+                    // std::cout << "it :" << *it << std::endl;
+                     specified_methods(*it);
             
             }
                 return(correct_methods);
@@ -242,7 +247,8 @@ std::vector <std::string > tmp;
              else
              {
                 std::cout << " root is defined but no value is put in it !  returning(./)for now  location index : " << index << " server index : " << nb_server << std::endl;
-                return("./");
+                exit(1);
+                // return("./");
              }
              }
             y++;
@@ -304,7 +310,7 @@ std::vector<std::string > tmp;
                     else
                     {
                         std::cout << "location client max body size defined but nothing is put in it ! location index : " << index << " server index : " << nb_server << std::endl;
-                    return (-1);
+                    exit(1);
                     }
                 }
             y++;
@@ -315,7 +321,7 @@ std::vector<std::string > tmp;
         }
     i++;
     }
-    std::cerr << " No client_max_body_size  !" << std::endl;
+    // std::cerr << " No client_max_body_size  !" << std::endl;
     return (num);
 }
 std::vector<std::string> extract_location_index(std::vector<std::string> text_vector,int index,int nb_server)
@@ -362,7 +368,7 @@ std::vector<std::string> location_limit;
         }
     i++;
     }
-   // std::cout << " No Index in location !" << std::endl;
+    // std::cout << " No Index in location !" << std::endl;
     return (server_index);
 }
 bool extract_location_autoindex(std::vector<std::string > text_vector,int index,int nb_server)
@@ -423,7 +429,7 @@ std::vector <std::string > tmp;
         }
     i++;
     }
-             std::cout << " No autoindex found " << std::endl;
+            //  std::cout << " No autoindex found " << std::endl;
 
     return (false);
 }
@@ -529,9 +535,9 @@ location::location(std::vector<std::string> text_vector,int index,int nb_server)
 //     std::cout << this->_root << std::endl;
 //          std::cout << "-----------------------Location Max Body Size | Index :  " << index << " <<  ------------------"  << std::endl;
 //     std::cout << this->_client_max_body_size << std::endl;
-//      std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
-//      for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-//          std::cout << *it2 << std::endl;
+     std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
+     for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
+         std::cout << *it2 << std::endl;
 //         std::cout << "-----------------------location  AutoIndex    : ------------------"  << std::endl;
 //         if (this->_autoindex == true)
 //         std::cout << "autoindex on  location : " << index  << " server : " << nb_server << std::endl;

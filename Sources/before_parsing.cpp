@@ -79,6 +79,25 @@ void specified_words(std::string word)
             exit(1);    
         }
 }
+
+void specified_wordsv2(std::string word)
+{
+     std::string err;
+      err = "Error: Loc:  ";
+     err += word;
+    err += " is not a valid word";
+    if (word != "cgi_path" && word != "root" &&
+        word != "allow_methods" && word != "upload_path" && word != "index"
+         && word != "autoindex" && word != "redirection"
+        && word != "client_max_body_size" && word != "location" && word != "cgi"
+        && word != "{" && word != "}")
+        {
+            // if(err)
+            std::cout << err << std::endl;
+            exit(1);    
+        }
+}
+
 void check_syntax_error(std::vector <std::string > text_vector)
 {
   for (std::vector<std::string>::iterator it = text_vector.begin(); it != text_vector.end(); ++it)
@@ -159,12 +178,22 @@ void check_words_config_file(std::vector<std::string > text_vector)
     int i = 0;
     std::vector <std::string> tmp;
     std::vector <std::string > first_word;
+    int inside = 0;
     for(std::vector<std::string>::iterator it = text_vector.begin();it != text_vector.end();it++)
     {
         // tmp = ft_split(*it," ");
         tmp.push_back(*it);
         first_word = split_by_space(tmp);
         // std::cout << first_word.size() << first_word[0] << std::endl;
+         if(first_word[0] == "location" || inside == 1)
+         {
+            std::cout << " THIS IS GOOOOOOOOOOD" << first_word[0] << std::endl;
+            specified_wordsv2(first_word[0]);
+            inside = 1;
+         }
+         if(inside == 1 && first_word[0] == "}")
+         inside = 0;
+        if (inside == 0)
          specified_words(first_word[0]);
         tmp.clear();
         first_word.clear();

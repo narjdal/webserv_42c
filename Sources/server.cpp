@@ -53,7 +53,7 @@ int check_listen_host(std::string tmp)
     }
     if (count != 3)
     {
-        std::cout << "host not well defined !" << count << " "<< tmp <<std::endl;
+        std::cout << "host not well defined !   "<< tmp <<std::endl;
         exit(1);
     }
     }
@@ -163,6 +163,9 @@ default_error_pages= fill_error_page();
 //            std::cout << "-----------------------------------------------"  << std::endl;
 //            length++;
 //             }
+    std::map<std::string,std::string> tmp2 = this->_redirections;
+          for (std::map<std::string, std::string>::iterator it1 = tmp2.begin(); it1 != tmp2.end(); it1++)
+            std::cout << "The Redir page : " << it1->first << " and his path : " << it1->second << std::endl;
      
 
 //         // for (std::vector<std::string>::iterator it4 = this->_error_pages[1].begin();it4 != this->_error_pages[1].end();it4++)

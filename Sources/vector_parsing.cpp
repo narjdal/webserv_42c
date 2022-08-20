@@ -303,6 +303,7 @@ std::string extract_server_root(std::vector<std::string> text_vector,int index)
                 else
                 {
                     std::cout << "root is defined but nothing is put in it !  server : " << index << std::endl;
+                    exit(1);
                 }
                
                 inside = 1;
@@ -369,6 +370,11 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
                 // if(pos != allowed_methods.end())
                 correct_methods.erase(std::remove(correct_methods.begin(),correct_methods.end(),"allow_methods"));
                 // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
+                if(correct_methods.empty())
+                {
+                    std::cout<< " Error ! Allowed methods is defined in server but no value is put in it !" << std::endl;
+                    exit(1);
+                }
                 for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
              {  
                
@@ -430,6 +436,7 @@ std::string extract_server_upload_path(std::vector<std::string> text_vector,int 
 {
 std::vector<std::string> parser;
  std::vector <std::string> server_upload_path;
+ std::vector<std::string> tmp;
  std::string upload_path;
     int i = 0;
     int y = 0;
@@ -455,8 +462,15 @@ std::vector<std::string> parser;
             if (parser[y].compare("upload_path") == 0)
             {   
                 server_upload_path = split (text_vector[i]," ","upload_path");
-                if(!server_upload_path.empty())
+                tmp = server_upload_path;
+                tmp.erase(tmp.begin());
+                if(tmp.size() > 0)
                 upload_path = server_upload_path[1];
+                else
+                {
+                    std::cout << "upload path defined but nothing is put in it !" << std::endl;
+                    exit(1);
+                }
                 inside = 1;
             }
             y++;
@@ -606,16 +620,16 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
         //return (correct_index);
         parser = split(text_vector[i]," ","redirection");
         y = 0;
+                // std::cout << "WWWWWWW__________WW__W_W_Wred/irection : "  << std::endl;
         while (y < parser.size())
         {
            // i++;
-            if (parser[y].compare("rediretion") == 0)
+            if (parser[y].compare("redirection") == 0)
             {
 
                 test = split (text_vector[i]," ","redirection");
 
-           //correct_index.assign(server_index.begin() + 1,server_index.end());
-                // errors_pages.assign(test.begin() + 1,test.end())
+
                 if (test.size()  == 3)
                 {
                     redirections[test[1]] = test[2];
@@ -632,7 +646,7 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
                 std::cout << "Config file :  too many  redirections links on code !, IDX :" << index << std::endl;
                 exit(1);
             }
-                
+                std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
                 inside = 1;
                 // server_error_pages.push_back(errors_pages);
                 test.clear();
@@ -733,12 +747,21 @@ std::string test;
                 tmp.erase(tmp.begin());
              if(tmp.size() > 0)
             {
-                num = std::stoi(tmp[0]);
+                if(isnumber(tmp[0]))
+                {
+                    num = std::stoi(tmp[0]);
                 return(num);
+                }
+                else
+                {
+                    std::cout << " Error ! A char is present in client_max_body_size" << std::endl;
+                    exit(1);
+                }
             }
             else if(tmp.size() == 0)
             {
                 std::cout << "client_max_body_size is defined but no value is put in it ! server index : " << index << std::endl; 
+                exit(1);
                 num = -1;
             }
       
@@ -802,10 +825,18 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
              {
                if(tmp[0].compare("on") == 0)
                autoindex = true;
+               else if (tmp[0].compare("off") == 0)
+               autoindex = false;
+               else
+               {
+                std::cout << "Error ! autoindex can only take on or off as values  not " << tmp[0] << std::endl;
+                exit(1); 
+               }
              }
             else if(tmp.size() == 0)
             {
-                std::cout << "autoindex is defined but no value is put in it ! server index : " << index << std::endl; 
+                std::cout << "autoindex is defined but no value is put in it ! server index : " << index << std::endl;
+                exit(1);
             }
             }
             }
