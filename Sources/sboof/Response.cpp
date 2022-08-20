@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/19 22:00:54 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 15:16:45 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void     Response::errorsPages( int Status_Code)
 {
     if (Status_Code != 200)
     {
-        std::string tmp = "./errorpages/" + to_string(Status_Code) + "/" + to_string(Status_Code) + ".html";
+        std::string tmp = this->_Serv.get_error_pages()[to_string(Status_Code)];
         this->_header->setHeader("Content-Type", (extension(tmp)));
         if (Status_Code == 201)
             this->_Body = "<div class=\"error\"> <div class=\"error__title\">201</div> <div class=\"error__subtitle\">Created</div> <div class=\"error__description\">" + this->_Upload_Path + " </div> </div>" + file_to_string(tmp);
@@ -104,6 +104,8 @@ void     Response::errorsPages( int Status_Code)
 std::string RandomWord( void )
 {
     std::string StrWord;
+
+    srand (time(NULL));
     int len = rand () % 10 + 1;
 
     for (int i = 0; i < len; i++)
@@ -476,7 +478,11 @@ int     Response::check_POST( void )
 
 int     Response::Upload_file( std::string upload_path )
 {
-    this->_Upload_Path = upload_path + RandomWord() + "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
+    std::cout << "I M IN \n And the little uload_path : " << upload_path << std::endl;
+    this->_Upload_Path = upload_path + RandomWord() + "_Upload";
+    if (this->_request.get_headrs()["Content-Type"].size() > 0)
+        this->_Upload_Path += "." + StatusCode(this->_request.get_headrs()["Content-Type"], 2);
+    std::cout << "THE UPLOAD PATH SENT : " << this->_Upload_Path << std::endl;
     ofstream    FILE(this->_Upload_Path);
     FILE << this->_request.get_body();
     FILE.close();
@@ -633,27 +639,27 @@ void    help_show_data_serv(server ser)
             std::cout << "The Error page : " << it->first << " and his path : " << it->second << std::endl;
     }
 
-    // std::cout << "The root : " << ser.get_root() << std::endl;
-    // std::cout << "The client max body size : " << ser.get_client_max_body_size() << std::endl;
-    // std::cout << "The auto index : " << bool(ser.get_autoindex()) << std::endl;
-    // std::cout << "****************/ROOT********************" << std::endl << std::endl;
-    // std::cout << "***************location******************" << std::endl;
+    std::cout << "The root : " << ser.get_root() << std::endl;
+    std::cout << "The client max body size : " << ser.get_client_max_body_size() << std::endl;
+    std::cout << "The auto index : " << bool(ser.get_autoindex()) << std::endl;
+    std::cout << "****************/ROOT********************" << std::endl << std::endl;
+    std::cout << "***************location******************" << std::endl;
     
-    // {
-    //     std::vector<location> tmp = ser.get_location();
-    //     for (std::vector<location>::iterator it = tmp.begin(); it != tmp.end(); it++)
-    //     {
-    //         std::cout << "The name : " << it->get_name() << std::endl;
-    //         std::cout << "The location path : " << it->get_locations_path() << std::endl;
-    //         // for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
-    //         //     std::cout << "The allowed_methods : " << *itv << std::endl;
-    //         std::cout << "The root : " << it->get_root() << std::endl;
-    //         std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
-    //         std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
-    //         std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
-    //         std::cout << "*****************************************" << std::endl;
-    //     }
-    // }
+    {
+        std::vector<location> tmp = ser.get_location();
+        for (std::vector<location>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            std::cout << "The name : " << it->get_name() << std::endl;
+            std::cout << "The location path : " << it->get_locations_path() << std::endl;
+            for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
+                std::cout << "The allowed_methods : " << *itv << std::endl;
+            std::cout << "The root : " << it->get_root() << std::endl;
+            std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
+            std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
+            std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
+            std::cout << "*****************************************" << std::endl;
+        }
+    }
 
     std::cout << "**************/location******************" << std::endl << std::endl;
     std::cout << "*****************cgi*********************" << std::endl;
@@ -680,7 +686,7 @@ std::string Response::get_Response( void )
     FirstLine   FirstLine(this->_request);
 
     help_show_data(this->_request);
-    help_show_data_serv(this->_Serv);
+    // help_show_data_serv(this->_Serv);
     int i = statuscode();
     errorsPages(i);
     if (this->_is_cgi && (i == 200))

@@ -4,6 +4,8 @@ std::string StatusCode(string location, int i)
 {
     std::map<std::string, std::string>ext;
 
+    ext["txt"] = "text/plain";
+    ext["hello"] = "hello";
     ext["3g2"] = "video/3gpp2";
     ext["3gp"] = "video/3gpp";
     ext["3gpp"] = "video/3gpp";
@@ -33,8 +35,7 @@ std::string StatusCode(string location, int i)
     ext["cgm"] = "image/cgm";
     ext["class"] = "application/java-vm";
     ext["coffee"] = "text/coffeescript";
-    ext["txt"] = "text/plain";
-    
+
     ext["cpt"] = "application/mac-compactpro";
     ext["crl"] = "application/pkix-crl";
     ext["css"] = "text/css";
@@ -345,7 +346,6 @@ std::string StatusCode(string location, int i)
     ext["yin"] = "application/yin+xml";
     ext["yml"] = "text/yaml";
     ext["zip"] = "application/zip";
-    ext["conf"] = "text/plain";
 
     if (i == 1)
         return (ext[location]);
@@ -353,6 +353,7 @@ std::string StatusCode(string location, int i)
     {
         for (std::map<std::string, std::string>::iterator it = ext.begin(); it != ext.end(); it++)
         {
+            // std::cout << "THE ITERATOR " << it->first << " : " << it->second << ";" << std::endl;
             if (it->second == location)
                 return (it->first);
         }

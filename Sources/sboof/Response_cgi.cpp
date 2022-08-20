@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/16 13:28:44 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 13:05:36 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,8 @@ bool   Response_cgi::set_cgi_response_file()
 
     _cgi_response_file = "/var/tmp/cgi_" + RandomWord() + "_response";
 
-    std::ofstream    file;
+    std::ofstream    file(_cgi_response_file);
 
-    file.open(_cgi_response_file);
     if (file.is_open() == 0)
         return false;
     return true;
