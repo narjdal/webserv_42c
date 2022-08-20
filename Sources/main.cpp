@@ -219,6 +219,12 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
         std::cout << " Server allowed methods : " << multi_server[i].get_allowed_methods()[savior] << " IDX: " << i << std::endl;
         savior++;
     }
+    savior = 0;
+      while (  savior < multi_server[i].get_index().size())
+    {
+        std::cout << " Server INDEX  : " << multi_server[i].get_index()[savior] << " IDX: " << i << std::endl;
+        savior++;
+    }
     // for (std::vector<std::string>::iterator it1 = multi_server[i].get_allowed_methods().begin();it1 != multi_server[i].get_allowed_methods().end();it1++)
     //      std::cout << *it1 << std::endl;
             std::cout << "-----------------------LOCATION allowed methods : ------------------"  << std::endl;
@@ -415,9 +421,9 @@ int main(int ac,char **av)
      multi_server = fill_server(text_vector,number_of_servers(words));
     std::vector<int > fds;
       servers(multi_server,fds);
-      for (int kk = 0;kk < fds.size();kk++)
-      std::cout <<  "fds => " <<fds[kk] << " "<< kk <<  std::endl;
-      std::cout << " HIGHEST FD" << get_highest_fd(fds) << std::endl;
+    //   for (int kk = 0;kk < fds.size();kk++)
+    //   std::cout <<  "fds => " <<fds[kk] << " "<< kk <<  std::endl;
+    //   std::cout << " HIGHEST FD" << get_highest_fd(fds) << std::endl;
        init_server(multi_server,fds);
     }
     

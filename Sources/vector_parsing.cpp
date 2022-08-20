@@ -412,16 +412,27 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
         {
         if(text_vector[i].find("location") != std::string::npos)
         return (correct_index);
+         size_t found = text_vector[i].find("index.html");
+        // found = std::find(text_vector[i].begin(),text_vector[i].end(),"index.html") ;
+        if ( found != std::string::npos)
+        parser = split(text_vector[i]," ","index.html");
+        else
         parser = split(text_vector[i]," ","index");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("index") == 0)
-            {
-                server_index = split (text_vector[i]," ","index");
-                correct_index.assign(server_index.begin() + 1,server_index.end());
+            int i = 0;
+              for(std::vector<std::string>::iterator it = parser.begin();it != parser.end();it++)
+                {
+                    std::cout  << " i : " << i << " PARSER => " << *it << std::endl;
+                    if(i > 0)
+                    correct_index.push_back(*it);
+                    i++;
+                }
+                std::cout << " CORRECT_INDEX SIZE : " << correct_index.size() << std::endl;
+                return(correct_index);
                 inside = 1;
-            }
+            // }
             y++;
         }
         }
@@ -646,7 +657,7 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
                 std::cout << "Config file :  too many  redirections links on code !, IDX :" << index << std::endl;
                 exit(1);
             }
-                std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
+                // std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
                 inside = 1;
                 // server_error_pages.push_back(errors_pages);
                 test.clear();
@@ -742,8 +753,6 @@ std::string test;
         {
             if (parser[y].compare("client_max_body_size") == 0)
             {
-        std::cout << " MAX BODY SIZE " << text_vector[i] << std::endl;
-
                 tmp = parser;
                 tmp.erase(tmp.begin());
              if(tmp.size() > 0)

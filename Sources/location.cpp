@@ -191,7 +191,7 @@ int find_right_server = 0;
                 // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
                 for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
              { 
-                     std::cout << "it :" << *it << std::endl;
+                    //  std::cout << "it :" << *it << std::endl;
                      specified_methods(*it);
             
             }
@@ -537,9 +537,9 @@ location::location(std::vector<std::string> text_vector,int index,int nb_server)
 //     std::cout << this->_root << std::endl;
 //          std::cout << "-----------------------Location Max Body Size | Index :  " << index << " <<  ------------------"  << std::endl;
 //     std::cout << this->_client_max_body_size << std::endl;
-     std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
-         std::cout << *it2 << std::endl;
+    //  std::cout << "-----------------------Location index  | Index :  " << index << " <<  ------------------"  << std::endl;
+    //  for (std::vector<std::string>::iterator it2 = this->_index.begin();it2 != this->_index.end();it2++)
+    //      std::cout << *it2 << std::endl;
 //         std::cout << "-----------------------location  AutoIndex    : ------------------"  << std::endl;
 //         if (this->_autoindex == true)
 //         std::cout << "autoindex on  location : " << index  << " server : " << nb_server << std::endl;
