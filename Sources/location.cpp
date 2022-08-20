@@ -2,7 +2,14 @@
 #include "../Includes/tt.hpp"
 #include <sstream>
 // ADD ERR DOUBLON
-location::location()
+location::location() : _locations_path(""),
+                        _allow_methods(std::vector<std::string>()),
+                        _root(""),
+                        _client_max_body_size(-1),  
+                        _index(std::vector<std::string>()),
+                        _autoindex(false),
+                        _upload_path("")
+                        
 {
 
 }
@@ -112,10 +119,12 @@ std::vector<std::string> extract_location_allowed_methods(std::vector<std::strin
 std::vector<std::string> parser;
 std::vector<std::string> allowed_methods;
 std::vector <std::string > correct_methods;
+std::vector<std::string > tmp;
 int find_right_server = 0;
     int i = 0;
     int y = 0;
     int count = 0;
+    int z = 0;
     while ( i < text_vector.size())
     {  
       if(text_vector[i].compare("server") == 0)
@@ -127,7 +136,6 @@ int find_right_server = 0;
 
           if(text_vector[i].find("location") != std::string::npos)
         {
-                     //std::cout << "W*-----------------W : " << count << " " << index << std::endl;
 
             if ( count == index )
                 {
@@ -135,32 +143,58 @@ int find_right_server = 0;
                     y = i;
         while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
              {
-             parser = split(text_vector[y]," ","allow_methods");
-            if(parser.size()> 0)
+
+             int found = 0;
+             found = text_vector[y].find("allow_methods") ;
+           if (found != std::string::npos)
             {
-                if (!parser.empty())
-                {
-                    correct_methods.assign(parser.begin() + 1,parser.end());
-                    break;
-                }
+                tmp.push_back(text_vector[y]);
+                 allowed_methods = split_by_space(tmp);
+                 int i = 0;
+                 for(std::vector<std::string>::iterator it2 = allowed_methods.begin();it2 != allowed_methods.end();it2++)
+                 {
+                    if ( i > 0)
+                    correct_methods.push_back(*it2);
+                    i++;
+                 }
+                // tmp.push_back(text_vector[y]);
+                // if (!allowed_methods.empty() && allowed_methods.size() > 1)
+                // {
+                // if (allowed_methods[1] == "GET")
+                // correct_methods.push_back("GET");
+                // else if (allowed_methods[1] == "POST")
+                // correct_methods.push_back("POST");
+                // else if (allowed_methods[1] == " DELETE")
+                // correct_methods.push_back("DELETE");
+                // }
+                //  allowed_methods.erase(std::remove(allowed_methods.begin(),allowed_methods.end(),"allow_methods"));
+                // for(std::vector<std::string>::iterator it = allowed_methods.begin();it != allowed_methods.end();it++)
+                // correct_methods.push_back(*it);
+                // if(!tmp[0].empty())  
+                // tmp.erase(tmp.begin());
+                // allowed_methods = split(text_vector[y]," ","allow_methods");
+                // allowed_methods.erase(allowed_methods.beg/in());
+                // allowed_methods.push_back("GET");
+                // allowed_methods.push_back("POST");
+                // allowed_methods.push_back("DELETE");
+                // allowed_methods.erase(std::remove(allowed_methods.begin(),allowed_methods.end(),"allow_methods"));
+            //   correct_methods = allowed_methods;
+                // tmp.clear();
+                // std::vector<std::string>::iterator pos = std::find(allowed_methods.begin(),allowed_methods.end(),"allow_methods");
+                // if(pos != allowed_methods.end())
+                // allowed_methods.erase(std::remove(allowed_methods.begin(),allowed_methods.end(),"allow_methods"));
+                // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
+                for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
+             { 
+                    std::cout << "it :" << *it << std::endl;
+                    //  specified_methods(*it);
+            
             }
-            // tmp = parser;
-            //  tmp.erase(tmp.begin());
-            //  if(tmp.size() > 0)
-            //  {
-            //     std
-            // //  location_path = tmp[0];
-            //  }
-            //  else
-        //      {
-        //        std::cout << "upload path is defined byut no value is put in it ! location index : " << index << " server index " << nb_server << std::endl;
-        //    return(location_path);
-          //  }
-                 //
-                   // {
+                return(correct_methods);
                
-            y++;
             }
+            y++;
+             }
                 }
         count++;
        
@@ -168,7 +202,7 @@ int find_right_server = 0;
         }
     i++;
     }
-    return (correct_methods);
+    return (allowed_methods);
 }
 std::string extract_location_root(std::vector<std::string> text_vector,int index,int nb_server)
 {
@@ -464,8 +498,13 @@ std::vector<std::string> location_limit;
 
 location::location(std::vector<std::string> text_vector,int index,int nb_server)
 {
+    // std::vector <std::string> allowed_methods;
+    // allowed_methods.push_back("GET");
+    // allowed_methods.push_back("DELETE");
+    // allowed_methods.push_back("POST");
     this->_name = extract_location_path(text_vector,index, nb_server);
      this->_locations_path = extract_location_path(text_vector,index,nb_server);
+    //  this->_allow_methods = allowed_methods;
     this->_allow_methods = extract_location_allowed_methods(text_vector,index,nb_server);
      this->_root = extract_location_root(text_vector,index,nb_server);
     this->_client_max_body_size = extract_location_max_body_size(text_vector,index,nb_server);

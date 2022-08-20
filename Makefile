@@ -1,9 +1,10 @@
 NAME = webserv
 
 CC = c++
-CFLAGS = 
+CFLAGS = -g
 
 
+DEBUG =  valgrind --track-origins=yes 
 RM = rm
 RMFLAGS = -rf
 
@@ -79,6 +80,8 @@ CRLF= \n$(LF)
 
 all : $(NAME) $(CLIENT)
 
+debug :$(NAME_D)
+
 clean :
 	@$(RM) $(RMFLAGS) $(OBJS)
 	@printf "$(LF)🧹 $(FG_TEXT)Cleaning $(FG_TEXT_PRIMARY)$(NAME)'s Object files...\n"
@@ -102,6 +105,12 @@ $(NAME) : $(OBJS)  $(OBJS_SBOOF) $(INCS) $(INCS_SBOOF)
 	@$(CC) $(CFLAGS) -I $(INC_DIR) $(OBJS) $(OBJS_SBOOF) -o $@
 	@printf "$(LF)🎉 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@ $(FG_TEXT)!\n$(NO_COLOR)"
 
+
+$(NAME_D) : $(OBJS)  $(OBJS_SBOOF) $(INCS) $(INCS_SBOOF)
+	@printf "$(LF)🚀 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@'s Object files $(FG_TEXT)!"
+	@printf "$(CRLF)📚 $(FG_TEXT)Create $(FG_TEXT_PRIMARY)$@$(FG_TEXT)!\n"
+	@$(CC) $(CFLAGS) -g -I $(INC_DIR) $(OBJS) $(OBJS_SBOOF) -o $@
+	@printf "$(LF)🎉 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@ $(FG_TEXT)!\n$(NO_COLOR)"
 
 $(CLIENT) :  $(INCS)
 	@printf "$(LF)🚀 $(FG_TEXT)Successfully Created $(FG_TEXT_PRIMARY)$@'s Object files $(FG_TEXT)!"

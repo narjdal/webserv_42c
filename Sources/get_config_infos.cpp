@@ -32,48 +32,48 @@ void print_parsing_infos(server myserver)
          std::cout << myserver.get_listen_host() << std::endl;
             std::cout << "-----------------------Server root : ------------------"  << std::endl;
          std::cout << myserver.get_root() << std::endl;
-                   std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it1 = myserver.get_allowed_methods().begin();it1 != myserver.get_allowed_methods().end();it1++)
-         std::cout << *it1 << std::endl;
-     std::cout << "-----------------------Server  Index : | ------------------"  << std::endl;
-     for (std::vector<std::string>::iterator it2 = myserver.get_index() .begin();it2 != myserver.get_index() .end();it2++)
-         std::cout << *it2 << std::endl;
-     std::cout << "-----------------------Server  upload path : ------------------"  << std::endl;
-    std::cout << myserver.get_upload_path() << std::endl;
-     std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
-        try
-        {
-        for (std::map<std::string,std::string >::iterator it3 = myserver.get_error_pages().begin();it3 != myserver.get_error_pages().end();it3++)
-         std::cout << it3->first << it3->second << std::endl;
-           std::cout << "-----------------------------------------------"  << std::endl;
+    //                std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
+    //  for (std::vector<std::string>::iterator it1 = myserver.get_allowed_methods().begin();it1 != myserver.get_allowed_methods().end();it1++)
+    //      std::cout << *it1 << std::endl;
+    //  std::cout << "-----------------------Server  Index : | ------------------"  << std::endl;
+    //  for (std::vector<std::string>::iterator it2 = myserver.get_index() .begin();it2 != myserver.get_index() .end();it2++)
+    //      std::cout << *it2 << std::endl;
+    //  std::cout << "-----------------------Server  upload path : ------------------"  << std::endl;
+    // std::cout << myserver.get_upload_path() << std::endl;
+    //  std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
+    //     try
+    //     {
+    //     for (std::map<std::string,std::string >::iterator it3 = myserver.get_error_pages().begin();it3 != myserver.get_error_pages().end();it3++)
+    //      std::cout << it3->first << it3->second << std::endl;
+    //        std::cout << "-----------------------------------------------"  << std::endl;
 
-        // for (std::vector<std::string>::iterator it4 = myserver.get_error_pages(1).begin();it4 != myserver.get_error_pages(1).end();it4++)
+    //     // for (std::vector<std::string>::iterator it4 = myserver.get_error_pages(1).begin();it4 != myserver.get_error_pages(1).end();it4++)
         //  std::cout << *it4 << std::endl;
         //    std::cout << "-----------------------------------------------"  << std::endl;
          
           //for (std::vector<std::string>::iterator it5 = myserver.get_error_pages(2).begin();it5 != myserver.get_error_pages(2).end();it5++)
         // std::cout << *it5 << std::endl;
-        } 
-        catch (const std::string & exception)
-        {
-            std::cout << "error pages exception !" << std::endl;
-        }
-       try {
-           std::cout << "-----------------------Server  redirections  pages  : ------------------"  << std::endl;
-         for (std::vector<std::string>::iterator it3 = myserver.get_redirections()[0].begin();it3 != myserver.get_redirections()[0].end();it3++)
-         std::cout << *it3 << std::endl;
-           std::cout << "-----------------------------------------------"  << std::endl;
+        // } 
+      //   catch (const std::string & exception)
+      //   {
+      //       std::cout << "error pages exception !" << std::endl;
+      //   }
+      //  try {
+      //      std::cout << "-----------------------Server  redirections  pages  : ------------------"  << std::endl;
+      //    for (std::vector<std::string>::iterator it3 = myserver.get_redirections()[0].begin();it3 != myserver.get_redirections()[0].end();it3++)
+      //    std::cout << *it3 << std::endl;
+      //      std::cout << "-----------------------------------------------"  << std::endl;
      
-        for (std::vector<std::string>::iterator it4 = myserver.get_redirections().at(1).begin();it4 != myserver.get_redirections()[1].end();it4++)
-         std::cout << *it4 << std::endl;
+      //   for (std::vector<std::string>::iterator it4 = myserver.get_redirections().at(1).begin();it4 != myserver.get_redirections()[1].end();it4++)
+      //    std::cout << *it4 << std::endl;
          
-         // for (std::vector<std::string>::iterator it5 = myserver..at(2).begin();it5 != myserver..at(2).end();it5++)
-         //std::cout << *it5 << std::endl;
-       }
-       catch (const std::string & exception )
-       {
-        std::cout << "redirections pages exception ! " << std::endl;
-       }
+      //    // for (std::vector<std::string>::iterator it5 = myserver..at(2).begin();it5 != myserver..at(2).end();it5++)
+      //    //std::cout << *it5 << std::endl;
+      //  }
+      //  catch (const std::string & exception )
+      //  {
+      //   std::cout << "redirections pages exception ! " << std::endl;
+      //  }
            std::cout << "-----------------------Server  Client Max Body Size   : ------------------"  << std::endl;
         std::cout << myserver.get_client_max_body_size() << std::endl;
         std::cout << "-----------------------Server  AutoIndex    : ------------------"  << std::endl;

@@ -127,11 +127,16 @@ int get_highest_fd(std::vector <int > fds)
 void init_server(std::vector<server> multi_server,std::vector<int > fds)
 {
     std::vector <std::string > full_request;
+    int max_clients = 30;
+    int sd = 0;
+    int client_socket[30];
+    std::vector <int> clients_fds;
      while(1)
     {
     int valread = 0;
   int new_socket = 0;
   int server_fd = 0;
+  int activity = 0;
  //test_leaks();
     for ( int i = 0;i < fds.size() ; i++)
         {   
@@ -140,40 +145,123 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
     int addrlen = sizeof(sockaddr);
     struct timeval      time;
 	time.tv_sec = 1; // Time before time out of select 
-	time.tv_usec = 0;
+	time.tv_usec = 100;
     fd_set set; // Read_set
     //  is_socket_ready(fds,multi_server,i);
     FD_ZERO(&set);
     FD_SET(fds[i],&set);
-    select(get_highest_fd(fds) + 1 ,&set,NULL,NULL,&time); // Sending highest fd  + 1 to select
+    activity = select(get_highest_fd(fds) + 1 ,&set,NULL,NULL,&time); // Sending highest fd  + 1 to select
+    if ((activity < 0))
+    {
+        std::cout << " AN ERROR OCCURED IN SELECT " << std::endl;
+    }
      if(FD_ISSET(fds[i],&set))
     {
-        std::cout << "Data is coming ! Accepting ... "<<  i << std::endl;
+        std::cout << "Data is coming ! Accepting ... "<<  get_highest_fd(fds)<<  i << std::endl;
+     std::cout << "New connection , socket fd is " << new_socket << " , ip is" <<   inet_ntoa(sockaddr.sin_addr) << ":  , port : "   <<   ntohs(sockaddr.sin_port) << std::endl;
         if ((new_socket = accept(fds[i], (struct sockaddr *)&sockaddr, (socklen_t*)&addrlen))<0)
         {
             perror("In accept");
             exit(EXIT_FAILURE);
         }
-         fd_set write_set; // write set
+
+        std::vector<int>::iterator it = std::find(clients_fds.begin(),clients_fds.end(),new_socket);
+        if (it == clients_fds.end())
+        clients_fds.push_back(new_socket);
+
+        // for ( int help = 0;help < max_clients;help++)
+        // {
+        //     if(client_socket[help] == 0)
+        //     {
+        //         client_socket[help] = new_socket;
+        //         std::cout << " Client addes succesffuly to the list ! " << std::endl;
+        //         break;
+        //     }
+        // }
+        // for ( int help = 0;help < max_clients ; help++)
+        // {
+        //     sd  = client_socket[help];
+        //     if (FD_ISSET(sd,&set))
+        //     {
+
+        //     }
+        // }
+        for (int help = 0;help < clients_fds.size();help++)
+        {
+            sd = clients_fds[help];
+    fd_set write_set; // write set
     char buffer[30000] = {0};
     FD_ZERO(&write_set);
-    FD_SET(new_socket,&write_set);
-    select (new_socket + 1,&write_set,NULL,NULL,&time);
-    if (FD_ISSET(new_socket,&write_set))
+    FD_SET(sd,&write_set);
+    select (get_highest_fd(clients_fds) + 1,&write_set,NULL,NULL,&time);
+    if (FD_ISSET(sd,&write_set))
     {
         std::cout << "Data is coming ! ... "<< std::endl;
-        valread = read( new_socket , buffer, 30000);
+        valread = read( sd , buffer, 30000);
         full_request = parsing_request(buffer);
         Request parsed_request(full_request);
         if(parsed_request.get_location() == "/favicon.ico")
             {
                 // std::cout << " Ignoring this request ... ( this line will be removed " << std::endl;
-                close(new_socket);
+                close(sd);
                 break;
             }
        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
-        std::cout << buffer << std::endl;
+        // std::cout << buffer << std::endl;
         std::cout << "---------------------------MAIN-------------------"  << std::endl;
+                 // for (std::vector<std::string>::iterator itv = mu->get_methods().begin(); itv != it->get_methods().end(); itv++)
+            //     std::cout << "The allowed_methods : " << *itv << std::endl;
+                 std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
+    int savior = 0;
+   
+    while (  savior < multi_server[i].get_allowed_methods().size())
+    {
+        std::cout << " Server allowed methods : " << multi_server[i].get_allowed_methods()[savior] << " IDX: " << i << std::endl;
+        savior++;
+    }
+    // for (std::vector<std::string>::iterator it1 = multi_server[i].get_allowed_methods().begin();it1 != multi_server[i].get_allowed_methods().end();it1++)
+    //      std::cout << *it1 << std::endl;
+            std::cout << "-----------------------LOCATION allowed methods : ------------------"  << std::endl;
+         
+         int counteur = 0;
+         int ww = 0;
+           {
+        std::vector<location> tmp = multi_server[i].get_location();
+        while ( counteur < tmp.size())
+        {
+
+            std::cout << "The name : " << multi_server[i].get_location(counteur).get_name() << counteur << std::endl;
+            std::cout << "The location path : " << multi_server[i].get_location(counteur).get_locations_path() << std::endl;
+            ww = 0;
+            while ( ww < multi_server[i].get_location(counteur).get_methods().size())
+            {
+                std::cout << "loc allowed_methods : " << multi_server[i].get_location(counteur).get_methods()[ww] << i <<  std::endl;
+                ww++;
+
+            }
+            // for (std::vector<std::string>::iterator itv = multi_server->get_methods().begin(); itv != it->get_methods().end(); itv++)
+            // std::cout << "The root : " << it->get_root() << std::endl;
+            // std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
+            // std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
+            // std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
+            // std::cout << "*****************************************" << std::endl;
+            
+             counteur++;
+      
+        // for (std::vector<location>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        // {
+        //     counteur++;
+        //     std::cout << "The name : " << it->get_name() << counteur << std::endl;
+        //     std::cout << "The location path : " << it->get_locations_path() << std::endl;
+        //     for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
+        //         std::cout << "The allowed_methods : " << *itv << i <<  std::endl;
+        //     std::cout << "The root : " << it->get_root() << std::endl;
+        //     std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
+        //     std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
+        //     std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
+        //     std::cout << "*****************************************" << std::endl;
+        }
+    }
         std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
        Response response(parsed_request,multi_server[i]);
@@ -184,15 +272,21 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
     //    while ( datalen > 0) 
     //    {
         
-        if((pp = send(new_socket ,sboof_response.c_str(),sboof_response.size(),0) == -1))
+        if((pp = send(sd ,sboof_response.c_str(),sboof_response.size(),0) == -1))
         {
             std::cout << "error : Response to client !" << std::endl;
-            close(new_socket);
+            close(sd);
         }
         if ( pp   == -1)
             {
-                close(new_socket);
+                close(sd);
             std::cout << " smth wrong happend in send " << std::endl;
+            }
+            if ( pp == 0)
+            {
+                std::cout << " CLIENT GOT DISCONNECTED " << std::endl;
+                close(sd);
+                
             }
         datalen -= pp;
      //  }
@@ -200,16 +294,16 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
         printf("------------------Hello message sent-------------------");
         std::cout << "++++++Responding SERVER :  ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
        
-        close(new_socket);
+        close(sd);
     }
-       FD_CLR(fds[i],&write_set);
-
+    //    FD_CLR(fds[i],&write_set);
+        }
     }
     else
     {
         std::cout << "++++++ Waiting for new connection ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
     }
-       FD_CLR(fds[i],&set);
+    //    FD_CLR(fds[i],&set);
 }
     }
     }
@@ -281,8 +375,9 @@ void servers (std::vector <server> ss,std::vector <int> &fds)
     sockaddr.sin_addr.s_addr = INADDR_ANY;
     sockaddr.sin_port = htons(ss[i].get_listen_port());
     
-    fcntl(socket_fd,F_SETFL,O_NONBLOCK);
-     memset(sockaddr.sin_zero, '\0', sizeof sockaddr.sin_zero);
+    if (fcntl(socket_fd,F_SETFL,O_NONBLOCK) < 0)
+    std::cout <<" could not set TCP listening socket to be non-blocking" << std::endl;
+    //  memset(sockaddr.sin_zero, '\0', sizeof sockaddr.sin_zero);
     std::cout  << " " << ss[i].get_listen_host()<< "------------" << ss[i].get_listen_port() << std::endl;
      if (bind(socket_fd, (struct sockaddr*)&sockaddr,
              sizeof(sockaddr))
@@ -342,6 +437,7 @@ int main(int ac,char **av)
       servers(multi_server,fds);
       for (int kk = 0;kk < fds.size();kk++)
       std::cout <<  "fds => " <<fds[kk] << " "<< kk <<  std::endl;
+      std::cout << " HIGHEST FD" << get_highest_fd(fds) << std::endl;
        init_server(multi_server,fds);
     }
     

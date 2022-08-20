@@ -334,7 +334,8 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
 {
      std::vector<std::string> parser;
  std::vector <std::string> allowed_methods;
-  std::vector <std::string> correct_methods;
+ std::vector <std::string > correct_methods;
+  std::vector <std::string> tmp;
     int i = 0;
     int y = 0;
     int inside = 0;
@@ -355,10 +356,25 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
         {
             if (parser[y].compare("allow_methods") == 0)
             {
-                allowed_methods = split (text_vector[i]," ","allow_methods");
-                correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
+                tmp.push_back(text_vector[i]);
+            
+                // if(!tmp[0].empty())  
+                // tmp.erase(tmp.begin());
+                allowed_methods = split_by_space(tmp);
+                // allowed_methods.erase(allowed_methods.begin());
+             
+              correct_methods = allowed_methods;
+                tmp.clear();
+                // std::vector<std::string>::iterator pos = std::find(allowed_methods.begin(),allowed_methods.end(),"allow_methods");
+                // if(pos != allowed_methods.end())
+                correct_methods.erase(std::remove(correct_methods.begin(),correct_methods.end(),"allow_methods"));
+                // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
                 for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
-                specified_methods(*it);
+             {  
+               
+                   specified_methods(*it);
+                }
+                return(correct_methods);
                 inside = 1;
             }
             y++;
@@ -397,7 +413,7 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
             if (parser[y].compare("index") == 0)
             {
                 server_index = split (text_vector[i]," ","index");
-           correct_index.assign(server_index.begin() + 1,server_index.end());
+                correct_index.assign(server_index.begin() + 1,server_index.end());
                 inside = 1;
             }
             y++;
@@ -568,6 +584,70 @@ std::map <std::string,std::string > extract_server_errors_page1(std::vector<std:
 
 
 
+std::map <std::string,std::string > extract_server_redirections1(std::vector<std::string > text_vector,int index)
+{
+    int i = 0;
+    int count = 0;
+    std::map <std::string,std::string > redirections;
+    std::vector<std::string > parser;
+    std::vector < std::string >test;
+
+    int inside = 1;
+    int y = 0;
+       while ( i < text_vector.size())
+    {  
+            if(text_vector[i].compare("server") == 0)
+     {
+           count++;
+    }
+        if ( count == index)
+        {
+       // if(text_vector[i].find("location") != std::string::npos)
+        //return (correct_index);
+        parser = split(text_vector[i]," ","redirection");
+        y = 0;
+        while (y < parser.size())
+        {
+           // i++;
+            if (parser[y].compare("rediretion") == 0)
+            {
+
+                test = split (text_vector[i]," ","redirection");
+
+           //correct_index.assign(server_index.begin() + 1,server_index.end());
+                // errors_pages.assign(test.begin() + 1,test.end())
+                if (test.size()  == 3)
+                {
+                    redirections[test[1]] = test[2];
+                //    errors_page.insert(std::make_pair<std::string,std::string>({test[1],test[2]}));
+                std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
+            }
+            else if ( test.size() < 3)
+            {
+                std::cout << " Config file : No redirection   link  ! !,IDX :" << index  << std::endl;
+                exit(1);
+            }
+            else if (test.size() > 3)
+            {
+                std::cout << "Config file :  too many  redirections links on code !, IDX :" << index << std::endl;
+                exit(1);
+            }
+                
+                inside = 1;
+                // server_error_pages.push_back(errors_pages);
+                test.clear();
+            }
+            y++;
+        }
+        }
+    i++;
+    }
+    //correct_server_error_pages.assign(correct_server_error_pages.begin(),server_error_pages.begin() + 1,server_error_pages.end());
+    //if(!server_error_pages.size())
+  // server_error_pages.assign(server_error_pages.begin() + 1,server_error_pages.end());
+
+    return (redirections);
+}
 
 std::vector<std::vector<std::string > > extract_server_redirections(std::vector<std::string> text_vector,int index)
 {

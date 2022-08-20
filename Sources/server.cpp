@@ -6,9 +6,9 @@ server::server():
     _name(),
     _listen_port(-1),
     _listen_host(),
-    _allowed_methods(),
+    _allowed_methods(std::vector<std::string>()),
     _index(),
-    _error_pages(),
+    _error_pages(std::map<std::string,std::string>()),
     _redirections(),
     _root(""),
     _client_max_body_size(-1),
@@ -60,6 +60,26 @@ int check_listen_host(std::string tmp)
     return (0);
     
 }
+server    &server::operator=(server const &rhs)
+{
+  if (this != &rhs)
+    {
+        _name = rhs._name;
+        _listen_host = rhs._listen_host;
+        _listen_port = rhs._listen_port;
+        _index = rhs._index;
+        _autoindex = rhs._autoindex;
+        _client_max_body_size = rhs._client_max_body_size;
+        _allowed_methods = rhs._allowed_methods;
+        _location = rhs._location;
+        _cgi = rhs._cgi;
+        _redirections = rhs._redirections;
+        _upload_path = rhs._upload_path;
+        _root = rhs._root;
+        _error_pages = rhs._error_pages;
+    }
+    return *this;
+}
 std::map<std::string, std::string>  fill_error_page( void )
 {
     std::map<std::string, std::string> tmp;
@@ -85,18 +105,24 @@ server::server(std::vector<std::string> text_vector,int helper)
     this->_autoindex = false;
     this->_listen_port = -1;
     std::map <std::string,std::string> default_error_pages;
+    // std::vector <std::string> allowed_methods;
+    // allowed_methods.push_back("GET");
+    // allowed_methods.push_back("DELETE");
+    // allowed_methods.push_back("POST");
    this->_name = extract_server_names(text_vector,helper);
    
    this->_listen_port = extract_server_port(text_vector,helper);;
    // this->_listen_port = extract_server_port(text_vector,helper);
     this->_listen_host = extract_server_host(text_vector,helper);
-    this->_allowed_methods = extract_allowed_methods(text_vector,helper);
+    // this->_allowed_methods = allowed_methods;
+        this->_allowed_methods = extract_allowed_methods(text_vector,helper);
         this->_index = extract_server_index(text_vector,helper);
    this->_upload_path = extract_server_upload_path(text_vector,helper);
 //    this->_error_pages = extract_server_errors_page(text_vector,helper);
 default_error_pages= fill_error_page();
    this->_error_pages = extract_server_errors_page1(text_vector,helper,default_error_pages);
-   this->_redirections = extract_server_redirections(text_vector,helper);
+//    this->_redirections = extract_server_redirections(text_vector,helper);
+   this->_redirections = extract_server_redirections1(text_vector,helper);
    this->_root = extract_server_root(text_vector, helper);  
 //     //this->_location = extract_server_location(text_vector);
  this->_cgi = extract_server_cgi(text_vector,helper);
@@ -257,14 +283,14 @@ server::~server()
     {
         return(this->_redirections.size());
     }
-    std::vector<std::string>     server::get_redirections(int i) const
-    {
-        return(this->_redirections.at(i));
-    }
-    std::vector<std::vector<std::string> > server::get_redirections() const
-    {
-        return(this->_redirections);
-    }
+    // std::vector<std::string>     server::get_redirections(int i) const
+    // {
+    //     return(this->_redirections.at(i));
+    // }
+    // std::vector<std::vector<std::string> > server::get_redirections() const
+    // {
+    //     return(this->_redirections);
+    // }
     std::string                  server::get_root() const
     {
         return(this->_root);

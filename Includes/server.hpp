@@ -39,8 +39,8 @@ protected:
     std::string                             _upload_path;
     // std::vector<std::vector<std::string> >  _error_pages;
     std::map <std::string ,std::string >      _error_pages;
-    std::map <std::string, std::string >      _redirections1;
-    std::vector<std::vector<std::string> >  _redirections;
+    std::map <std::string, std::string >      _redirections;
+    // std::vector<std::vector<std::string> >  _redirections;
     std::string                             _root;
     std::vector<location>                   _location;
     std::vector<cgi>                        _cgi;
@@ -52,6 +52,7 @@ public:
     ~server();
     server(std::vector<std::string > text_vector,int index);
     server (const server &src);
+    server &operator=(server const &rhs);
     std::string                  get_name(int) const;
     unsigned int                 get_name_size() const;
     std::string                  get_listen_host() const;
@@ -63,11 +64,11 @@ public:
     // std::vector<std::string>     get_error_pages(int i) const;
     // std::vector<std::vector<std::string> >     get_error_pages() const{return _error_pages;};/
     std::map<std::string,std::string >     get_error_pages() const{return _error_pages;};
-
+    std::map <std::string,std::string >   get_redirections() const { return _redirections;};
     unsigned int                 get_error_pages_size() const;
     unsigned int                 get_redirections_size() const;
-    std::vector<std::string>     get_redirections(int i) const;
-    std::vector<std::vector<std::string> > get_redirections() const;
+    // std::vector<std::string>     get_redirections(int i) const;
+    // std::vector<std::vector<std::string> > get_redirections() const;
     std::string                  get_root() const;
     std::string                  get_upload_path() const;
     std::vector<location>        get_location() const;
