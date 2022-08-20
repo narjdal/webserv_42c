@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 15:16:45 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 15:34:15 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -387,10 +387,9 @@ int     Response::file_GET( void )
         check_chancked();
     }
     else if (this->_location_type == 2)
-  {    
-        std::cout << " B4 handle iiii" << std::endl;
-
-      tmp = handle_index(this->_Serv.get_index(), this->_location);}
+      tmp = handle_index(this->_Serv.get_index(), this->_location);
+    if (tmp.empty())
+        return 404;
     // if (this->_is_chanked == true)
         // return (file_Is_chancked());
     this->_header->setHeader("Content-Type", (extension(tmp)));
