@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 23:50:24 by amaach            #+#    #+#             */
-/*   Updated: 2022/07/21 17:16:41 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 18:57:09 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ class FirstLine
 private:
     std::map<int, std::string> _StatusCode;
     Request&    _req;
+    FirstLine();
 public:
     FirstLine(Request& request);
     ~FirstLine();
