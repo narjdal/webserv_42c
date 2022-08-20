@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 17:14:23 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 19:10:38 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,23 +530,23 @@ int     Response::DELETE_all_Folder( void )
 
 int     Response::handle_DELETE_Dir( void )
 {
-    if (this->_Serv.get_cgi().size() > 0)
-    {
-        std::vector<std::string> tmp;
+    // if (this->_Serv.get_cgi().size() > 0)
+    // {
+        // std::vector<std::string> tmp;
 
-        if (this->_location_index == -1)
-            tmp = this->_Serv.get_index();
-        else
-            tmp = this->_Serv.get_location(this->_location_index).get_index();
-        if (tmp.size() > 0)
-        {
-            if (check_CGI())
-                return (CGI()); // 204 !!
-        }
-        else
-            return (403);
-    }
-    else
+        // if (this->_location_index == -1)
+            // tmp = this->_Serv.get_index();
+        // else
+            // tmp = this->_Serv.get_location(this->_location_index).get_index();
+        // if (tmp.size() > 0)
+        // {
+            // if (check_CGI())
+                // return (CGI()); // 204 !!
+        // }
+        // else
+            // return (403);
+    // }
+    // else
         return (DELETE_all_Folder());
     return (500);
 }

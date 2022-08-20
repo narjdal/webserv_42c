@@ -100,7 +100,8 @@ void specified_wordsv2(std::string word)
 
 void check_syntax_error(std::vector <std::string > text_vector)
 {
-  for (std::vector<std::string>::iterator it = text_vector.begin(); it != text_vector.end(); ++it)
+    std::vector <std::string > tmp1 = text_vector;
+  for (std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); ++it)
     {
         std::string line = *it;
         std::stringstream ss(line);
