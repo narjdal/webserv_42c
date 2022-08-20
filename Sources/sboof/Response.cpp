@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 15:34:15 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 16:45:25 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,16 +243,16 @@ bool    Response::check_location()
 
 bool    Response::check_CGI( void )
 {
-    std::vector<std::string>   str = ft_split(this->_request.get_location(), ".");
+    // std::vector<std::string>   str = ft_split(this->_request.get_location(), ".");
 
-    for (int i = 0; i < this->_Serv.get_cgi_size(); i++)
-    {
-        if (this->_Serv.get_cgi(i).get_cgi_name() == "." + str.back())
-        {
-            this->_Cgi_Path = this->_Serv.get_cgi(i).get_cgi_path();
-            return (true);
-        }
-    }
+    // for (int i = 0; i < this->_Serv.get_cgi_size(); i++)
+    // {
+    //     if (this->_Serv.get_cgi(i).get_cgi_name() == "." + str.back())
+    //     {
+    //         this->_Cgi_Path = this->_Serv.get_cgi(i).get_cgi_path();
+    //         return (true);
+    //     }
+    // }
     return (false);
 }
 
@@ -269,6 +269,7 @@ int     Response::CGI( void )
 
     this->_is_cgi = true;
     return (cgi.execute(*this, this->_request, root));
+    return (200);
 }
 
 //**********************************************GET**********************************************//
@@ -403,8 +404,7 @@ int     Response::cgi_GET( void )
     if (check_CGI())
         return (CGI());
     else
-{    std::cout << " going to file get" << std::endl;
-        return (file_GET());}
+        return (file_GET());
 }
 
 int     Response::handle_GET_Dir( void )
@@ -630,6 +630,12 @@ void    help_show_data_serv(server ser)
             std::cout << "The allowed_methods : " << *i << std::endl;
     }
     
+    {
+        std::vector<std::string> tmp = ser.get_index();
+        for (std::vector<std::string>::iterator i = tmp.begin(); i != tmp.end(); i++)
+            std::cout << "The index : " << *i << std::endl;
+    }
+    
     std::cout << "The upload_path : " << ser.get_upload_path() << std::endl;
     
     {
@@ -652,6 +658,8 @@ void    help_show_data_serv(server ser)
             std::cout << "The location path : " << it->get_locations_path() << std::endl;
             for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
                 std::cout << "The allowed_methods : " << *itv << std::endl;
+            for (std::vector<std::string>::iterator i = it->get_index().begin(); i != it->get_index().end(); i++)
+                std::cout << "The index : " << *i << std::endl;
             std::cout << "The root : " << it->get_root() << std::endl;
             std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
             std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
@@ -684,8 +692,8 @@ std::string Response::get_Response( void )
 {
     FirstLine   FirstLine(this->_request);
 
-    help_show_data(this->_request);
-    // help_show_data_serv(this->_Serv);
+    // help_show_data(this->_request);
+    help_show_data_serv(this->_Serv);
     int i = statuscode();
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
