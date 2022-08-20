@@ -12,6 +12,7 @@ server::server():
     _redirections(),
     _root(""),
     _client_max_body_size(-1),
+    _location(std::vector<location>()),
     _autoindex(false),
     response_chuncked(false)
 {

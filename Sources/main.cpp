@@ -239,27 +239,7 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
                 ww++;
 
             }
-            // for (std::vector<std::string>::iterator itv = multi_server->get_methods().begin(); itv != it->get_methods().end(); itv++)
-            // std::cout << "The root : " << it->get_root() << std::endl;
-            // std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
-            // std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
-            // std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
-            // std::cout << "*****************************************" << std::endl;
-            
              counteur++;
-      
-        // for (std::vector<location>::iterator it = tmp.begin(); it != tmp.end(); it++)
-        // {
-        //     counteur++;
-        //     std::cout << "The name : " << it->get_name() << counteur << std::endl;
-        //     std::cout << "The location path : " << it->get_locations_path() << std::endl;
-        //     for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
-        //         std::cout << "The allowed_methods : " << *itv << i <<  std::endl;
-        //     std::cout << "The root : " << it->get_root() << std::endl;
-        //     std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
-        //     std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
-        //     std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
-        //     std::cout << "*****************************************" << std::endl;
         }
     }
         std::cout << ("------------------ message -------------------") << std::endl;

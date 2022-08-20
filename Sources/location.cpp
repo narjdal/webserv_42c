@@ -148,7 +148,7 @@ int find_right_server = 0;
              found = text_vector[y].find("allow_methods") ;
            if (found != std::string::npos)
             {
-                tmp.push_back(text_vector[y]);
+                 tmp.push_back(text_vector[y]);
                  allowed_methods = split_by_space(tmp);
                  int i = 0;
                  for(std::vector<std::string>::iterator it2 = allowed_methods.begin();it2 != allowed_methods.end();it2++)
@@ -191,7 +191,7 @@ int find_right_server = 0;
                 // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
                 for(std::vector<std::string>::iterator it = correct_methods.begin();it != correct_methods.end();it++)
              { 
-                    // std::cout << "it :" << *it << std::endl;
+                     std::cout << "it :" << *it << std::endl;
                      specified_methods(*it);
             
             }
@@ -357,7 +357,15 @@ std::vector<std::string> location_limit;
              parser = split(text_vector[y]," ","index");
                 if (!parser.empty())
                 {
-                    correct_index.assign(parser.begin() + 1,parser.end());
+                    int i = 0;
+                    std::vector<std::string> tmp = parser;
+                    for(std::vector<std::string>::iterator it = tmp.begin();it != tmp.end();it++)
+                    {
+                    if (i > 0 )
+                    correct_index.push_back(*it);
+                    i++;
+                    }
+                    // correct_index.assign(parser.begin() + 1,parser.end());
                     return (correct_index);
                 }
             y++;
@@ -500,6 +508,8 @@ location::location(std::vector<std::string> text_vector,int index,int nb_server)
     // allowed_methods.push_back("GET");
     // allowed_methods.push_back("DELETE");
     // allowed_methods.push_back("POST");
+    std::vector<std::string> tmp;
+    this->_index = tmp;
     this->_name = extract_location_path(text_vector,index, nb_server);
      this->_locations_path = extract_location_path(text_vector,index,nb_server);
     //  this->_allow_methods = allowed_methods;

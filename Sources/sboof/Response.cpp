@@ -662,11 +662,13 @@ void    help_show_data_serv(server ser)
         {
             std::cout << "The name : " << it->get_name() << std::endl;
             std::cout << "The location path : " << it->get_locations_path() << std::endl;
-            for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
+            std::vector<std::string> tmp_methods = it->get_methods();
+            for (std::vector<std::string>::iterator itv = tmp_methods.begin(); itv != tmp_methods.end(); itv++)
                 std::cout << "The allowed_methods : " << *itv << std::endl;
             std::cout << "The root : " << it->get_root() << std::endl;
             std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
-            for (std::vector<std::string>::iterator i = it->get_index().begin(); i != it->get_index().end(); i++)
+            std::vector<std::string> loc_index = it->get_index();
+            for (std::vector<std::string>::iterator i = loc_index.begin(); i != loc_index.end(); i++)
                 std::cout << "The index : " << *i << std::endl;
             std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
             std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
