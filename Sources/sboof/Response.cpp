@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 16:45:25 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 17:14:23 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,16 @@ std::vector<std::string>     ft_split(std::string s1, std::string delim)
     return (vector);
 }
 
-int     return_loc(std::vector<string> vec1, std::vector<string> vec2)
+int     return_loc(std::vector<std::string> vec1, std::vector<std::string> vec2)
 {
-    std::vector<string>::iterator it2 = vec2.begin();
+    std::vector<std::string> tmp1 = vec1;
+    std::vector<std::string> tmp2 = vec2;
+    std::vector<string>::iterator it2 = tmp2.begin();
     int     compt = 0;
 
-    for(std::vector<string>::iterator it = vec1.begin(); it != vec1.end(); it++)
+    for(std::vector<string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
     {
-        if (it2 != vec2.end())
+        if (it2 != tmp2.end())
         {
             if (*it == *it2)
                 compt++;
@@ -319,8 +321,9 @@ int     Response::handle_GET_autoindex( void )
 std::string    handle_index( std::vector<std::string> vector, std::string root)
 {
     std::string     tmp;
+    std::vector<std::string> tmp1 = vector;
 
-    for(std::vector<std::string>::iterator it = vector.begin(); it != vector.end(); it++)
+    for(std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
     {
         tmp = root + *it;
         std::cout << "tmp=> " << tmp << std::endl;
@@ -606,7 +609,8 @@ void    help_show_data(Request req)
     std::cout << "The is location : " << req.location << std::endl;
     std::cout << "The is vrs : " << req.vrs << std::endl;
     
-    for (std::map<std::string,std::string>::iterator it=req.headers.begin(); it!=req.headers.end(); ++it)
+    std::map<std::string,std::string> tmp = req.headers;
+    for (std::map<std::string,std::string>::iterator it= tmp.begin(); it!= tmp.end(); ++it)
         std::cout << "The is headers : " << it->first << " => " << it->second << std::endl;
 
     std::cout << "The is body : " << req.body << std::endl;
@@ -618,10 +622,12 @@ void    help_show_data(Request req)
 void    help_show_data_serv(server ser)
 {
     std::cout << "*****************************************" << std::endl;
-    std::cout << "*****************ROOT********************" << std::endl;
+    std::cout << "****************SERVER*******************" << std::endl;
     for (int i = 0; i < ser.get_name_size(); i++)
         std::cout << "The name N" << i << " : " << ser.get_name(i) << std::endl;
+
     std::cout << "The listen_port : " << ser.get_listen_port() << std::endl;
+    
     std::cout << "The listen_host : " << ser.get_listen_host() << std::endl;
 
     {
@@ -647,7 +653,7 @@ void    help_show_data_serv(server ser)
     std::cout << "The root : " << ser.get_root() << std::endl;
     std::cout << "The client max body size : " << ser.get_client_max_body_size() << std::endl;
     std::cout << "The auto index : " << bool(ser.get_autoindex()) << std::endl;
-    std::cout << "****************/ROOT********************" << std::endl << std::endl;
+    std::cout << "***************/SERVER*******************" << std::endl << std::endl;
     std::cout << "***************location******************" << std::endl;
     
     {
@@ -658,10 +664,10 @@ void    help_show_data_serv(server ser)
             std::cout << "The location path : " << it->get_locations_path() << std::endl;
             for (std::vector<std::string>::iterator itv = it->get_methods().begin(); itv != it->get_methods().end(); itv++)
                 std::cout << "The allowed_methods : " << *itv << std::endl;
-            for (std::vector<std::string>::iterator i = it->get_index().begin(); i != it->get_index().end(); i++)
-                std::cout << "The index : " << *i << std::endl;
             std::cout << "The root : " << it->get_root() << std::endl;
             std::cout << "The client max body size : " << it->get_client_max_body_size() << std::endl;
+            for (std::vector<std::string>::iterator i = it->get_index().begin(); i != it->get_index().end(); i++)
+                std::cout << "The index : " << *i << std::endl;
             std::cout << "The autoindex : " << bool(it->get_autoindex()) << std::endl;
             std::cout << "The upload path : " << it->get_upload_path() << std::endl << std::endl;
             std::cout << "*****************************************" << std::endl;
