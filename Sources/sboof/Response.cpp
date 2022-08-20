@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 21:38:02 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/20 21:52:16 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -647,6 +647,12 @@ void    help_show_data_serv(server ser)
         std::map<std::string, std::string> tmp = ser.get_error_pages();
         for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
             std::cout << "The Error page : " << it->first << " and his path : " << it->second << std::endl;
+    }
+
+    {
+        std::map<std::string, std::string> tmp = ser.get_redirections();
+        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+            std::cout << "The Redirections : " << it->first << " and his path : " << it->second << std::endl;
     }
 
     std::cout << "The root : " << ser.get_root() << std::endl;
