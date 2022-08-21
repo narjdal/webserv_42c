@@ -893,16 +893,19 @@ void check_cgi(std::string tmp)
     int i = 0;
     while (tmp[i])
     {
-        if(tmp[i] == '.')
+    if (tmp[0] != '.')
+        break;
+        if(tmp[0] == '.')
         {
-            if(tmp[i + 1] == 'p' && tmp[i + 2] == 'y' && tmp[i + 3] == '\0')
+            if(tmp[1] == 'p' && tmp[2] == 'y' && tmp[3] == '\0')
                 return ;
-            else if (tmp[i  + 1] == 'p' && tmp[i + 2] == 'h' && tmp[i + 3] == 'p' && tmp[i + 4] == '\0')
+            else if (tmp[1] == 'p' && tmp[2] == 'h' && tmp[3] == 'p' && tmp[i + 4] == '\0')
             return ;
         }
     i++;
     }
-    std::cout << " Error ! cgi extension " << tmp << std::endl;
+    if(!tmp.empty())
+    std::cout << " Error ! cgi extension "  << std::endl;
     exit(1);
 }
 // TO FIXE ERRORS CASE : if no path is specified
@@ -938,14 +941,15 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int in
             inside = 1;
             if ( inside == 1)
             {
-                // if(!parser[1].empty())
-                // check_cgi(parser[1]);
+                parser[1] = removespace(parser[1]);
+                if(!parser[1].empty())
+                check_cgi(parser[1]);
                 // while ( i < text_vector.size())
                 // {
                     cgi_path = split(text_vector[i]," ",(char *)"cgi_path");
                 //     if()
                 // {
-                    if(cgi_path.size() > 1)
+                    if(cgi_path.size() == 2)
                    {
                     tmp.set_cgi_path(cgi_path[1]);
                      path = 1;
@@ -962,7 +966,7 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int in
                   }
 
                     cgi_name = split(text_vector[i]," ",(char *)"cgi_name");
-                    if(cgi_name.size() > 1)
+                    if(cgi_name.size() ==  2)
                    {
                      tmp.set_cgi_name(cgi_name[1]);
                     name = 1;

@@ -131,6 +131,7 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
     int sd = 0;
     int client_socket[30];
     std::vector <int> clients_fds;
+int all_connections[255];
      while(1)
     {
     int valread = 0;
@@ -169,23 +170,6 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
         if (it == clients_fds.end())
         clients_fds.push_back(new_socket);
 
-        // for ( int help = 0;help < max_clients;help++)
-        // {
-        //     if(client_socket[help] == 0)
-        //     {
-        //         client_socket[help] = new_socket;
-        //         std::cout << " Client addes succesffuly to the list ! " << std::endl;
-        //         break;
-        //     }
-        // }
-        // for ( int help = 0;help < max_clients ; help++)
-        // {
-        //     sd  = client_socket[help];
-        //     if (FD_ISSET(sd,&set))
-        //     {
-
-        //     }
-        // }
         for (int help = 0;help < clients_fds.size();help++)
         {
             sd = clients_fds[help];
@@ -202,7 +186,6 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
         Request parsed_request(full_request);
         if(parsed_request.get_location() == "/favicon.ico")
             {
-                // std::cout << " Ignoring this request ... ( this line will be removed " << std::endl;
                 close(sd);
                 break;
             }
@@ -212,42 +195,7 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
                  // for (std::vector<std::string>::iterator itv = mu->get_methods().begin(); itv != it->get_methods().end(); itv++)
             //     std::cout << "The allowed_methods : " << *itv << std::endl;
                  std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
-    int savior = 0;
-   
-    while (  savior < multi_server[i].get_allowed_methods().size())
-    {
-        std::cout << " Server allowed methods : " << multi_server[i].get_allowed_methods()[savior] << " IDX: " << i << std::endl;
-        savior++;
-    }
-    savior = 0;
-      while (  savior < multi_server[i].get_index().size())
-    {
-        std::cout << " Server INDEX  : " << multi_server[i].get_index()[savior] << " IDX: " << i << std::endl;
-        savior++;
-    }
-    // for (std::vector<std::string>::iterator it1 = multi_server[i].get_allowed_methods().begin();it1 != multi_server[i].get_allowed_methods().end();it1++)
-    //      std::cout << *it1 << std::endl;
-            std::cout << "-----------------------LOCATION allowed methods : ------------------"  << std::endl;
-         
-         int counteur = 0;
-         int ww = 0;
-           {
-        std::vector<location> tmp = multi_server[i].get_location();
-        while ( counteur < tmp.size())
-        {
-
-            std::cout << "The name : " << multi_server[i].get_location(counteur).get_name() << counteur << std::endl;
-            std::cout << "The location path : " << multi_server[i].get_location(counteur).get_locations_path() << std::endl;
-            ww = 0;
-            while ( ww < multi_server[i].get_location(counteur).get_methods().size())
-            {
-                std::cout << "loc allowed_methods : " << multi_server[i].get_location(counteur).get_methods()[ww] << i <<  std::endl;
-                ww++;
-
-            }
-             counteur++;
-        }
-    }
+ 
         std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
        Response response(parsed_request,multi_server[i]);
