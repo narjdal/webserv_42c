@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 18:58:19 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 20:10:01 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,21 @@ std::string Response_cgi::header_to_envp(std::map<std::string, std::string>::ite
     return (tmp);
 }
 
+std::string ft_toupper_headers( std::string str)
+{
+    std::string     tmp;
+
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '-')
+            tmp.push_back('_');
+        else
+            tmp.push_back(toupper(str[i]));
+    }
+
+    return (tmp);
+}
+
 void    Response_cgi::set_envp(Response& response, Request &request, std::string root_path)
 {
     std::vector<std::string>    envp_vect;
@@ -56,15 +71,20 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
     envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
     envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
     envp_vect.push_back("REMOTE_PORT=0");
+    {
+        std::map<std::string, std::string> tmp = response.get_Request().get_headrs();
+        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+            envp_vect.push_back("HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\r\n");
+    }
     if (request.get_headrs()["Cookie"].size() > 0)
         envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);   
-	if (request.get_body_len() > 0)
+	if (request.get_body_len() == 0)
     {
-        envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
-        envp_vect.push_back("CONTENT_LENGTH=" + std::to_string(request.get_body_len()));
-    }
-    else
-    {
+    //     // envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
+    //     // envp_vect.push_back("CONTENT_LENGTH=" + std::to_string(request.get_body_len()));
+    // }
+    // else
+    // {
         envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
         envp_vect.push_back("CONTENT_LENGTH=0");
     }
@@ -115,9 +135,7 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
         return (500);
     pid = fork();
     if (pid == -1)
-    {
         return 502;
-    }
     if (pid == 0)
     {
         int cgi_response_fd = 0;
@@ -143,7 +161,7 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
         if (waitpid(pid, &status, 0) == -1)
             return 500;
         int exit_status;
-        if (WIFEXITED(status) && (exit_status = WEXITSTATUS(status)) == 21) 
+        if (WIFEXITED(status) && (exit_status = WEXITSTATUS(status)) == 21)
             return 502;
         else if (WIFEXITED(status) && (exit_status = WEXITSTATUS(status)) == 204)
             return 204;
@@ -151,21 +169,6 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
 
     fillResponseBuffer(response);
     return 200; 
-}
-
-std::string ft_toupper_headers( std::string str)
-{
-    std::string     tmp;
-
-    for (int i = 0; i < str.size(); i++)
-    {
-        if (str[i] == '-')
-            tmp.push_back('_');
-        else
-            tmp.push_back(toupper(str[i]));
-    }
-
-    return (tmp);
 }
 
 void        Response_cgi::set_header(Response & response)
@@ -176,27 +179,34 @@ void        Response_cgi::set_header(Response & response)
     if (FILE.is_open())
     {
         std::string                 LINE;
+        bool                        headrefinish = false;
         size_t                      header_index;
-        std::map<std::string, std::string> tmp = response.get_Request().get_headrs();
 
-        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
-            this->_FILEINLINE += "HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\r\n";
         while (getline (FILE, LINE))
-            this->_FILEINLINE += LINE + "\n";
-        header_index = this->_FILEINLINE.find_first_of("\n\n", 0, 2);
-        if (header_index != std::string::npos)
-            this->_header = this->_FILEINLINE.substr(0, header_index);
-        else
-            this->_header = "";
+        {
+            if (LINE.size() == 1)
+                headrefinish = true;
+            if (headrefinish == true)
+                this->_FILEINLINE += LINE + "\n";
+        }
+        // header_index = this->_FILEINLINE.find_first_of("\n\n");
+        // std::cout << "THE HEADER INDEX = " << header_index << std::endl;
+        // std::cout << "THE FILE = " << this->_FILEINLINE << std::endl;
+        // if (header_index != std::string::npos)
+        // {
+        //     this->_header = this->_FILEINLINE.substr(0, header_index);
+        //     this->_FILEINLINE.erase(0, header_index);
+        // }
+        // else
+        //     this->_header = "";
     }
-    else
         this->_header = "";
     FILE.close();
 }
 
 std::string Response_cgi::set_status( void )
 {
-    std::string                 status = "200 OK\r\n";
+    std::string                 status;
     size_t                      status_index = 0;
     size_t                      len;
 
@@ -215,9 +225,9 @@ void        Response_cgi::fillResponseBuffer( Response & response )
     set_header(response);
     std::string     tmp;
 
-    tmp = set_status();
-    tmp += this->_FILEINLINE;
-    response.set_Body(tmp);
+    // tmp = set_status();
+    // tmp += this->_FILEINLINE;
+    response.set_Body(this->_FILEINLINE);
     // std::cout << "THE RESPONSE = " << response.get_Body() << std::endl;
     // std::cout << "THE FILE = " << this->_FILEINLINE << std::endl;
     remove(_cgi_response_file.c_str());

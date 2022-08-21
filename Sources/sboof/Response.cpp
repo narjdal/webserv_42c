@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/21 17:55:42 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 18:47:06 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,16 +262,8 @@ int     Response::CGI( void )
 {
 
     Response_cgi    cgi;
-    std::string     root;
-    std::vector<std::string>    tmp = ft_split(this->_request.get_location(), "/");
 
-    root = (this->_location_index == -1) ? this->_Serv.get_root() : this->_Serv.get_location(this->_location_index).get_root();
-    root += tmp.back();
-    root = skip_slash(root);
-
-    this->_is_cgi = true;
-    return (cgi.execute(*this, this->_request, root));
-    return (200);
+    return (cgi.execute(*this, this->_request, this->_location));
 }
 
 //**********************************************GET**********************************************//
@@ -475,8 +467,6 @@ int     Response::Upload_file( std::string upload_path )
 
 int     Response::check_POST( void )
 {
-    std::cout << "THE LOCATION = " << this->_location << std::endl;
-    std::cout << "the extension is = " << extension(this->_location) << " and The cgi size = " << this->_Serv.get_cgi().size() << std::endl;
     if (this->_Serv.get_cgi().size() > 0 && (extension(this->_location) == "php" || extension(this->_location) == "py"))
             return (cgi_POST());
     else if (this->_location_type == 1)
@@ -705,7 +695,7 @@ std::string Response::get_Response( void )
     FirstLine   FirstLine(this->_request);
 
     // help_show_data(this->_request);
-    help_show_data_serv(this->_Serv);
+    // help_show_data_serv(this->_Serv);
     int i = statuscode();
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
