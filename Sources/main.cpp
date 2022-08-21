@@ -54,7 +54,8 @@ It extracts the first connection request on the queue of pending connections for
 
  */
 #define PORT 8080
-
+#define DATA_BUFFER 5000
+#define MAX_CONNECTIONS 200
 void test_leaks()
 {
     system("leaks webserv");
@@ -131,64 +132,97 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
     int sd = 0;
     int client_socket[30];
     std::vector <int> clients_fds;
-int all_connections[255];
-     while(1)
-    {
-    int valread = 0;
-  int new_socket = 0;
-  int server_fd = 0;
-  int activity = 0;
- //test_leaks();
-    for ( int i = 0;i < fds.size() ; i++)
-        {   
-     struct sockaddr_in sockaddr = {0};
-    sockaddr = multi_server[i].get_sock_ader();
-    int addrlen = sizeof(sockaddr);
-    struct timeval      time;
-	time.tv_sec = 1; // Time before time out of select 
-	time.tv_usec = 100;
-    fd_set set; // Read_set
-    //  is_socket_ready(fds,multi_server,i);
-    FD_ZERO(&set);
-    FD_SET(fds[i],&set);
-    activity = select(get_highest_fd(fds) + 1 ,&set,NULL,NULL,&time); // Sending highest fd  + 1 to select
-    if ((activity < 0))
-    {
-        std::cout << " AN ERROR OCCURED IN SELECT " << std::endl;
-    }
-     if(FD_ISSET(fds[i],&set))
-    {
-        std::cout << "Data is coming ! Accepting ... "<<  get_highest_fd(fds)<<  i << std::endl;
-     std::cout << "New connection , socket fd is " << new_socket << " , ip is" <<   inet_ntoa(sockaddr.sin_addr) << ":  , port : "   <<   ntohs(sockaddr.sin_port) << std::endl;
-        if ((new_socket = accept(fds[i], (struct sockaddr *)&sockaddr, (socklen_t*)&addrlen))<0)
-        {
-            perror("In accept");
-            exit(EXIT_FAILURE);
-        }
+// int all_connections[255];
+    //  while(1)
+    // {
 
-        std::vector<int>::iterator it = std::find(clients_fds.begin(),clients_fds.end(),new_socket);
-        if (it == clients_fds.end())
-        clients_fds.push_back(new_socket);
+         fd_set read_fd_set;
+     struct sockaddr_in new_addr;
+     int server_fd, new_fd, ret_val, i;
+     socklen_t addrlen;
+     char buf[DATA_BUFFER];
+     int all_connections[MAX_CONNECTIONS];
+    
+     /* Get the socket server fd */
+    //  server_fd = create_tcp_server_socket();
+    int nb_of_servers = multi_server.size();
+    server_fd = fds[0];
+     if (server_fd == -1) {
+       fprintf(stderr, "Failed to create a server\n");
+    //    return -1; 
+     }   
 
-        for (int help = 0;help < clients_fds.size();help++)
-        {
-            sd = clients_fds[help];
-    fd_set write_set; // write set
-    char buffer[30000] = {0};
-    FD_ZERO(&write_set);
-    FD_SET(sd,&write_set);
-    select (get_highest_fd(clients_fds) + 1,&write_set,NULL,NULL,&time);
-    if (FD_ISSET(sd,&write_set))
-    {
-        std::cout << "Data is coming ! ... "<< std::endl;
-        valread = read( sd , buffer, 30000);
-        full_request = parsing_request(buffer);
-        Request parsed_request(full_request);
-        if(parsed_request.get_location() == "/favicon.ico")
+     /* Initialize all_connections and set the first entry to server fd */
+     for (i=0;i < MAX_CONNECTIONS;i++) {
+         all_connections[i] = -1;
+     }
+     for ( int i = 0; i < fds.size();i++)
+     all_connections[i] = fds[i];
+
+     while (1) {
+
+         FD_ZERO(&read_fd_set);
+         /* Set the fd_set before passing it to the select call */
+         for (i=0;i < MAX_CONNECTIONS;i++) {
+             if (all_connections[i] >= 0) {
+                 FD_SET(all_connections[i], &read_fd_set);
+             }
+         }
+
+         /* Invoke select() and then wait! */
+         std::cout << ("+++++++++++++Waiting for a new connections ") << std::endl;
+         ret_val = select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL);
+
+         /* select() woke up. Identify the fd that has events */
+         if (ret_val >= 0 ) {
+             printf("Select returned with %d\n", ret_val);
+             /* Check if the fd with event is the server fd */
+             for ( int i = 0;i < nb_of_servers;i++)
             {
-                close(sd);
-                break;
+                 if (FD_ISSET(fds[i], &read_fd_set)) { 
+                 /* accept the new connection */
+                 printf("Returned fd is %d (server's fd)\n", server_fd);
+                 new_fd = accept(fds[i], (struct sockaddr*)&new_addr, &addrlen);
+                 if (new_fd >= 0) {
+                     printf("Accepted a new connection with fd: %d\n", new_fd);
+                     for (i=0;i < MAX_CONNECTIONS;i++) {
+                         if (all_connections[i] < 0) {
+                             all_connections[i] = new_fd; 
+                             break;
+                         }
+                     }
+                 } else {
+                     fprintf(stderr, "accept failed [%s]\n", strerror(errno));
+                 }
+                 ret_val--;
+                 if (!ret_val) continue;
+             } 
             }
+
+
+             /* Check if the fd with event is a non-server fd */
+             for (i=fds.size();i < MAX_CONNECTIONS;i++) {
+                 if ((all_connections[i] > 0) &&
+                     (FD_ISSET(all_connections[i], &read_fd_set))) {
+                     /* read incoming data */   
+                     printf("Returned fd is %d [index, i: %d]\n", all_connections[i], i);
+                     ret_val = read(all_connections[i], buf, DATA_BUFFER);
+                     if (ret_val == 0) {
+       
+                         printf("Closing connection for fd:%d\n", all_connections[i]);
+                         close(all_connections[i]);
+                         all_connections[i] = -1; /* Connection is now closed */
+                     } 
+                     if (ret_val > 0) { 
+                         printf("Received data (len %d bytes, fd: %d): %s\n", 
+                             ret_val, all_connections[i], buf);
+                               full_request = parsing_request(buf);
+        Request parsed_request(full_request);
+        // if(parsed_request.get_location() == "/favicon.ico")
+        //     {
+        //         close(sd);
+        //         break;
+        //     }
        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
         // std::cout << buffer << std::endl;
         std::cout << "---------------------------MAIN-------------------"  << std::endl;
@@ -198,49 +232,140 @@ int all_connections[255];
  
         std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
-       Response response(parsed_request,multi_server[i]);
+       Response response(parsed_request,multi_server[0]);
       std::string sboof_response(response.get_Response());
         std::cout << ("------------------ FINAL RESPONSE -------------------") << std::endl;
-     int datalen = sboof_response.size();
-    int pp = 0;
-    //    while ( datalen > 0) 
-    //    {
+                            send(all_connections[i],sboof_response.c_str(),sboof_response.size(),0);
+      
+                     } 
+                     if (ret_val == -1) {
+                         printf("recv() failed for fd: %d [%s]\n", 
+                             all_connections[i], strerror(errno));
+                            //  std::cout << 
+                         break;
+                     }
+                 }
+                 ret_val--;
+                 if (!ret_val) continue;
+             } /* for-loop */
+         }
+         } /* (ret_val >= 0) */
+    //  ÷} /* while(1) */
+
+     /* Last step: Close all the sockets */
+     for (i=0;i < MAX_CONNECTIONS;i++) {
+         if (all_connections[i] > 0) {
+             close(all_connections[i]);
+         }
+     }
+    }
+//     int valread = 0;
+//   int new_socket = 0;
+//   int server_fd = 0;
+//   int activity = 0;
+//  //test_leaks();
+//     for ( int i = 0;i < fds.size() ; i++)
+//         {   
+//      struct sockaddr_in sockaddr = {0};
+//     sockaddr = multi_server[i].get_sock_ader();
+//     int addrlen = sizeof(sockaddr);
+//     struct timeval      time;
+// 	time.tv_sec = 1; // Time before time out of select 
+// 	time.tv_usec = 100;
+//     fd_set set; // Read_set
+//     //  is_socket_ready(fds,multi_server,i);
+//     FD_ZERO(&set);
+//     FD_SET(fds[i],&set);
+//     activity = select(get_highest_fd(fds) + 1 ,&set,NULL,NULL,&time); // Sending highest fd  + 1 to select
+//     if ((activity < 0))
+//     {
+//         std::cout << " AN ERROR OCCURED IN SELECT " << std::endl;
+//     }
+//      if(FD_ISSET(fds[i],&set))
+//     {
+//         std::cout << "Data is coming ! Accepting ... "<<  get_highest_fd(fds)<<  i << std::endl;
+//      std::cout << "New connection , socket fd is " << new_socket << " , ip is" <<   inet_ntoa(sockaddr.sin_addr) << ":  , port : "   <<   ntohs(sockaddr.sin_port) << std::endl;
+//         if ((new_socket = accept(fds[i], (struct sockaddr *)&sockaddr, (socklen_t*)&addrlen))<0)
+//         {
+//             perror("In accept");
+//             exit(EXIT_FAILURE);
+//         }
+
+//         std::vector<int>::iterator it = std::find(clients_fds.begin(),clients_fds.end(),new_socket);
+//         if (it == clients_fds.end())
+//         clients_fds.push_back(new_socket);
+
+//         for (int help = 0;help < clients_fds.size();help++)
+//         {
+//             sd = clients_fds[help];
+//     fd_set write_set; // write set
+//     char buffer[30000] = {0};
+//     FD_ZERO(&write_set);
+//     FD_SET(sd,&write_set);
+//     select (get_highest_fd(clients_fds) + 1,&write_set,NULL,NULL,&time);
+//     if (FD_ISSET(sd,&write_set))
+//     {
+//         std::cout << "Data is coming ! ... "<< std::endl;
+//         valread = read( sd , buffer, 30000);
+//         full_request = parsing_request(buffer);
+//         Request parsed_request(full_request);
+//         if(parsed_request.get_location() == "/favicon.ico")
+//             {
+//                 close(sd);
+//                 break;
+//             }
+//        std::cout << "---------------------------BUFFER-------------------"  << std::endl;
+//         // std::cout << buffer << std::endl;
+//         std::cout << "---------------------------MAIN-------------------"  << std::endl;
+//                  // for (std::vector<std::string>::iterator itv = mu->get_methods().begin(); itv != it->get_methods().end(); itv++)
+//             //     std::cout << "The allowed_methods : " << *itv << std::endl;
+//                  std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
+ 
+//         std::cout << ("------------------ message -------------------") << std::endl;
+//         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
+//        Response response(parsed_request,multi_server[i]);
+//       std::string sboof_response(response.get_Response());
+//         std::cout << ("------------------ FINAL RESPONSE -------------------") << std::endl;
+//      int datalen = sboof_response.size();
+//     int pp = 0;
+//     //    while ( datalen > 0) 
+//     //    {
         
-        if((pp = send(sd ,sboof_response.c_str(),sboof_response.size(),0) == -1))
-        {
-            std::cout << "error : Response to client !" << std::endl;
-            close(sd);
-        }
-        if ( pp   == -1)
-            {
-                close(sd);
-            std::cout << " smth wrong happend in send " << std::endl;
-            }
-            if ( pp == 0)
-            {
-                std::cout << " CLIENT GOT DISCONNECTED " << std::endl;
-                close(sd);
+//         if((pp = send(sd ,sboof_response.c_str(),sboof_response.size(),0) == -1))
+//         {
+//             std::cout << "error : Response to client !" << std::endl;
+//             close(sd);
+//         }
+//         if ( pp   == -1)
+//             {
+//                 close(sd);
+//             std::cout << " smth wrong happend in send " << std::endl;
+//             }
+//             if ( pp == 0)
+//             {
+//                 std::cout << " CLIENT GOT DISCONNECTED " << std::endl;
+//                 close(sd);
                 
-            }
-        datalen -= pp;
-     //  }
-     std::cout << multi_server[i].get_listen_host() << std::endl;
-        printf("------------------Hello message sent-------------------");
-        std::cout << "++++++Responding SERVER :  ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
+//             }
+//         datalen -= pp;
+//      //  }
+//      std::cout << multi_server[i].get_listen_host() << std::endl;
+//         printf("------------------Hello message sent-------------------");
+//         std::cout << "++++++Responding SERVER :  ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
        
-        close(sd);
-    }
-    //    FD_CLR(fds[i],&write_set);
-        }
-    }
-    else
-    {
-        std::cout << "++++++ Waiting for new connection ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
-    }
-    //    FD_CLR(fds[i],&set);
-}
-    }
-    }
+//         close(sd);
+//     }
+//     //    FD_CLR(fds[i],&write_set);
+//         }
+//     }
+//     else
+//     {
+//         std::cout << "++++++ Waiting for new connection ++++++++ ... sv index : "  << i  << "server 1st name " << multi_server[i].get_name(0) << std::endl;
+//     }
+//     //    FD_CLR(fds[i],&set);
+// }
+//     }
+    // }
     // shutdown(server_fd, SHUT_RDWR);
 
 int is_server_inside(server srv,std::vector <server> ss )

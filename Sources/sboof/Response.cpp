@@ -245,16 +245,16 @@ bool    Response::check_location()
 
 bool    Response::check_CGI( void )
 {
-    // std::vector<std::string>   str = ft_split(this->_request.get_location(), ".");
+    std::vector<std::string>   str = ft_split(this->_request.get_location(), ".");
 
-    // for (int i = 0; i < this->_Serv.get_cgi_size(); i++)
-    // {
-    //     if (this->_Serv.get_cgi(i).get_cgi_name() == "." + str.back())
-    //     {
-    //         this->_Cgi_Path = this->_Serv.get_cgi(i).get_cgi_path();
-    //         return (true);
-    //     }
-    // }
+    for (int i = 0; i < this->_Serv.get_cgi_size(); i++)
+    {
+        if (this->_Serv.get_cgi(i).get_cgi_name() == "." + str.back())
+        {
+            this->_Cgi_Path = this->_Serv.get_cgi(i).get_cgi_path();
+            return (true);
+        }
+    }
     return (false);
 }
 
@@ -529,23 +529,23 @@ int     Response::DELETE_all_Folder( void )
 
 int     Response::handle_DELETE_Dir( void )
 {
-    // if (this->_Serv.get_cgi().size() > 0)
-    // {
-        // std::vector<std::string> tmp;
+    if (this->_Serv.get_cgi().size() > 0)
+    {
+        std::vector<std::string> tmp;
 
-        // if (this->_location_index == -1)
-            // tmp = this->_Serv.get_index();
-        // else
-            // tmp = this->_Serv.get_location(this->_location_index).get_index();
-        // if (tmp.size() > 0)
-        // {
-            // if (check_CGI())
-                // return (CGI()); // 204 !!
-        // }
-        // else
-            // return (403);
-    // }
-    // else
+        if (this->_location_index == -1)
+            tmp = this->_Serv.get_index();
+        else
+            tmp = this->_Serv.get_location(this->_location_index).get_index();
+        if (tmp.size() > 0)
+        {
+            if (check_CGI())
+                return (CGI()); // 204 !!
+        }
+        else
+            return (403);
+    }
+    else
         return (DELETE_all_Folder());
     return (500);
 }
