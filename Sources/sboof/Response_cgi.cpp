@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/21 20:10:01 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 20:52:46 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
             envp_vect.push_back("HTTP_" + ft_toupper_headers(it->first) + "=" + it->second + "\r\n");
     }
     if (request.get_headrs()["Cookie"].size() > 0)
-        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);   
+        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
 	if (request.get_body_len() == 0)
     {
     //     // envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
@@ -127,6 +127,16 @@ bool    Response_cgi::init_data(Response& response)
     return true;
 }
 
+std::string         set_file_body(Request &request)
+{
+    std::string     FILE = "/var/tmp/cgi_" + RandomWord() + "_body";
+    std::ofstream   file(FILE);
+
+    file << request.get_body();
+    file.close();
+    return FILE;
+}
+
 int     Response_cgi::execute(Response& response, Request &request, std::string root_path)
 {
     pid_t   pid;
@@ -140,11 +150,14 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
     {
         int cgi_response_fd = 0;
         int body_fd = 0;
+        std::string     body_file;
         set_envp(response, request, root_path);
         set_argv(root_path);
+        if (request.get_body_len() > 0)
+            body_file = set_file_body(request);
         if ((cgi_response_fd = open(_cgi_response_file.c_str(), O_WRONLY)) < 0)
             exit(21);
-        if (0 < request.get_body_len() && (body_fd = open(root_path.c_str(), O_RDONLY)) < 0)
+        if (0 < request.get_body_len() && (body_fd = open(body_file.c_str(), O_RDONLY)) < 0)
             exit(21);
         if ((request.get_method().compare("POST") == 0 || request.get_method().compare("DELETE") == 0)
             && dup2(body_fd, STDIN_FILENO) < 0)
@@ -179,26 +192,18 @@ void        Response_cgi::set_header(Response & response)
     if (FILE.is_open())
     {
         std::string                 LINE;
-        bool                        headrefinish = false;
         size_t                      header_index;
 
         while (getline (FILE, LINE))
+            this->_FILEINLINE += LINE + "\n";
+        header_index = this->_FILEINLINE.find("\n\r\n");
+        if (header_index != std::string::npos)
         {
-            if (LINE.size() == 1)
-                headrefinish = true;
-            if (headrefinish == true)
-                this->_FILEINLINE += LINE + "\n";
+            this->_header = this->_FILEINLINE.substr(0, header_index);
+            this->_FILEINLINE.erase(0, header_index);
         }
-        // header_index = this->_FILEINLINE.find_first_of("\n\n");
-        // std::cout << "THE HEADER INDEX = " << header_index << std::endl;
-        // std::cout << "THE FILE = " << this->_FILEINLINE << std::endl;
-        // if (header_index != std::string::npos)
-        // {
-        //     this->_header = this->_FILEINLINE.substr(0, header_index);
-        //     this->_FILEINLINE.erase(0, header_index);
-        // }
-        // else
-        //     this->_header = "";
+        else
+            this->_header = "";
     }
         this->_header = "";
     FILE.close();
