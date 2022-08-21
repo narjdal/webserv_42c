@@ -346,6 +346,7 @@ std::string StatusCode(string location, int i)
     ext["yin"] = "application/yin+xml";
     ext["yml"] = "text/yaml";
     ext["zip"] = "application/zip";
+    ext["ico"] = "image/x-icon";
 
     if (i == 1)
         return (ext[location]);

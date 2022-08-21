@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/20 21:52:16 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 17:55:42 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ std::string     extension(std::string str)
     std::vector<std::string>  vector;
 
     vector = ft_split(str, ".");
-    
+
     return (vector.back());
 }
 
@@ -388,16 +388,15 @@ int     Response::file_GET( void )
     if (this->_location_type == 1)
     {
         tmp = this->_location;
-        check_chancked();
+        // check_chancked();
     }
     else if (this->_location_type == 2)
       tmp = handle_index(this->_Serv.get_index(), this->_location);
     if (tmp.empty())
         return 404;
-    std::cout << " I M IN BIIITCH " << std::endl;
     // if (this->_is_chanked == true)
         // return (file_Is_chancked());
-    this->_header->setHeader("Content-Type", (extension(tmp)));
+    this->_header->setHeader("Content-Type", (StatusCode(extension(tmp), 1)));
     this->_Body = file_to_string(tmp);
     this->_header->setHeader("Content-Length", to_string(this->_Body.size()));
     return (200);
@@ -463,22 +462,6 @@ int     Response::handle_POST_Dir( void )
         return (403);
 }
 
-int     Response::check_POST( void )
-{
-    if (this->_location_type == 1)
-        return (cgi_POST());
-    else
-    {
-        if (this->_location[this->_location.size() - 1] != '/')
-        {
-            this->_header->setHeader("Location", this->_location + "/");
-            return (301);
-        }
-        else
-            return (handle_POST_Dir());
-    }
-}
-
 int     Response::Upload_file( std::string upload_path )
 {
     this->_Upload_Path = upload_path + RandomWord() + "_Upload";
@@ -490,17 +473,33 @@ int     Response::Upload_file( std::string upload_path )
     return (201);
 }
 
-int     Response::check_POST_upload( void )
+int     Response::check_POST( void )
 {
-    std::string tmp;
+    std::cout << "THE LOCATION = " << this->_location << std::endl;
+    std::cout << "the extension is = " << extension(this->_location) << " and The cgi size = " << this->_Serv.get_cgi().size() << std::endl;
+    if (this->_Serv.get_cgi().size() > 0 && (extension(this->_location) == "php" || extension(this->_location) == "py"))
+            return (cgi_POST());
+    else if (this->_location_type == 1)
+    {
+        std::string tmp;
 
-    tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
-    if (tmp.size())
-        return (Upload_file(tmp));
+        tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
+        if (tmp.size())
+            return (Upload_file(tmp));
+        return (403);
+    }
     else
-        return (check_POST());
+    {
+        if (this->_location[this->_location.size() - 1] != '/')
+        {
+            std::cout << "I M IN BIATCH" << std::endl;
+            this->_header->setHeader("Location", this->_location + "/");
+            return (301);
+        }
+        else
+            return (handle_POST_Dir());
+    }
 }
-
 //*********************************************DELETE*********************************************//
 
 int     Response::file_DELETE( void )
@@ -569,7 +568,7 @@ int     Response::check_DELETE( void )
 int    Response::check_methods( void )
 {
     std::string             methods[3] = {"GET", "POST", "DELETE"};
-    int                     (Response::*funct[3])( void ) = {&Response::check_GET, &Response::check_POST_upload, &Response::check_DELETE};
+    int                     (Response::*funct[3])( void ) = {&Response::check_GET, &Response::check_POST, &Response::check_DELETE};
     std::vector<string>     tmp;
 
     if (this->_location_index == -1)
