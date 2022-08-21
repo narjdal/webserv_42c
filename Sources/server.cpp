@@ -241,7 +241,24 @@ default_error_pages= fill_error_page();
 
 server::~server()
 {
+    this->_name.clear();
+   
+   this->_listen_port = 0;
+    this->_listen_host.clear();
+    // this->_allowed_methods = allowed_methods;
+        this->_allowed_methods.clear();
+        this->_index.clear();
+   this->_upload_path.clear();
+//    this->_error_pages = extract_server_errors_page(text_vector,helper);
 
+   this->_error_pages.clear();
+//    this->_redirections = extract_server_redirections(text_vector,helper);
+   this->_redirections.clear();
+   this->_root.clear(); 
+//     //this->_location = extract_server_location(text_vector);
+ this->_cgi.clear();
+    this->_client_max_body_size = 0;
+//    this->_autoindex = extract_server_autoindex(text_vector,helper);
 }
 
     std::string                  server::get_name(int i) const

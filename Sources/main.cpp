@@ -55,7 +55,7 @@ It extracts the first connection request on the queue of pending connections for
  */
 #define PORT 8080
 #define DATA_BUFFER 5000
-#define MAX_CONNECTIONS 200
+#define MAX_CONNECTIONS 300
 void test_leaks()
 {
     system("leaks webserv");
@@ -128,9 +128,9 @@ int get_highest_fd(std::vector <int > fds)
 void init_server(std::vector<server> multi_server,std::vector<int > fds)
 {
     std::vector <std::string > full_request;
-    int max_clients = 30;
+    int max_clients = 300;
     int sd = 0;
-    int client_socket[30];
+    int client_socket[300];
     std::vector <int> clients_fds;
     fd_set read_fd_set;
      fd_set write_set;
@@ -240,7 +240,7 @@ while(1)
         }
             if ( pp == 0)
             {
-                std::cout << " CLIENT GOT DISCONNECTED " << std::endl;
+                std::cout << " CLIENT SESSION ENDED  " << std::endl;
                 close(sd);
                 FD_CLR(sd,&read_fd_set);
                 all_connections[i] = 0;
@@ -252,6 +252,12 @@ while(1)
                 close(sd);
                 FD_CLR(sd,&write_set);
                 // FR_CLR(sd,&read_fd_set);
+                all_connections[i] = 0;
+            }
+            else if (valread == -1)
+            {
+                FD_CLR(sd,&read_fd_set);
+                close(sd);
                 all_connections[i] = 0;
             }
         
