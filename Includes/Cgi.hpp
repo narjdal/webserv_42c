@@ -2,6 +2,7 @@
 
 #include "server.hpp"
 #include "tt.hpp"
+
 class cgi
 {
 protected:

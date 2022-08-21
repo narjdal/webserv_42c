@@ -2,7 +2,8 @@
 #include "../Includes/tt.hpp"
 #include <sstream>
 // ADD ERR DOUBLON
-location::location() : _locations_path(""),
+location::location() : _name(""),
+                        _locations_path(""),
                         _allow_methods(std::vector<std::string>()),
                         _root(""),
                         _client_max_body_size(-1),  
@@ -53,7 +54,7 @@ std::string name;
         {
             if ( count == index )
                 {
-             parser = split(text_vector[i]," ","upload_path");
+             parser = split(text_vector[i]," ",(char *)"upload_path");
                 }
         }
     i++;
@@ -103,7 +104,7 @@ std::string location_path;
         {
             if ( count == index )
                 {
-             parser = split(text_vector[i]," ","location");
+             parser = split(text_vector[i]," ",(char *)"location");
             return (parser[1]);
             }
         count++;
@@ -233,7 +234,7 @@ std::vector <std::string > tmp;
                     y = i;
                  while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
-             parser = split(text_vector[y]," ","root");
+             parser = split(text_vector[y]," ",(char *)"root");
              if(!parser.empty())
              {
 
@@ -294,7 +295,7 @@ std::vector<std::string > tmp;
                     while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
        
-             parser = split(text_vector[y]," ","client_max_body_size");
+             parser = split(text_vector[y]," ",(char *)"client_max_body_size");
              inside = 1;
                 if (!parser.empty())
                 {
@@ -354,7 +355,7 @@ std::vector<std::string> location_limit;
                     while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
 
-             parser = split(text_vector[y]," ","index");
+             parser = split(text_vector[y]," ",(char *)"index");
                 if (!parser.empty())
                 {
                     int i = 0;
@@ -406,7 +407,7 @@ std::vector <std::string > tmp;
                     y = i;
            while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
                     {
-             parser = split(text_vector[y]," ","autoindex");
+             parser = split(text_vector[y]," ",(char *)"autoindex");
              if(!parser.empty())
              {
 
@@ -473,7 +474,7 @@ std::vector<std::string> location_limit;
                     y = i;
              while ( y < text_vector.size() && text_vector[y].find("}") == std::string::npos)
              {
-             parser = split(text_vector[y]," ","upload_path");
+             parser = split(text_vector[y]," ",(char *)"upload_path");
             if(parser.size()> 0)
             {
             tmp = parser;

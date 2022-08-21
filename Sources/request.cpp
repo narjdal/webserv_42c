@@ -2,11 +2,12 @@
 #include "../Includes/tt.hpp"
 #include <map>
 Request::Request():
-            rqmethod(),
-            location(),
-            vrs(),
-            headers(),
-            body(),
+            rqmethod(""),
+            location(""),
+            vrs(""),
+            headers((std::map<std::string,std::string>())),
+            body(""),
+            query(""),
             body_len(-1)
 {
 
@@ -52,32 +53,32 @@ Request::Request(std::vector<std::string > full_request)
     this->body_len = this->body.size();
     this->vrs = get_request_vrs(full_request[0]);
     this->headers = get_request_headers(full_request);
-//     std::cout << "------------------REQUEST FIRSDT LINE ---------------------" << std::endl;
-//     std::cout << full_request[0] << std::endl;
-//     std::cout << "Request method => " << this->rqmethod << std::endl;
-//     //std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "Request Location=> " << this->location << std::endl;
+    std::cout << "------------------REQUEST FIRSDT LINE ---------------------" << std::endl;
+    std::cout << full_request[0] << std::endl;
+    std::cout << "Request method => " << this->rqmethod << std::endl;
+    //std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Request Location=> " << this->location << std::endl;
     
-//     std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "Request vrs=> " << this->vrs << "|"<< std::endl;
-//     std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "HEADERS      "  << std::endl;
-//     std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "Number of Headers : " <<  headers.size() << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Request vrs=> " << this->vrs << "|"<< std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "HEADERS      "  << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Number of Headers : " <<  headers.size() << std::endl;
 
-//     for(std::map<std::string ,std::string > ::iterator it = this->headers.begin();it != this->headers.end();it++)
-//    {
-//        std::cout << it->first << ":" <<  it->second  << std::endl;
-//     }
-//     std::cout << std::endl;
-//     std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "Request body => " << this->body << std::endl;
-//     std::cout << "---------------------------------------" << std::endl;
+    for(std::map<std::string ,std::string > ::iterator it = this->headers.begin();it != this->headers.end();it++)
+   {
+       std::cout << it->first << ":" <<  it->second  << std::endl;
+    }
+    std::cout << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Request body => " << this->body << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
 
 
-//     std::cout << "Request qwuery => " << this->query << std::endl;
-//     std::cout << "---------------------------------------" << std::endl;
-//     std::cout << "Request body_len => " << this->body_len << std::endl;
+    std::cout << "Request qwuery => " << this->query << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Request body_len => " << this->body_len << std::endl;
 
 }
 Request::~Request()

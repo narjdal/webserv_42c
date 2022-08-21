@@ -2,6 +2,7 @@
 #include "../Includes/request.hpp"
 #include "../Includes/tt.hpp"
 
+// CHECK QWERY IF path_to_file/??/jdsjkd??sdsad , What happens 
 std::vector<std::string> parsing_request(char* buffer)
 {
     int i  = 0;
@@ -51,21 +52,21 @@ int get_request_method(std::vector<std::string > request)
     size_t found = request[0].find("GET");
     if(found != string::npos)
     {
-    method = split(request[0]," ","GET");
+    method = split(request[0]," ",(char *)"GET");
     std::cout << method[0] << std::endl;
     return(1);
     }
     found = request[0].find("POST");
      if(found != string::npos)
     {
-    method = split(request[0]," ","POST");
+    method = split(request[0]," ",(char *)"POST");
     std::cout << method[0] << std::endl;
     return (2);
     }
       found = request[0].find("DELETE");
      if(found != string::npos)
     {
-    method = split(request[0]," ","DELETE");
+    method = split(request[0]," ",(char *)"DELETE");
     std::cout << method[0] << std::endl;
     return (3);
     }
@@ -131,13 +132,38 @@ std::string get_request_location(std::vector<std::string > request)
   
          if(request[0].find("?") != std::string::npos)
          {
-          //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+
+          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+
+          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+
+       
+
           method = split_sboof(request[0]," ");
            if(!method[1].empty())
            {
+            int savior = 0;
+          //      std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
             parsing_helper = split_sboof(method[1],"?");
+            for(std::vector<std::string>::iterator it = parsing_helper.begin();it != parsing_helper.end();it++)
+            {
+              if (savior == 0 && ((*it) == "?"))
+              return ("/");
+              savior++;
+            }
             location = parsing_helper[0];
+            // if (parsing_helper.size() == 1)
+            // return ("/");
+
+
            }
+         
          }
        else
        {
@@ -185,17 +211,35 @@ std::string get_request_query(std::vector<std::string > request)
 
          if(request[0].find("?") != std::string::npos)
          {
-          while ( count > 0)
-          {
-
-          }
-          //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
           method = split_sboof(request[0]," ");
-           if(!method[1].empty())
+          // while ( count > 0)
+          // {
+            // if( count == 0 && !method[1].empty())
+            // parsing_helper  = split_sboof(method[1],"?");
+            // else 
+            // parsing_request = split_sboof(parsing_)
+   
+          if ( count > 0 && !method[1].empty())
+         { 
+          int tt = 0;
+          parsing_helper = split_sboof(method[1],"?");
+          std::vector<std::string>::iterator it ;
+          for (it = parsing_helper.begin();it != parsing_helper.end();it++)
+          {
+            if ((*it) != "?" && tt > 0)
+             qwery = *it;
+             tt++;
+          }
+         }
+             if(!method[1].empty() && count == 0)
            {
             parsing_helper = split_sboof(method[1],"?");
             qwery = parsing_helper[1];
            }
+            // parsing_helper = split_sboof(method[1],"")
+          // }
+          //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
+        
          }
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);

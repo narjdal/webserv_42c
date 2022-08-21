@@ -114,7 +114,7 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
                 exit(1);
             }
             //std::cout << "HELLO HELLO HELLO " << std::endl;
-                server_names = split (text_vector[i]," ","server_names");
+                server_names = split (text_vector[i]," ",(char *)"server_names");
         // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " " << std::endl;
         // std::cout << "=> " << server_names.size()  << " " << server_names[1] << " "  << std::endl;
         if(!server_names.empty() && server_names.size() > 1 )
@@ -157,7 +157,7 @@ int extract_server_port(std::vector<std::string> text_vector,int index)
     }
         if ( count == index)
         {
-        parser = split(text_vector[i]," ","listen");
+        parser = split(text_vector[i]," ",(char *)"listen");
         y = 0;
         while (y < parser.size())
         {
@@ -226,7 +226,7 @@ std::string server_host;
     }
         if ( count == index)
         {
-        parser = split(text_vector[i]," ","listen");
+        parser = split(text_vector[i]," ",(char *)"listen");
         y = 0;
         while (y < parser.size())
         {
@@ -286,13 +286,13 @@ std::string extract_server_root(std::vector<std::string> text_vector,int index)
                  {
                     return (root);
                  }
-        parser = split(text_vector[i]," ","");
+        parser = split(text_vector[i]," ",(char *)"");
         y = 0;
         while (y < parser.size())
         {
             if (parser[y].compare("root") == 0)
             {   
-                server_names = split (text_vector[i]," ","root");
+                server_names = split (text_vector[i]," ",(char *)"root");
                 tmp = server_names;
                 tmp.erase(tmp.begin());
                 if (tmp.size() > 0)
@@ -351,7 +351,7 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
         {
         if(text_vector[i].find("location") != std::string::npos)
         return (correct_methods);
-        parser = split(text_vector[i]," ","allow_methods");
+        parser = split(text_vector[i]," ",(char *)"allow_methods");
         y = 0;
         while (y < parser.size())
         {
@@ -415,9 +415,9 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
          size_t found = text_vector[i].find("index.html");
         // found = std::find(text_vector[i].begin(),text_vector[i].end(),"index.html") ;
         if ( found != std::string::npos)
-        parser = split(text_vector[i]," ","index.html");
+        parser = split(text_vector[i]," ",(char *)"index.html");
         else
-        parser = split(text_vector[i]," ","index");
+        parser = split(text_vector[i]," ",(char *)"index");
         y = 0;
         while (y < parser.size())
         {
@@ -466,13 +466,13 @@ std::vector<std::string> parser;
          if (inside == 1)
     return (server_upload_path.at(1));
         }
-        parser = split(text_vector[i]," ","upload_path");
+        parser = split(text_vector[i]," ",(char *)"upload_path");
         y = 0;
         while (y < parser.size())
         {
             if (parser[y].compare("upload_path") == 0)
             {   
-                server_upload_path = split (text_vector[i]," ","upload_path");
+                server_upload_path = split (text_vector[i]," ",(char *)"upload_path");
                 tmp = server_upload_path;
                 tmp.erase(tmp.begin());
                 if(tmp.size() > 0)
@@ -512,7 +512,7 @@ std::map <std::string,std::string > extract_server_errors_page1(std::vector<std:
         {
        // if(text_vector[i].find("location") != std::string::npos)
         //return (correct_index);
-        parser = split(text_vector[i]," ","error_page");
+        parser = split(text_vector[i]," ",(char *)"error_page");
         y = 0;
         while (y < parser.size())
         {
@@ -520,7 +520,7 @@ std::map <std::string,std::string > extract_server_errors_page1(std::vector<std:
             if (parser[y].compare("error_page") == 0)
             {
 
-                test = split (text_vector[i]," ","error_page");
+                test = split (text_vector[i]," ",(char *)"error_page");
 
            //correct_index.assign(server_index.begin() + 1,server_index.end());
                 // errors_pages.assign(test.begin() + 1,test.end())
@@ -528,7 +528,7 @@ std::map <std::string,std::string > extract_server_errors_page1(std::vector<std:
                 {
                     errors_page[test[1]] = test[2];
                 //    errors_page.insert(std::make_pair<std::string,std::string>({test[1],test[2]}));
-                std::cout << "erros_page:1 " << test[1] << " " <<  test[2] << std::endl;
+                // std::cout << "erros_page:1 " << test[1] << " " <<  test[2] << std::endl;
             }
             else if ( test.size() < 3)
             {
@@ -629,7 +629,7 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
         {
        // if(text_vector[i].find("location") != std::string::npos)
         //return (correct_index);
-        parser = split(text_vector[i]," ","redirection");
+        parser = split(text_vector[i]," ",(char *)"redirection");
         y = 0;
                 // std::cout << "WWWWWWW__________WW__W_W_Wred/irection : "  << std::endl;
         while (y < parser.size())
@@ -638,14 +638,14 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
             if (parser[y].compare("redirection") == 0)
             {
 
-                test = split (text_vector[i]," ","redirection");
+                test = split (text_vector[i]," ",(char *)"redirection");
 
 
                 if (test.size()  == 3)
                 {
                     redirections[test[1]] = test[2];
                 //    errors_page.insert(std::make_pair<std::string,std::string>({test[1],test[2]}));
-                std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
+                // std::cout << "redirection : " << test[1] << " " <<  test[2] << std::endl;
             }
             else if ( test.size() < 3)
             {
@@ -674,49 +674,49 @@ std::map <std::string,std::string > extract_server_redirections1(std::vector<std
     return (redirections);
 }
 
-std::vector<std::vector<std::string > > extract_server_redirections(std::vector<std::string> text_vector,int index)
-{
-     std::vector<std::string> parser;
-     std::vector <std::string> test;
-     std::vector <std::string > redirections;
- std::vector <std::vector<std::string> > server_redirections;
-  std::vector <std::string> correct_server_redirections;
-    int i = 0;
-    int y = 0;
-    int inside = 0;
-    int count = 0;
-    while ( i < text_vector.size())
-    {  
-       // if(text_vector[i].find("location") != std::string::npos)
-        //return (correct_index);
+// std::vector<std::vector<std::string > > extract_server_redirections(std::vector<std::string> text_vector,int index)
+// {
+//      std::vector<std::string> parser;
+//      std::vector <std::string> test;
+//      std::vector <std::string > redirections;
+//  std::vector <std::vector<std::string> > server_redirections;
+//   std::vector <std::string> correct_server_redirections;
+//     int i = 0;
+//     int y = 0;
+//     int inside = 0;
+//     int count = 0;
+//     while ( i < text_vector.size())
+//     {  
+//        // if(text_vector[i].find("location") != std::string::npos)
+//         //return (correct_index);
 
-            if(text_vector[i].compare("server") == 0)
-     {
-           count++;
-    }
-        if ( count == index)
-        {
-        parser = split(text_vector[i]," ","redirection");
-        y = 0;
-        while (y < parser.size())
-        {
-            if (parser[y].compare("redirection") == 0)
-            {
-                test = split (text_vector[i]," ","redirection");
-                redirections.assign(test.begin() + 1,test.end());
-           //correct_index.assign(server_index.begin() + 1,server_index.end());
-                inside = 1;
-                server_redirections.push_back(redirections);
-                test.clear();
-            }
-            y++;
-        }
-        }
-    i++;
-    }
+//             if(text_vector[i].compare("server") == 0)
+//      {
+//            count++;
+//     }
+//         if ( count == index)
+//         {
+//         parser = split(text_vector[i]," ","(char *)redirection");
+//         y = 0;
+//         while (y < parser.size())
+//         {
+//             if (parser[y].compare("redirection") == 0)
+//             {
+//                 test = split (text_vector[i]," ",(char *)"redirection");
+//                 redirections.assign(test.begin() + 1,test.end());
+//            //correct_index.assign(server_index.begin() + 1,server_index.end());
+//                 inside = 1;
+//                 server_redirections.push_back(redirections);
+//                 test.clear();
+//             }
+//             y++;
+//         }
+//         }
+//     i++;
+//     }
    
-    return (server_redirections);
-}
+//     return (server_redirections);
+// }
 
 long long int extract_server_max_body_size(std::vector<std::string> text_vector,int index)
 {
@@ -747,7 +747,7 @@ std::string test;
 
         return ( num);
         }
-        parser = split(text_vector[i]," ","client_max_body_size");
+        parser = split(text_vector[i]," ",(char *)"client_max_body_size");
         y = 0;
         while (y < parser.size())
         {
@@ -818,7 +818,7 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
     }
         if ( count == index)
         {
-        parser = split(text_vector[i]," ","autoindex");
+        parser = split(text_vector[i]," ",(char *)"autoindex");
         if(text_vector[i].find("location") != std::string::npos)
             inside = 1 ;
         y = 0;
@@ -888,19 +888,42 @@ int extract_number_of_locations(std::vector <std::string> text_vector,int index)
 std::cout << "Number of locations  :" << count << " Server Index : " << index << std::endl;
     return (count);
 }
+void check_cgi(std::string tmp)
+{
+    int i = 0;
+    while (tmp[i])
+    {
+        if(tmp[i] == '.')
+        {
+            if(tmp[i + 1] == 'p' && tmp[i + 2] == 'y' && tmp[i + 3] == '\0')
+                return ;
+            else if (tmp[i  + 1] == 'p' && tmp[i + 2] == 'h' && tmp[i + 3] == 'p' && tmp[i + 4] == '\0')
+            return ;
+        }
+    i++;
+    }
+    std::cout << " Error ! cgi extension " << tmp << std::endl;
+    exit(1);
+}
 // TO FIXE ERRORS CASE : if no path is specified
 std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int index)
 {
     std::vector<cgi> vector_cgi;
+    std::vector<cgi> tt;
+
     cgi tmp;
     std::vector<std::string > parser;
     std::vector<std::string > cgi_path;
+    std::vector<std::string> cgi_name;
 
     int i = 0;
     int count = 0;
     int vector_size = 0;
     int accolade = 0;
     int find_right_server = 0;
+    int inside = 0;
+    int path = 0;
+    int name = 0;
     while ( i < text_vector.size())
     {  
         
@@ -910,37 +933,70 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int in
     }
         if (find_right_server == index)
         {
-    if(text_vector[i].find("cgi") != std::string::npos)
-          {
-            parser = split(text_vector[i]," ","cgi");
-            vector_size = vector_cgi.size();
-            if ( count == 0)// A verifier si il y a um seul cgi / config file ou plus
-           {
-           // std::cout << "HMMM WTF" << std::endl;
-            for(std::vector<std::string>::iterator it = parser.begin();it != parser.end();it++)
-               // std::cout << *it << std::endl;
-            tmp.set_cgi_name(parser[1]);
-          }
-         else  if (count == 1 )
+            parser = split(text_vector[i]," ",(char *)"cgi");
+            if (parser.size() > 0 )
+            inside = 1;
+            if ( inside == 1)
             {
-            cgi_path = split (text_vector[i ], " ","cgi_path");
-            tmp.set_cgi_path(cgi_path[1]);
-            //std::cout << " cgi_path size : " << cgi_path.size() <<  text_vector[i]<< std::endl;
-           // std::cout << "cgi name : " << tmp.get_cgi_name() << std::endl;
-           // std::cout << "cgi path : " << tmp.get_cgi_path() << std::endl;
-            vector_cgi.push_back(tmp);
-            tmp.set_cgi_name("");
-            tmp.set_cgi_path("error");
-            count = 0;
-            parser.clear();
-            cgi_path.clear();
-            }
-            if (vector_size == vector_cgi.size())
-            count++;
-          }
-        }
+                // if(!parser[1].empty())
+                // check_cgi(parser[1]);
+                // while ( i < text_vector.size())
+                // {
+                    cgi_path = split(text_vector[i]," ",(char *)"cgi_path");
+                //     if()
+                // {
+                    if(cgi_path.size() > 1)
+                   {
+                    tmp.set_cgi_path(cgi_path[1]);
+                     path = 1;
+                  }
+                  else if (cgi_path.size() == 1)
+                  {
+                    std::cout << " Error ! Cgi_Path defined but nothing  is put in it !" << std::endl;
+                    exit(1);
+                  }
+                  else if (cgi_path.size() > 2)
+                  {
+                         std::cout << " Error ! Cgi_Path  Too many path in config file  !" << std::endl;
+                    exit(1);
+                  }
 
+                    cgi_name = split(text_vector[i]," ",(char *)"cgi_name");
+                    if(cgi_name.size() > 1)
+                   {
+                     tmp.set_cgi_name(cgi_name[1]);
+                    name = 1;
+                    }
+                    else if (cgi_name.size() == 1)
+                    {
+                            std::cout << " Error ! Cgi_name defined but nothing  is put in it !" << std::endl;
+                    exit(1);
+                    }
+                    else if (cgi_name.size() > 2)
+                    {
+                               std::cout << " Error ! Too many cgi names defined in Config file !" << std::endl;
+                    exit(1);
+                    }
+                    if (path == 1 && name == 1)
+                    {
+                        vector_cgi.push_back(tmp);
+                         std::cout << "tmp => " << tmp.get_cgi_name() << std::endl;
+                        std::cout << "tmp => " << tmp.get_cgi_path() << std::endl;
+                        // parser.clear();
+                        cgi_name.clear();
+                        cgi_path.clear();
+                        path = 0;
+                        name = 0;
+                    }
+                    
+                // }
+            }
+         
+
+
+        }
         i++;
+
     }
     return(vector_cgi);
 }

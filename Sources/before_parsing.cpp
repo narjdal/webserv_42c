@@ -70,7 +70,7 @@ void specified_words(std::string word)
     err += " is not a valid word";
     if (word != "server_names" && word != "server" && word != "cgi_path" && word != "root" &&
         word != "allow_methods" && word != "upload_path" && word != "index"
-         && word != "index.html" && word != "error_page" && word != "autoindex" && word != "redirection"
+         &&  word != "cgi_name" && word != "index.html" && word != "error_page" && word != "autoindex" && word != "redirection"
         && word != "client_max_body_size" && word != "location" && word != "cgi"
         && word != "{" && word != "}" && word != "listen")
         {
@@ -87,7 +87,7 @@ void specified_wordsv2(std::string word)
      err += word;
     err += " is not a valid word";
     if (word != "cgi_path" && word != "root" &&
-        word != "allow_methods" && word != "upload_path" && word != "index"
+         word != "allow_methods" && word != "upload_path" && word != "index"
          && word != "index.html"&& word != "autoindex" && word != "redirection"
         && word != "client_max_body_size" && word != "location" && word != "cgi"
         && word != "{" && word != "}")

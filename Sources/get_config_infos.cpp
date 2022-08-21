@@ -24,14 +24,14 @@
 
 void print_parsing_infos(server myserver)
 {
-     std::cout << "-----------------------Server Names : ------------------"  << std::endl;
-        std::cout << myserver.get_name(0) << "    " << myserver.get_name(1) << "   " << myserver.get_name(2) << std::endl;
-         std::cout << "-----------------------Server Port : ------------------"  << std::endl;
-         std::cout << myserver.get_listen_port() << std::endl;
-           std::cout << "-----------------------Server Host : ------------------"  << std::endl;
-         std::cout << myserver.get_listen_host() << std::endl;
-            std::cout << "-----------------------Server root : ------------------"  << std::endl;
-         std::cout << myserver.get_root() << std::endl;
+    //  std::cout << "-----------------------Server Names : ------------------"  << std::endl;
+    //     std::cout << myserver.get_name(0) << "    " << myserver.get_name(1) << "   " << myserver.get_name(2) << std::endl;
+    //      std::cout << "-----------------------Server Port : ------------------"  << std::endl;
+    //      std::cout << myserver.get_listen_port() << std::endl;
+    //        std::cout << "-----------------------Server Host : ------------------"  << std::endl;
+    //      std::cout << myserver.get_listen_host() << std::endl;
+    //         std::cout << "-----------------------Server root : ------------------"  << std::endl;
+    //      std::cout << myserver.get_root() << std::endl;
     //                std::cout << "-----------------------Server allowed methods : ------------------"  << std::endl;
     //  for (std::vector<std::string>::iterator it1 = myserver.get_allowed_methods().begin();it1 != myserver.get_allowed_methods().end();it1++)
     //      std::cout << *it1 << std::endl;
@@ -74,13 +74,13 @@ void print_parsing_infos(server myserver)
       //  {
       //   std::cout << "redirections pages exception ! " << std::endl;
       //  }
-           std::cout << "-----------------------Server  Client Max Body Size   : ------------------"  << std::endl;
-        std::cout << myserver.get_client_max_body_size() << std::endl;
-        std::cout << "-----------------------Server  AutoIndex    : ------------------"  << std::endl;
-        if (myserver.get_autoindex() == true)
-        std::cout << "autoindex on " << std::endl;
-        else if (myserver.get_autoindex() == false)
-        std::cout << "autoindex off " << std::endl;
+        //    std::cout << "-----------------------Server  Client Max Body Size   : ------------------"  << std::endl;
+        // std::cout << myserver.get_client_max_body_size() << std::endl;
+        // std::cout << "-----------------------Server  AutoIndex    : ------------------"  << std::endl;
+        // if (myserver.get_autoindex() == true)
+        // std::cout << "autoindex on " << std::endl;
+        // else if (myserver.get_autoindex() == false)
+        // std::cout << "autoindex off " << std::endl;
 
 }
 int number_of_servers(std::vector <std::string > words)

@@ -684,15 +684,15 @@ void    help_show_data_serv(server ser)
     std::cout << "**************/location******************" << std::endl << std::endl;
     std::cout << "*****************cgi*********************" << std::endl;
     
-    // {
-    //     std::vector<cgi> tmp = ser.get_cgi();
-    //     for (std::vector<cgi>::iterator it = tmp.begin(); it != tmp.end(); it++)
-    //     {
-    //         std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
-    //         std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
-    //         std::cout << "*****************************************" << std::endl;
-    //     }
-    // }
+    {
+        std::vector<cgi> tmp = ser.get_cgi();
+        for (std::vector<cgi>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            std::cout << "The cgi name : " << it->get_cgi_name() << std::endl;
+            std::cout << "The cgi path : " << it->get_cgi_path() << std::endl << std::endl;;
+            std::cout << "*****************************************" << std::endl;
+        }
+    }
     
     std::cout << "****************/cgi*********************" << std::endl << std::endl;
     

@@ -1,18 +1,20 @@
 #include "../Includes/server.hpp"
 #include "../Includes/tt.hpp"
 #include "../Includes/location.hpp"
+#include "../Includes/Cgi.hpp"
 
 server::server():
     _name(),
     _listen_port(-1),
     _listen_host(),
     _allowed_methods(std::vector<std::string>()),
-    _index(),
+    _index(std::vector<std::string>()),
     _error_pages(std::map<std::string,std::string>()),
-    _redirections(),
+    _redirections(std::map<std::string,std::string>()),
     _root(""),
     _client_max_body_size(-1),
     _location(std::vector<location>()),
+    _cgi(std::vector<cgi>()),
     _autoindex(false),
     response_chuncked(false)
 {
