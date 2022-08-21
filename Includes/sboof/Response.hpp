@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 23:23:12 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/16 13:19:50 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 17:41:22 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ private:
     
     //********CHECKERS*********
     int         check_GET( void );
-    int         check_POST_upload( void );
+    int         check_POST( void );
     int         check_DELETE( void );
     bool        check_CGI( void );
 
@@ -97,7 +97,6 @@ private:
     //***********POST**********
     int         cgi_POST( void );
     int         handle_POST_Dir( void );
-    int         check_POST( void );
     int         Upload_file( std::string upload_path );
 
 };
