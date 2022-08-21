@@ -48,6 +48,7 @@ Request::Request(std::vector<std::string > full_request)
         std::cout << " location is " << this->location << " ignoring ... this line will be removed" << std::endl;
         return ;
     }
+    this->host_port = get_request_port(full_request);
     this->body = get_request_body(full_request);
     this->query = get_request_query(full_request);
     this->body_len = this->body.size();
@@ -79,6 +80,8 @@ Request::Request(std::vector<std::string > full_request)
     std::cout << "Request qwuery => " << this->query << std::endl;
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "Request body_len => " << this->body_len << std::endl;
+    std::cout << "Request PORT => " << this->host_port << std::endl;
+
 
 }
 Request::~Request()
@@ -119,4 +122,8 @@ int Request::get_body_len()
 std::string&    Request::get_query()
 {
     return(this->query);
+}
+int Request::get_host_port()
+{
+    return (this->host_port);
 }

@@ -98,6 +98,20 @@ void specified_wordsv2(std::string word)
         }
 }
 
+void specified_wordsv3(std::string word)
+{
+     std::string err;
+      err = "Error: Loc:  ";
+     err += word;
+    err += " is not a valid word";
+    if (word != "cgi_path" && word != "cgi"
+        && word != "{" && word != "}")
+        {
+            // if(err)
+            std::cout << err << std::endl;
+            exit(1);    
+        }
+}
 void check_syntax_error(std::vector <std::string > text_vector)
 {
     std::vector <std::string > tmp1 = text_vector;
@@ -181,6 +195,7 @@ void check_words_config_file(std::vector<std::string > text_vector)
     std::vector <std::string> tmp;
     std::vector <std::string > first_word;
     int inside = 0;
+    int inside_cgi = 0;
     std::vector<std::string> tmp_iterator = text_vector;
     for(std::vector<std::string>::iterator it = tmp_iterator.begin();it != tmp_iterator.end();it++)
     {
@@ -188,18 +203,30 @@ void check_words_config_file(std::vector<std::string > text_vector)
         tmp.push_back(*it);
         first_word = split_by_space(tmp);
         // std::cout << first_word.size() << first_word[0] << std::endl;
+        if(first_word.size () > 0)
+        {
          if(first_word[0] == "location" || inside == 1)
          {
             // std::cout << " THIS IS GOOOOOOOOOOD" << first_word[0] << std::endl;
             specified_wordsv2(first_word[0]);
             inside = 1;
          }
+
+        if((first_word[0] == "cgi" || inside_cgi == 1 ) && first_word[0] != "location")
+         {
+            // std::cout << " THIS IS GOOOOOOOO¿OOD" << first_word[0] << std::endl;
+            specified_wordsv3(first_word[0]);
+            inside_cgi = 1;
+         }
          if(inside == 1 && first_word[0] == "}")
          inside = 0;
+        if (inside_cgi == 1 && first_word[0] == "}")
+        inside_cgi = 0;
         if (inside == 0)
          specified_words(first_word[0]);
         tmp.clear();
         first_word.clear();
+        }
         // if(!tmp[0].empty())
         // std::cout << tmp.at(0) << std::endl;
         // std::cout << *it << std::endl;

@@ -885,7 +885,7 @@ int extract_number_of_locations(std::vector <std::string> text_vector,int index)
         i++;
 
 }
-std::cout << "Number of locations  :" << count << " Server Index : " << index << std::endl;
+// std::cout << "Number of locations  :" << count << " Server Index : " << index << std::endl;
     return (count);
 }
 void check_cgi(std::string tmp)
@@ -941,9 +941,14 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int in
             inside = 1;
             if ( inside == 1)
             {
-                parser[1] = removespace(parser[1]);
-                if(!parser[1].empty())
-                check_cgi(parser[1]);
+                // parser[1] = removespace(parser[1]);
+            //     if(!parser[1].empty())
+            //    {
+                    check_cgi(parser[1]);
+                     tmp.set_cgi_name(parser[1]);
+                     name = 1;
+            //    }
+
                 // while ( i < text_vector.size())
                 // {
                     cgi_path = split(text_vector[i]," ",(char *)"cgi_path");
@@ -965,27 +970,27 @@ std::vector<cgi> extract_server_cgi(std::vector<std::string > text_vector,int in
                     exit(1);
                   }
 
-                    cgi_name = split(text_vector[i]," ",(char *)"cgi_name");
-                    if(cgi_name.size() ==  2)
-                   {
-                     tmp.set_cgi_name(cgi_name[1]);
-                    name = 1;
-                    }
-                    else if (cgi_name.size() == 1)
-                    {
-                            std::cout << " Error ! Cgi_name defined but nothing  is put in it !" << std::endl;
-                    exit(1);
-                    }
-                    else if (cgi_name.size() > 2)
-                    {
-                               std::cout << " Error ! Too many cgi names defined in Config file !" << std::endl;
-                    exit(1);
-                    }
+                //     cgi_name = split(text_vector[i]," ",(char *)"cgi_name");
+                //     if(cgi_name.size() ==  2)
+                //    {
+                    
+                //     name = 1;
+                //     }
+                //     else if (cgi_name.size() == 1)
+                //     {
+                //             std::cout << " Error ! Cgi_name defined but nothing  is put in it !" << std::endl;
+                //     exit(1);
+                //     }
+                //     else if (cgi_name.size() > 2)
+                //     {
+                //                std::cout << " Error ! Too many cgi names defined in Config file !" << std::endl;
+                //     exit(1);
+                //     }
                     if (path == 1 && name == 1)
                     {
                         vector_cgi.push_back(tmp);
-                         std::cout << "tmp => " << tmp.get_cgi_name() << std::endl;
-                        std::cout << "tmp => " << tmp.get_cgi_path() << std::endl;
+                        //  std::cout << "tmp => " << tmp.get_cgi_name() << std::endl;
+                        // std::cout << "tmp => " << tmp.get_cgi_path() << std::endl;
                         // parser.clear();
                         cgi_name.clear();
                         cgi_path.clear();

@@ -100,6 +100,6 @@ int number_of_servers(std::vector <std::string > words)
         i++;
         
     }
-    std::cout << "NUMBER OF SERVERS => " << count << std::endl;
+    // std::cout << "NUMBER OF SERVERS => " << count << std::endl;
     return (count);
 }

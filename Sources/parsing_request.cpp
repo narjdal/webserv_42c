@@ -286,7 +286,53 @@ while ((pos = s.find(delimiter)) != std::string::npos) {
 }
 return (splited);
 }
+int get_request_port(std::vector<std::string> full_request)
+{
+  int num = 0;
+  int i = 0;
+  int length = 0;
+   full_request.assign(full_request.begin() + 1,full_request.end());
+   std::string head;
+   std::string tail;
+   std::vector<std::string> tmp;
+   size_t found = 0;
+     while ( i < full_request.size())
+     {
+       
+        found = full_request[i].find(":");
+        if(found != string::npos)
+    {
+      // tmp = split(full_request[i]," ",":");
+      length = full_request[i].size() - found;
+      head.insert(0,full_request[i],0,found);
+      tail.insert(0,full_request[i],found + 2,length - 4);
+      if (head == "Host")
+      {
+     size_t found_delim = 0;
+        found_delim = tail.find(":");
+        std::string new_tail;
+        if ( found_delim != std::string::npos)
+        {
+          tmp = split_sboof(tail,":");
+          //  std::cout << "REMOVING THE PORT ..." << tmp[1]<<  std::endl;
+          tail.clear();
+          tail = tmp[1];
+           if(!tmp[1].empty() && isnumber(tmp[1]))
+                    num = std::stoi(tmp[1]);
+          // new_tail.insert(0,tail,found);
+          // tail.clear();
+          // tail = new_tail;
+          // std::cout << tail << " N| " << new_tail << std::endl;
+          // new_tail.clear();
+        }
+      }
+     }
+     i++;
+     }
+    //  std::cout ÷<< "THE PORT IS +>>>>" << num << std::endl;
+  return (num);
 
+}
  std::map<std::string, std::string> get_request_headers(std::vector <std::string > full_request)
  {
     int i = 0;

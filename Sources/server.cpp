@@ -41,7 +41,7 @@ int check_listen_host(std::string tmp)
     {
         if(tmp[i] == '.')
        { 
-        std::cout << check_if_number << std::endl;
+        // std::cout << check_if_number << std::endl;
         if(isnumber(check_if_number.c_str()) == false)
         {
             std::cout << " host not well defined ! Host should be all numeric" << tmp << std::endl;
@@ -97,6 +97,7 @@ std::map<std::string, std::string>  fill_error_page( void )
     tmp["414"] = "./errorpages/414/414.html";
     tmp["500"] = "./errorpages/500/500.html";
     tmp["501"] = "./errorpages/501/501.html";
+    tmp["502"] = "./errorpages/502/502.html";
 
     return (tmp);
 }
@@ -216,10 +217,10 @@ default_error_pages= fill_error_page();
 //         std::cout << "autoindex off  ! server : " << helper << std::endl;
 
   
-//            std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
+           std::cout << "-----------------------Server   CGI     : ------------------"  << std::endl;
 
-//     for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
-//     std::cout << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
+    for (std::vector<cgi>::iterator it = this->_cgi.begin();it != this->_cgi.end();it++)
+    std::cout  << "CGI SIZE : "<<  _cgi.size() << "cgi_name : " <<it->get_cgi_name() << " cgi_path : " << it->get_cgi_path() << std::endl;
 
    int index = 0;
    number_of_locations = extract_number_of_locations(text_vector,helper);

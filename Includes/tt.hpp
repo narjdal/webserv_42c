@@ -51,4 +51,5 @@ int is_binded_server(std::vector<server> ss, int i);
 int is_server_inside(server srv,std::vector <server> ss );
 void check_words_config_file(std::vector<std::string > text_vector);
 std::map <std::string,std::string > extract_server_redirections1(std::vector<std::string > text_vector,int index);
+int get_request_port(std::vector<std::string> full_request);
 int    specified_methods(std::string &tmp);
