@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/21 20:52:46 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/21 23:26:38 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ std::string         set_file_body(Request &request)
 
     file << request.get_body();
     file.close();
+    chmod(FILE.c_str(), 0777);
     return FILE;
 }
 
@@ -159,6 +160,7 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
             exit(21);
         if (0 < request.get_body_len() && (body_fd = open(body_file.c_str(), O_RDONLY)) < 0)
             exit(21);
+        std::cout << "THE REQUEST BODY = " << file_to_string(body_file) << std::endl;
         if ((request.get_method().compare("POST") == 0 || request.get_method().compare("DELETE") == 0)
             && dup2(body_fd, STDIN_FILENO) < 0)
             exit(21);
