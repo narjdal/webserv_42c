@@ -168,6 +168,8 @@ while(1)
 {
     int valread = 0;
     FD_ZERO (&read_fd_set);
+    FD_ZERO (&write_set);
+
     for ( int i = 0;i < fds.size();i++)
     FD_SET(fds[i],&read_fd_set);
     max_sd = get_highest_fd(fds);;
@@ -179,7 +181,7 @@ while(1)
         if (sd > max_sd)
         max_sd  = sd;
     }
-    activity = select(max_sd + 1,&read_fd_set,NULL,NULL,NULL);
+    activity = select(max_sd + 1,&read_fd_set,&write_set,NULL,NULL);
     if (( activity < 0))
     std::cout << "An error occured with select !" << std::endl;
     for ( int i = 0;i < fds.size();i++)
@@ -212,8 +214,11 @@ while(1)
         {
             if ((valread == read(sd,buf,1024)) == 0)
             {
+
                   full_request = parsing_request(buf);
                  Request parsed_request(full_request);
+                 FD_CLR(sd,&read_fd_set);
+                 FD_SET(sd,&write_set);
                   std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
         for ( int srv_idx = 0;srv_idx < multi_server.size();srv_idx++)
@@ -221,33 +226,35 @@ while(1)
     if (parsed_request.get_host_port() == multi_server[srv_idx].get_listen_port())
             {
                 int pp =0;
+                if (FD_ISSET(sd,&write_set))
+                {
          Response response(parsed_request,multi_server[srv_idx]);
       std::string sboof_response(response.get_Response());
         std::cout << ("------------------ FINAL RESPONSE -------------------") << std::endl;
                 if((pp = send(sd ,sboof_response.c_str(),sboof_response.size(),0) == -1))
         {
             std::cout << "error : Response to client !" << std::endl;
+            all_connections[i] = 0;
+            FD_CLR(sd,&read_fd_set);
             close(sd);
         }
-        if ( pp   == -1)
-            {
-                all_connections[i] = 0;
-                close(sd);
-            std::cout << " smth wrong happend in send " << std::endl;
-            }
             if ( pp == 0)
             {
                 std::cout << " CLIENT GOT DISCONNECTED " << std::endl;
                 close(sd);
+                FD_CLR(sd,&read_fd_set);
                 all_connections[i] = 0;
             }
-                }
-            
-                }
+             }
+            }       
+    }
                 std::cout << "Client disconnecting .... Pos :" << i << std::endl;
                 close(sd);
+                FD_CLR(sd,&write_set);
+                // FR_CLR(sd,&read_fd_set);
                 all_connections[i] = 0;
             }
+        
         }
     }
 }
