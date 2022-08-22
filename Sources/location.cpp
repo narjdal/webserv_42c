@@ -17,7 +17,16 @@ location::location() : _name(""),
 
 location::~location()
 {
-
+ this->_index.clear();
+    this->_name.clear();
+     this->_locations_path.clear();
+    //  this->_allow_methods = allowed_methods;
+    this->_allow_methods.clear() ;
+     this->_root.clear();
+    this->_client_max_body_size = -1;
+    this->_index.clear();
+    this->_autoindex = false;
+    this->_upload_path.clear();
 }
 
 location::location(const location &obj)

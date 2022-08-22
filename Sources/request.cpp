@@ -43,11 +43,11 @@ Request::Request(std::vector<std::string > full_request)
     if (method == 3)
     this->rqmethod = "DELETE";
     this->location = get_request_location(full_request);// HERE ERROR , if no location is sent , takes HTTP as location to fix
-    if(this->location == "/favicon.ico")
-    {
-        std::cout << " location is " << this->location << " ignoring ... this line will be removed" << std::endl;
-        return ;
-    }
+    // if(this->location == "/favicon.ico")
+    // {
+    //     std::cout << " location is " << this->location << " ignoring ... this line will be removed" << std::endl;
+    //     return ;
+    // }
     this->host_port = get_request_port(full_request);
     this->body = get_request_body(full_request);
     this->query = get_request_query(full_request);
@@ -86,7 +86,14 @@ Request::Request(std::vector<std::string > full_request)
 }
 Request::~Request()
 {
-
+    this->rqmethod.clear();
+    this->location .clear();
+    this->host_port = 0;
+    this->body.clear();
+    this->query.clear();
+    this->body_len = - 1;
+    this->vrs.clear();
+    this->headers.clear();
 }
 
 //*************************************** GETTERS FUNCTIONS*************************************** 

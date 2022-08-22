@@ -217,6 +217,14 @@ while(1)
 
                   full_request = parsing_request(buf);
                  Request parsed_request(full_request);
+                 if(parsed_request.get_location() == "/favicon.ico ")
+                {
+                    std::cout << " Ignoring favicon ... !!!!!!!!!!!!!!!!!!!!" << std::endl;
+                    close(sd);
+                    all_connections[i] = 0;
+                    FD_CLR(sd,&read_fd_set);
+                    break;
+                }
                  FD_CLR(sd,&read_fd_set);
                  FD_SET(sd,&write_set);
                   std::cout << ("------------------ message -------------------") << std::endl;
@@ -230,6 +238,7 @@ while(1)
                 {
          Response response(parsed_request,multi_server[srv_idx]);
       std::string sboof_response(response.get_Response());
+       std::cout << "Status Code Response = " << parsed_request.get_statuscoderesponse() << std::endl;
         std::cout << ("------------------ FINAL RESPONSE -------------------") << std::endl;
                 if((pp = send(sd ,sboof_response.c_str(),sboof_response.size(),0) == -1))
         {

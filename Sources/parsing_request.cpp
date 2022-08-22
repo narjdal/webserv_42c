@@ -167,11 +167,19 @@ std::string get_request_location(std::vector<std::string > request)
          }
        else
        {
-      method = split_sboof(request[0]," ");
-
-        if(!method[1].empty() && method.size() > 2 )
+         std::vector<std::string> tmp;
+         tmp.push_back(request[0]);
+      method = split_by_space(tmp);
+      // std::cout << "LOOOOOOOOOOOOOOCCCCCCCCCC +>>>>>>>>" << method[1] << std::endl;
+        if(method.size() > 0)
+        {
+        // if(!method[1].empty() && method.size() > 2 )
+        if(method.size() > 2)
         location = method[1];
         else
+        return("");
+        // else if (method.size()  == 2)
+        }
         return "/" ; // If empty SGV To fixe 
        }
      //   location_length = get_location_length(request[0]);

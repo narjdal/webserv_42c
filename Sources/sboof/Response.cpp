@@ -699,6 +699,7 @@ std::string Response::get_Response( void )
     // help_show_data(this->_request);
     // help_show_data_serv(this->_Serv);
     int i = statuscode();
+    this->_request.set_statuscoderesponse(i);
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
         return (this->_Body);

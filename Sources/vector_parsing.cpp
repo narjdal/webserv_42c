@@ -412,11 +412,11 @@ std::vector<std::string> extract_server_index(std::vector<std::string> text_vect
         {
         if(text_vector[i].find("location") != std::string::npos)
         return (correct_index);
-         size_t found = text_vector[i].find("index.html");
-        // found = std::find(text_vector[i].begin(),text_vector[i].end(),"index.html") ;
-        if ( found != std::string::npos)
-        parser = split(text_vector[i]," ",(char *)"index.html");
-        else
+        //  size_t found = text_vector[i].find("index.html");
+        // // found = std::find(text_vector[i].begin(),text_vector[i].end(),"index.html") ;
+        // if ( found != std::string::npos)
+        // parser = split(text_vector[i]," ",(char *)"index.html");
+        // else
         parser = split(text_vector[i]," ",(char *)"index");
         y = 0;
         while (y < parser.size())
