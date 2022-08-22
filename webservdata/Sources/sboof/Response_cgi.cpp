@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 20:10:29 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 21:24:47 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,31 +54,34 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
 {
     std::vector<std::string>    envp_vect;
 
-    envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
-    envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
-    envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
-    envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
-    envp_vect.push_back("PATH_TRANSLATED=" + root_path);
-    envp_vect.push_back("QUERY_STRING=" + request.get_query());
-    envp_vect.push_back("SERVER_NAME=localhost");
-    envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
-    envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
-    envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
-    envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
-    envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    envp_vect.push_back("REDIRECT_STATUS=200");
-    envp_vect.push_back("FCGI_ROLE=RESPONDER");
-    envp_vect.push_back("REQUEST_SCHEME=http");
-    envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
-    envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
-    envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
-    envp_vect.push_back("REMOTE_PORT=0");
-    if (request.get_headrs()["Cookie"].size() > 0)
-        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
-	if (request.get_body_len() == 0)
+    if (extension(response.get_location()) == "php")
     {
-        envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
-        envp_vect.push_back("CONTENT_LENGTH=0");
+        envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
+        envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
+        envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
+        envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
+        envp_vect.push_back("PATH_TRANSLATED=" + root_path);
+        envp_vect.push_back("QUERY_STRING=" + request.get_query());
+        envp_vect.push_back("SERVER_NAME=localhost");
+        envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
+        envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
+        envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
+        envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
+        envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
+        envp_vect.push_back("REDIRECT_STATUS=200");
+        envp_vect.push_back("FCGI_ROLE=RESPONDER");
+        envp_vect.push_back("REQUEST_SCHEME=http");
+        envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
+        envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
+        envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
+        envp_vect.push_back("REMOTE_PORT=0");
+        if (request.get_headrs()["Cookie"].size() > 0)
+            envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
+	    if (request.get_body_len() == 0)
+        {
+            envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
+            envp_vect.push_back("CONTENT_LENGTH=0");
+        }
     }
     std::map<std::string, std::string>  tmp = request.get_headrs();
     for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
@@ -155,8 +158,6 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
         if ((request.get_method().compare("POST") == 1) && dup2(body_fd, STDIN_FILENO) < 0)
             exit(21);
         close(body_fd);
-        std::cout << "THE BODY = " << file_to_string(body_file) << std::endl;
-        std::cout << "ARGV = " << _argv[0] << " and " << _argv[1] << std::endl;
         if (dup2(cgi_response_fd, STDOUT) < 0)
             exit(21);
         if (execve(_cgi_path.c_str(), _argv, _envp) < 0)
@@ -200,7 +201,6 @@ void        Response_cgi::set_header(Response & response)
         {
             this->_header = this->_FILEINLINE.substr(0, header_index);
             this->_FILEINLINE.erase(0, header_index);
-            std::cout << "THE HEADER = " <<  this->_header << std::endl << "FINISHED HEADER\n";
         }
         else
             this->_header = "";
@@ -228,13 +228,18 @@ std::string Response_cgi::set_status( Response & response )
 void        Response_cgi::fillResponseBuffer( Response & response )
 {
     set_header(response);
-    std::string     tmp;
+    std::string     tmp("");
 
-    tmp = set_status(response);
-    tmp += this->_header;
+    if (extension(response.get_location()) == "php")
+    {
+        tmp = set_status(response);
+        tmp += this->_header;
+    }
     // std::cout << "THE HEADER = " << tmp << std::endl;
+    std::cout << "THE HEADER IS = " << this->_header << std::endl << "HEADER END\n";
     tmp += this->_FILEINLINE;
     response.set_Body(tmp);
+    std::cout << "THE BODY IS = " << this->_FILEINLINE << std::endl << "FILE END\n";
     std::cout << "THE RESPONSE = " << response.get_Body() << std::endl;
     // std::cout << "THE FILE = " << this->_FILEINLINE << std::endl;
     // remove(_cgi_response_file.c_str());
