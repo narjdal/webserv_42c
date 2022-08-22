@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 23:23:12 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 00:24:52 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 21:52:39 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,14 @@ public:
     std::string     get_cgi_Path();
     std::string     get_location();
     void            set_Body(std::string str);
+    void            set_is_cgi(bool l) {_is_cgi = l;}
 
 private:
  
     void        errorsPages( int Status_code );
     int         statuscode( void ); 
-    bool        check_location( void );
+    int        check_location( void );
+    bool        handleredirection();
     bool        check_path( void );
     int         check_methods( void );
     int         CGI( void );
