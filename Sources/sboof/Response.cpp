@@ -478,6 +478,8 @@ int     Response::check_POST( void )
     std::string tmp;
 
     tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
+    // if ((tmp.size()) > this->_Serv.get_client_max_body_size())
+    // return (403);
     if (tmp.size())
         return (Upload_file(tmp));
     if (this->_location_type == 1)

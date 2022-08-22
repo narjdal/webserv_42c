@@ -42,5 +42,7 @@ FirstLine::~FirstLine()
 
 std::string     FirstLine::First_Line(int Key)
 {
+	std::string tmp;
+	tmp.insert(tmp.begin(),this->_req.get_version());
     return (std::string(this->_req.get_version() + " " + std::to_string(Key) + std::string(" ") + this->_StatusCode[Key] + "\r\n"));
 }
