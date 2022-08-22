@@ -159,14 +159,14 @@ default_error_pages= fill_error_page();
 //      std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
 //         try
 //         {
-//             int length = 0;
-//             while (length < this->_error_pages.size())
-//             {
-//                    for (std::vector<std::string>::iterator it3 = this->_error_pages[length].begin();it3 != this->_error_pages[length].end();it3++)
-//          std::cout << *it3 << std::endl;
-//            std::cout << "-----------------------------------------------"  << std::endl;
-//            length++;
-//             }
+            int length = 0;
+            while (length < this->_error_pages.size())
+            {
+                   for (std::map<std::string,std::string>::iterator it3 = this->_error_pages.begin();it3 != this->_error_pages.end();it3++)
+         std::cout <<"errors_pages : " <<  it3->first << it3->second << std::endl;
+           std::cout << "-----------------------------------------------"  << std::endl;
+           length++;
+            }
     // std::map<std::string,std::string> tmp2 = this->_redirections;
     //       for (std::map<std::string, std::string>::iterator it1 = tmp2.begin(); it1 != tmp2.end(); it1++)
     //         std::cout << "The Redir page : " << it1->first << " and his path : " << it1->second << std::endl;

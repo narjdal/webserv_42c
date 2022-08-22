@@ -170,12 +170,16 @@ std::string get_request_location(std::vector<std::string > request)
          std::vector<std::string> tmp;
          tmp.push_back(request[0]);
       method = split_by_space(tmp);
-      // std::cout << "LOOOOOOOOOOOOOOCCCCCCCCCC +>>>>>>>>" << method[1] << std::endl;
         if(method.size() > 0)
         {
-        // if(!method[1].empty() && method.size() > 2 )
-        if(method.size() > 2)
-        location = method[1];
+        if(!method[1].empty() && method.size() > 2 )
+        {
+          location = method[1];
+          return(location);
+       std::cout << "LOOOOOOOOOOOOOOCCCCCCCCCC +>>>>>>>>" << method[1] << std::endl;
+        
+        }
+        
         else
         return("");
         // else if (method.size()  == 2)

@@ -57,5 +57,7 @@ class Request
         int get_host_port();
         int get_statuscoderesponse( void ) { return (this->statuscoderesponse);}
         void    set_statuscoderesponse(int status) {this->statuscoderesponse = status;}
+        void    set_port(int port) {this->host_port = port;}
+        
 
 };

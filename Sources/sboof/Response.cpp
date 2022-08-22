@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../../Includes/sboof/Response.hpp"
 
 
@@ -336,7 +337,7 @@ void    Response::check_chancked( void )
     in_file.seekg(0, ios::end);
     this->_File_size = in_file.tellg();
     std::cout << "inside check_chanked" << std::endl;
-    if ( this->_File_size > 1000 ) // CHANGE AFTER TO 1M
+    if ( this->_File_size > 100000 ) // CHANGE AFTER TO 1M
     {
         this->_is_chanked = true;
         this->_Serv.set_response_chunked(true);
@@ -348,7 +349,7 @@ int     Response::file_Is_chancked( void )
 {
     if (this->_Bytes_Sent == 0)
     {
-        this->_header->setHeader("Content-Type", (extension(this->_location)));
+        this->_header->setHeader("Content-Type", (extension(this->_location))); // check status code
         this->_header->setHeader("Content-Length", to_string(this->_File_size));
         this->_FILE_chunk.open(this->_location.c_str(), ios::binary);
     }
@@ -697,7 +698,7 @@ std::string Response::get_Response( void )
     FirstLine   FirstLine(this->_request);
 
     // help_show_data(this->_request);
-    // help_show_data_serv(this->_Serv);
+    help_show_data_serv(this->_Serv);
     int i = statuscode();
     this->_request.set_statuscoderesponse(i);
     errorsPages(i);
