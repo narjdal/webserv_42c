@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 03:38:24 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 17:14:27 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,23 @@ Response_cgi::Response_cgi( void ) :    _extention(""),
                                         _cgi_response_file(""),
                                         _header(""),
                                         _FILEINLINE("") {}
+
+Response_cgi::~Response_cgi( void )
+{
+    _extention.clear();
+    _cgi_path.clear();
+    _methods.clear();
+    int i = 0;
+    while (_envp[i] != NULL)
+        free(_envp[i]);
+    free (_envp);
+    for (int i =0; i < 3; i++)
+        free(_argv[i]);
+    free(_argv);
+    _cgi_response_file.clear();
+    _header.clear();
+    _FILEINLINE.clear();
+}
 
 std::string Response_cgi::header_to_envp(std::map<std::string, std::string>::iterator it)
 {
@@ -37,43 +54,40 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
 {
     std::vector<std::string>    envp_vect;
 
-    if (extension(root_path) == "php")
+    envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
+    envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
+    envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
+    envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
+    envp_vect.push_back("PATH_TRANSLATED=" + root_path);
+    envp_vect.push_back("QUERY_STRING=" + request.get_query());
+    envp_vect.push_back("SERVER_NAME=localhost");
+    envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
+    envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
+    envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
+    envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
+    envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    envp_vect.push_back("REDIRECT_STATUS=200");
+    envp_vect.push_back("FCGI_ROLE=RESPONDER");
+    envp_vect.push_back("REQUEST_SCHEME=http");
+    envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
+    envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
+    envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
+    envp_vect.push_back("REMOTE_PORT=0");
+    if (request.get_headrs()["Cookie"].size() > 0)
+        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
+	if (request.get_body_len() == 0)
     {
-        envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
-        envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
-        envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
-        envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
-        envp_vect.push_back("PATH_TRANSLATED=" + root_path);
-        envp_vect.push_back("QUERY_STRING=" + request.get_query());
-        envp_vect.push_back("SERVER_NAME=localhost");
-        envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
-        envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
-        envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
-        envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
-        envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
-        envp_vect.push_back("REDIRECT_STATUS=200");
-        envp_vect.push_back("FCGI_ROLE=RESPONDER");
-        envp_vect.push_back("REQUEST_SCHEME=http");
-        envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
-        envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
-        envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
-        envp_vect.push_back("REMOTE_PORT=0");
-        if (request.get_headrs()["Cookie"].size() > 0)
-            envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
-	    if (request.get_body_len() == 0)
-        {
-            envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
-            envp_vect.push_back("CONTENT_LENGTH=0");
-        }
-        std::map<std::string, std::string>  tmp = request.get_headrs();
-        for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
-            envp_vect.push_back(header_to_envp(it));
+        envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
+        envp_vect.push_back("CONTENT_LENGTH=0");
     }
-        _envp = (char**)malloc(sizeof(char*) * (envp_vect.size() + 1));
-        size_t i = -1;
-        while (++i < envp_vect.size())
-            _envp[i] = strdup(envp_vect[i].c_str());
-        _envp[i] = NULL;
+    std::map<std::string, std::string>  tmp = request.get_headrs();
+    for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        envp_vect.push_back(header_to_envp(it));
+    _envp = (char**)malloc(sizeof(char*) * (envp_vect.size() + 1));
+    size_t i = -1;
+    while (++i < envp_vect.size())
+        _envp[i] = strdup(envp_vect[i].c_str());
+    _envp[i] = NULL;
 }
 
 void        Response_cgi::set_argv(std::string root_path)
@@ -141,10 +155,9 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
         if ((request.get_method().compare("POST") == 0 || request.get_method().compare("DELETE") == 0)
             && dup2(body_fd, STDIN_FILENO) < 0)
             exit(21);
-        std::cout << "THE BODY = " << file_to_string(body_file) << std::endl;
         if (dup2(cgi_response_fd, STDOUT) < 0)
             exit(21);
-        if (execve(_cgi_path.c_str(), _argv, this->_envp) < 0)
+        if (execvp(_cgi_path.c_str(), _argv) < 0)
         {
             std::cerr << "ERRNO = "<< errno << strerror(errno) << " " << _argv[0] << " " << _argv[1] << std::endl;
             exit(21);

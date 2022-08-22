@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 11:14:43 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/16 13:28:00 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 17:22:35 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ FirstLine::FirstLine(Request& request) : _req(request)
 
 FirstLine::~FirstLine()
 {
+	this->_StatusCode.clear();
 }
 
 std::string     FirstLine::First_Line(int Key)

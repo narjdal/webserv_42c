@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 00:01:09 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/16 13:28:30 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 17:21:02 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,20 @@ std::string     get_curentTime1(void)
     return dt;
 }
 
-Header::Header(server sev, Request req)
+Header::Header(server sev, Request req) : _Header(map<std::string, std::string>())
 {
     this->_Server = sev.get_name(0);
     this->_Date = get_curentTime1();
+    this->_FirstLine = "";
 }
 
 
 Header::~Header()
 {
+    this->_Server.clear();
+    this->_Date.clear();
+    this->_FirstLine.clear();
+    this->_Header.clear();
 }
 
 void        Header::setFirstLine(std::string FisrtLine)

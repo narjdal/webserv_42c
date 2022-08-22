@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 04:06:41 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 17:22:43 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,24 +160,36 @@ void            Response::set_Body(std::string str)
 
 //***************************************MEMBER FUNCTIONS***************************************//
 
-Response::Response(Request &request, server &Serv)
+Response::Response(Request &request, server &Serv) : _FILE_chunk(NULL)
 {
     this->_header = new Header(Serv, request);
     this->_request = request;
     this->_Serv = Serv;
     this->_Body = "";
     this->_location = "";
-    this->_is_chanked = false;
+    this->_Upload_Path = "";
     this->_location_index = -404;
     this->_location_type = -404;
-    this->_Bytes_Sent = 0;
+    this->_is_chanked = false;
     this->_File_size = 0;
+    this->_Bytes_Sent = 0;
+    this->_Cgi_Path = "";
     this->_is_cgi = false;
 }
 
 Response::~Response()
 {
     delete this->_header;
+    this->_Body.clear();
+    this->_location.clear();
+    this->_Upload_Path.clear();
+    this->_location_index = -404;
+    this->_location_type = -404;
+    this->_is_chanked = false;
+    this->_File_size = 0;
+    this->_Bytes_Sent = 0;
+    this->_Cgi_Path.clear();
+    this->_is_cgi = false;
 }
 
 bool    Response::get_is_chunked( void )
@@ -720,6 +732,7 @@ std::string Response::get_Response( void )
 {
     FirstLine   FirstLine(this->_request);
 
+    std::cout << "QUERY = " << this->_request.query << std::endl;
     // help_show_data(this->_request);
     // help_show_data_serv(this->_Serv);
     int i = 0;
