@@ -77,7 +77,8 @@ int get_request_method(std::vector<std::string > request)
     std::cout << method[0] << std::endl;
     return (3);
     }
-   // std::cout << method[0] << std::endl;
+    std::cout << "Unknow REQUEST METHOOOOD" << std::endl;
+    // std::cout << method[0] << std::endl;
     return (0);
 }
 

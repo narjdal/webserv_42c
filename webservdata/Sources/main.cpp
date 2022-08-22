@@ -165,11 +165,12 @@ void init_server(std::vector<server> multi_server,std::vector<int > fds)
 
 
 while(1)
-{
+{   
+    // test_leaks();
     int valread = 0;
     FD_ZERO (&read_fd_set);
     FD_ZERO (&write_set);
-
+    signal(SIGPIPE,SIG_IGN);
     for ( int i = 0;i < fds.size();i++)
     FD_SET(fds[i],&read_fd_set);
     max_sd = get_highest_fd(fds);;
@@ -226,11 +227,11 @@ while(1)
                  FD_SET(sd,&write_set);
                   std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
-    //     if (parsed_request.get_host_port() ==  0)
-    //   {
-    //         parsed_request.set_port(multi_server[0].get_listen_port());
-    //         std::cout << "Request found no port in the headers ... " << std::endl;
-    //   }
+        if (parsed_request.get_host_port() ==  0)
+      {
+            parsed_request.set_port(multi_server[0].get_listen_port());
+            std::cout << "Request found no port in the headers ... " << std::endl;
+      }
         for ( int srv_idx = 0;srv_idx < multi_server.size();srv_idx++)
         {
     if (parsed_request.get_host_port() == multi_server[srv_idx].get_listen_port())
