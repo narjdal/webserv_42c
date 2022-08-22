@@ -1,7 +1,7 @@
 NAME = webserv
 
 CC = c++
-CFLAGS = -g3 -fsanitize=address
+CFLAGS = #-g3 -fsanitize=address
 
 
 DEBUG =  valgrind --track-origins=yes 
