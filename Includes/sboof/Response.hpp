@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 23:23:12 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/21 18:13:40 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 00:24:52 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ public:
     std::string     get_FirstLine();
     std::string     get_Body();
     std::string     get_cgi_Path();
+    std::string     get_location();
     void            set_Body(std::string str);
 
 private:
@@ -105,3 +106,4 @@ std::string     StatusCode(string location, int i);
 std::string     file_to_string(std::string location);
 std::string     RandomWord( void );
 std::vector<std::string>     ft_split(std::string s1, std::string delim);
+std::string     extension(std::string str);
