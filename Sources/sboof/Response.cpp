@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/21 18:47:06 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 00:58:49 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,10 @@ std::string     Response::get_cgi_Path( void )
     return this->_Cgi_Path;
 }
 
+std::string     Response::get_location( void )
+{
+    return this->_location;
+}
 void            Response::set_Body(std::string str)
 {
     this->_Body = str;
@@ -437,6 +441,7 @@ int     Response::check_GET( void )
 
 int     Response::cgi_POST( void )
 {
+    std::cout << " I M IN CGI POST \n";
     if (check_CGI())
         return (CGI());
     else
@@ -467,22 +472,19 @@ int     Response::Upload_file( std::string upload_path )
 
 int     Response::check_POST( void )
 {
-    if (this->_Serv.get_cgi().size() > 0 && (extension(this->_location) == "php" || extension(this->_location) == "py"))
+    if ((this->_Serv.get_cgi().size() > 0) && (extension(this->_location) == "php" || extension(this->_location) == "py"))
             return (cgi_POST());
-    else if (this->_location_type == 1)
-    {
-        std::string tmp;
+    std::string tmp;
 
-        tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
-        if (tmp.size())
-            return (Upload_file(tmp));
+    tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
+    if (tmp.size())
+        return (Upload_file(tmp));
+    if (this->_location_type == 1)
         return (403);
-    }
     else
     {
         if (this->_location[this->_location.size() - 1] != '/')
         {
-            std::cout << "I M IN BIATCH" << std::endl;
             this->_header->setHeader("Location", this->_location + "/");
             return (301);
         }
