@@ -79,6 +79,7 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
  std::vector<std::string> parser;
  std::vector <std::string> server_names;
  std::vector <std::string> correct_names;
+//  std::vecto<std::string> tmp ;
     int i = 0;
     int y = 0;
     int inside = 0;
@@ -95,7 +96,7 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
         if ( count == index)
         {
               //  std::cerr << "E------------------------------------- !" << std::endl;
-
+        // tmp.push_back
         parser = ft_split(text_vector[i]," ");
         y = 0;
         while (y < parser.size())
@@ -107,7 +108,7 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
             if (parser[y] == "server_names")
             {
                 
-                if(index == 2)
+                // if(index == 2)
                 if (inside == 1)
              {
                 std::cerr << "ERROR ! Too many server_names in config files !" << std::endl;
@@ -120,21 +121,23 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
         if(!server_names.empty() && server_names.size() > 1 )
         {
             server_names.erase(server_names.begin());
-          return (server_names);
+        //   return (server_names);
         }
         else 
         {
             std::cout << " Config file error :  No servernames found ! , IDX " << index << std::endl;
             exit(1);
         }
-            }
+           
+           inside = 1;
+         }
             y++;
         }
         }
     i++;
     }
    
-    return (correct_names);
+    return (server_names);
 }
 
 int extract_server_port(std::vector<std::string> text_vector,int index)
@@ -168,7 +171,7 @@ int extract_server_port(std::vector<std::string> text_vector,int index)
 
                 if (inside == 1)
              {
-                std::cerr << "ERROR ! Too many Port in config files !" << std::endl;
+                std::cerr << "ERROR ! Too many Listen in config files !" << std::endl;
             exit(1);
             }
              if( parser[y + 1].find(":") != std::string::npos)
@@ -274,6 +277,7 @@ std::string extract_server_root(std::vector<std::string> text_vector,int index)
     int y = 0;
     int inside = 0;
     int count = 0;
+    int inside_loc = 0;
     while ( i < text_vector.size())
     {  
              if(text_vector[i].compare("server") == 0)
@@ -284,21 +288,32 @@ std::string extract_server_root(std::vector<std::string> text_vector,int index)
         {
                  if(text_vector[i].find("location") != std::string::npos)
                  {
-                    return (root);
+                     inside_loc = 1;
+                    //  std::cout << "AAAAAAAAAAAAAA " << inside_loc <<std::endl;
+                    // return (root);
                  }
+                 if (text_vector[i].find("}")  != std::string::npos && inside_loc == 1)
+                 inside_loc = 0;
+                //  std::cout << text_vector[i] << inside_loc << std::endl;
         parser = split(text_vector[i]," ",(char *)"");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("root") == 0)
+            
+            if (parser[y].compare("root") == 0 && inside_loc == 0)
             {   
+                if (inside == 1)
+                {
+                    std::cout << "Error ! The root for this server is already defined !" << std::endl;
+                    exit(1);
+                }
                 server_names = split (text_vector[i]," ",(char *)"root");
                 tmp = server_names;
                 tmp.erase(tmp.begin());
                 if (tmp.size() > 0)
                 {
                     root = tmp[0];
-                    return (root);
+                    // return (root);
                 }
                 else
                 {

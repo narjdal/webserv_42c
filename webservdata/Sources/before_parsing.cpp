@@ -9,10 +9,15 @@ int check_errors(int ac,char **av)
 {
     std::ifstream file;
     struct stat buffer;
-    if (ac < 2)
+    // if (ac < 2)
+    // {
+    //     std::cout << "Usage: ./webserv <path_to_config_file>" << std::endl;
+    //     exit (1);
+    // }
+    if ( ac > 2)
     {
-        std::cout << "Usage: ./webserv <path_to_config_file>" << std::endl;
-        exit (1);
+        std::cout << "Error ! Too many config files " << std::endl;
+        exit(1);
     }
     if ( ac == 2 )
     {
@@ -29,9 +34,9 @@ int check_errors(int ac,char **av)
          exit(2);
         }
     }
-    else
+    else if ( ac <  2)
     {
-        file.open("./conf.conf");
+        file.open("./config/default.config");
         if (!file.is_open())
             {
         std::cout << "default conf not found "   << std::endl;

@@ -34,6 +34,7 @@ Request& Request::operator=(Request const &copy)
 }
 Request::Request(std::vector<std::string > full_request)
 {
+    std::cout << "Starting the rq pqrsing" << std::endl;
     int method = 0;
     method = get_request_method(full_request);
     if (method == 1)

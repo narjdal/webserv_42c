@@ -24,16 +24,16 @@ Response_cgi::Response_cgi( void ) :    _extention(""),
 
 Response_cgi::~Response_cgi( void )
 {
+    // int i = 0;
+    // while (_envp[i] != NULL)
+    //     free(_envp[i]);
+    // free (_envp);
+    // for (int i =0; i < 2; i++)
+    //     free(_argv[i]);
+    // free(_argv);
+    _methods.clear();
     _extention.clear();
     _cgi_path.clear();
-    _methods.clear();
-    int i = 0;
-    while (_envp[i] != NULL)
-        free(_envp[i]);
-    free (_envp);
-    for (int i =0; i < 3; i++)
-        free(_argv[i]);
-    free(_argv);
     _cgi_response_file.clear();
     _header.clear();
     _FILEINLINE.clear();

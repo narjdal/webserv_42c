@@ -12,10 +12,17 @@ std::vector<std::string> parsing_request(char* buffer)
     {
         
         str.push_back(buffer[i]);
-          if(buffer[i] == '\n' || buffer[i + 1] == '\0') // this is too form string not send char by char
+          if(buffer[i] == '\n' && buffer[i] != '\0')// this is too form string not send char by char
           {
             request.push_back(str);
             str.clear();
+          }
+          else if (buffer[i + 1] == '\0')
+          {
+            // std::cout << "str=> " << str << std::endl;
+            request.push_back(str);
+            str.clear();
+
           }
             //i++;
         i++;
@@ -128,31 +135,32 @@ std::string get_request_location(std::vector<std::string > request)
     std::string location;
     std::vector <std::string > method;
     std::vector <std::string > parsing_helper;
-
+  int length = 0;
   
          if(request[0].find("?") != std::string::npos)
          {
-          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
-          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
-
-          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
-
-          // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
-
-       
-
           method = split_sboof(request[0]," ");
            if(!method[1].empty())
            {
             int savior = 0;
-          //      std::cout << "HOHOOHOHOHOHOOH" << std::endl;
-          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
-          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
-          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
-          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+            size_t found = 0;
+            found = method[1].find("?");
+            if (found != std::string::npos)
+            {
+              length = method[1].size() - found;
+              if (found == 1)
+              return ("/");
+              std::cout  << " MSIZE "  << method[1].size() << "LENGTHHHHHH ISSSSSSSS " << length << std::endl;
+            }
+            
             parsing_helper = split_sboof(method[1],"?");
             for(std::vector<std::string>::iterator it = parsing_helper.begin();it != parsing_helper.end();it++)
             {
+          //        std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
+          // std::cout << "HOHOOHOHOHOHOOH" << std::endl;
               if (savior == 0 && ((*it) == "?"))
               return ("/");
               savior++;
@@ -205,13 +213,29 @@ std::string get_request_query(std::vector<std::string > request)
     std::vector <std::string > parsing_helper;
 
   int count = 0;
-   count = get_number_of_query(request[0]);
+  int length = 0;
+  size_t found  = 0;
+  //  count = get_number_of_query(request[0]);
           // std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
-         std::cout << " NUMBER OF ??" << count << std::endl;
+        //  std::cout << " NUMBER OF ??" << count << std::endl;
 
-         if(request[0].find("?") != std::string::npos)
-         {
+        
           method = split_sboof(request[0]," ");
+
+        
+              if(!method[1].empty() && count == 0)
+           {
+             found = method[1].find("?");
+                 if(found != std::string::npos )
+         {
+             length = method[1].size() - found;
+             qwery.insert(0,method[1],found + 1,method[1].size());
+            // parsing_helper = split_sboof(method[1],"?");
+            // qwery = parsing_helper[1];
+           }
+           }
+            
+          //  head.insert(0,full_request[i],0,found);
           // while ( count > 0)
           // {
             // if( count == 0 && !method[1].empty())
@@ -219,28 +243,24 @@ std::string get_request_query(std::vector<std::string > request)
             // else 
             // parsing_request = split_sboof(parsing_)
    
-          if ( count > 0 && !method[1].empty())
-         { 
-          int tt = 0;
-          parsing_helper = split_sboof(method[1],"?");
-          std::vector<std::string>::iterator it ;
-          for (it = parsing_helper.begin();it != parsing_helper.end();it++)
-          {
-            if ((*it) != "?" && tt > 0)
-             qwery = *it;
-             tt++;
-          }
-         }
-             if(!method[1].empty() && count == 0)
-           {
-            parsing_helper = split_sboof(method[1],"?");
-            qwery = parsing_helper[1];
-           }
+        //   if ( count > 0 && !method[1].empty())
+        //  { 
+        //   int tt = 0;
+        //   parsing_helper = split_sboof(method[1],"?");
+        //   std::vector<std::string>::iterator it ;
+        //   for (it = parsing_helper.begin();it != parsing_helper.end();it++)
+        //   {
+        //     if ((*it) != "?" && tt > 0)
+        //      qwery = *it;
+        //      tt++;
+        //   }
+        //  }
+           
             // parsing_helper = split_sboof(method[1],"")
           // }
           //std::cout << "HHEHEHEHEHHEHHEHE" << std::endl;
         
-         }
+         
      //   location_length = get_location_length(request[0]);
       //  location.insert(0,request[0],found + 4,11);
 
@@ -407,13 +427,15 @@ int get_request_port(std::vector<std::string> full_request)
     int inside = 0;
     std::string body;
     
-       // std::cout << "INSIDE BODY REQUEST" << std::endl;
+       std::cout << "BDY => " << full_request[i]<< std::endl;
 
     while ( i < full_request.size())
     {
+       std::cout << "BDY => " << full_request[i] << "size: " << full_request[i].size() << std::endl;
            if (inside == 1)
         {
-            body = body + full_request[i];
+          body.insert(body.size(),full_request[i]);
+            // body = body + full_request[i];
           //  std::cout << "AAAAA" << body <<  full_request[i] << std::endl;
         }
         if (full_request[i].size() == 2)
@@ -423,5 +445,6 @@ int get_request_port(std::vector<std::string> full_request)
      
         i++;
     }
+    // body.insert(body.size(),'\0');
     return (body);
  }

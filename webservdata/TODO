@@ -10,3 +10,22 @@ TODO WritE SET :
 KEYWORK ONLY INFDEX 
 CHUNKED 
 CONDITION IF NO HOST OR NO PORT IN RQ
+
+-------------
+TO Check
+ If GET not in method allowed  -> 405 method not allowed
+ IF GET not in method allowed , if you fetch a file not found -> Answers 404 Found or 405 ?
+
+
+
+
+SGV LONG BODY FIXED 
+
+ PARSE ERROR
+ DOUBLON : server_names √
+            listen      √
+            root        √
+            allow_methods x
+            upload_path DOUBLON EOF , + fixe erreur if doublon empty 
+            autoindex doublon
+            client_max_body_size doublon

@@ -35,7 +35,7 @@ class Response_cgi
     
     public:
         Response_cgi();
-        ~Response_cgi() {};
+        ~Response_cgi();
         int     execute(Response& response, Request &request, std::string root_path);
 
     private:
