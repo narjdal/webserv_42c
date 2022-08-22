@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/14 22:39:39 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 00:20:22 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 20:01:49 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ class Response_cgi
         bool            init_data(Response& response);
 
         void            fillResponseBuffer( Response & response );
-        void            set_header(Response & response);
+        void            set_header( Response & response );
+        std::string     set_status( Response & response );
 };
 
 #endif

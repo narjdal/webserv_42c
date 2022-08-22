@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 17:14:27 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 20:10:29 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,14 @@ int     Response_cgi::execute(Response& response, Request &request, std::string 
             exit(21);
         if (0 < request.get_body_len() && (body_fd = open(body_file.c_str(), O_RDONLY)) < 0)
             exit(21);
-        if ((request.get_method().compare("POST") == 0 || request.get_method().compare("DELETE") == 0)
-            && dup2(body_fd, STDIN_FILENO) < 0)
+        if ((request.get_method().compare("POST") == 1) && dup2(body_fd, STDIN_FILENO) < 0)
             exit(21);
+        close(body_fd);
+        std::cout << "THE BODY = " << file_to_string(body_file) << std::endl;
+        std::cout << "ARGV = " << _argv[0] << " and " << _argv[1] << std::endl;
         if (dup2(cgi_response_fd, STDOUT) < 0)
             exit(21);
-        if (execvp(_cgi_path.c_str(), _argv) < 0)
+        if (execve(_cgi_path.c_str(), _argv, _envp) < 0)
         {
             std::cerr << "ERRNO = "<< errno << strerror(errno) << " " << _argv[0] << " " << _argv[1] << std::endl;
             exit(21);
@@ -185,6 +187,7 @@ void        Response_cgi::set_header(Response & response)
     (void) response;
     std::ifstream               FILE(this->_cgi_response_file);
 
+    // std::cout << this->_cgi_response_file << "#     ///////\n"; 
     if (FILE.is_open())
     {
         std::string                 LINE;
@@ -192,14 +195,12 @@ void        Response_cgi::set_header(Response & response)
 
         while (getline (FILE, LINE))
             this->_FILEINLINE += LINE + "\n";
-        std::cout << "THE FILEINLINE : \n";
-        std::cout << this->_FILEINLINE;
-        std::cout << "----------------------\n";
         header_index = this->_FILEINLINE.find("\n\r\n");
         if (header_index != std::string::npos && (extension(response.get_location()) == "php"))
         {
             this->_header = this->_FILEINLINE.substr(0, header_index);
             this->_FILEINLINE.erase(0, header_index);
+            std::cout << "THE HEADER = " <<  this->_header << std::endl << "FINISHED HEADER\n";
         }
         else
             this->_header = "";
@@ -207,15 +208,34 @@ void        Response_cgi::set_header(Response & response)
     FILE.close();
 }
 
+std::string Response_cgi::set_status( Response & response )
+{
+    std::string                 status = response.get_Request().get_version() + " 200 OK\r\n";
+    size_t                      status_index = 0;
+    size_t                      len;
+
+    // std::cout << response.get_Request().get_version() << std::endl;
+    if (_header.length())
+        status_index = this->_header.find(response.get_Request().get_version());
+    if (status_index != std::string::npos)
+    {
+        len = this->_header.find("\r\n", 0);
+        status = _header.substr(status_index + 8, len);
+    }
+    return status;
+}
+
 void        Response_cgi::fillResponseBuffer( Response & response )
 {
     set_header(response);
     std::string     tmp;
 
-    // tmp = set_status();
-    // tmp += this->_FILEINLINE;
-    response.set_Body(this->_FILEINLINE);
-    // std::cout << "THE RESPONSE = " << response.get_Body() << std::endl;
+    tmp = set_status(response);
+    tmp += this->_header;
+    // std::cout << "THE HEADER = " << tmp << std::endl;
+    tmp += this->_FILEINLINE;
+    response.set_Body(tmp);
+    std::cout << "THE RESPONSE = " << response.get_Body() << std::endl;
     // std::cout << "THE FILE = " << this->_FILEINLINE << std::endl;
-    remove(_cgi_response_file.c_str());
+    // remove(_cgi_response_file.c_str());
 }
