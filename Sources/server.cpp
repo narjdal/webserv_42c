@@ -159,14 +159,14 @@ default_error_pages= fill_error_page();
 //      std::cout << "-----------------------Server  error pages  : ------------------"  << std::endl;
 //         try
 //         {
-//             int length = 0;
-//             while (length < this->_error_pages.size())
-//             {
-//                    for (std::vector<std::string>::iterator it3 = this->_error_pages[length].begin();it3 != this->_error_pages[length].end();it3++)
-//          std::cout << *it3 << std::endl;
-//            std::cout << "-----------------------------------------------"  << std::endl;
-//            length++;
-//             }
+            int length = 0;
+            while (length < this->_error_pages.size())
+            {
+                   for (std::map<std::string,std::string>::iterator it3 = this->_error_pages.begin();it3 != this->_error_pages.end();it3++)
+         std::cout <<"errors_pages : " <<  it3->first << it3->second << std::endl;
+           std::cout << "-----------------------------------------------"  << std::endl;
+           length++;
+            }
     // std::map<std::string,std::string> tmp2 = this->_redirections;
     //       for (std::map<std::string, std::string>::iterator it1 = tmp2.begin(); it1 != tmp2.end(); it1++)
     //         std::cout << "The Redir page : " << it1->first << " and his path : " << it1->second << std::endl;
@@ -242,23 +242,18 @@ default_error_pages= fill_error_page();
 server::~server()
 {
     this->_name.clear();
-   
    this->_listen_port = 0;
     this->_listen_host.clear();
-    // this->_allowed_methods = allowed_methods;
-        this->_allowed_methods.clear();
+    this->_allowed_methods.clear();
         this->_index.clear();
    this->_upload_path.clear();
-//    this->_error_pages = extract_server_errors_page(text_vector,helper);
-
    this->_error_pages.clear();
-//    this->_redirections = extract_server_redirections(text_vector,helper);
    this->_redirections.clear();
    this->_root.clear(); 
-//     //this->_location = extract_server_location(text_vector);
+this->_location.clear();
  this->_cgi.clear();
     this->_client_max_body_size = 0;
-//    this->_autoindex = extract_server_autoindex(text_vector,helper);
+   this->_autoindex = false;
 }
 
     std::string                  server::get_name(int i) const

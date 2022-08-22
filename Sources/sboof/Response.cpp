@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../../Includes/sboof/Response.hpp"
 
 
@@ -336,7 +337,7 @@ void    Response::check_chancked( void )
     in_file.seekg(0, ios::end);
     this->_File_size = in_file.tellg();
     std::cout << "inside check_chanked" << std::endl;
-    if ( this->_File_size > 1000 ) // CHANGE AFTER TO 1M
+    if ( this->_File_size > 100000 ) // CHANGE AFTER TO 1M
     {
         this->_is_chanked = true;
         this->_Serv.set_response_chunked(true);
@@ -348,7 +349,7 @@ int     Response::file_Is_chancked( void )
 {
     if (this->_Bytes_Sent == 0)
     {
-        this->_header->setHeader("Content-Type", (extension(this->_location)));
+        this->_header->setHeader("Content-Type", (extension(this->_location))); // check status code
         this->_header->setHeader("Content-Length", to_string(this->_File_size));
         this->_FILE_chunk.open(this->_location.c_str(), ios::binary);
     }
@@ -477,6 +478,8 @@ int     Response::check_POST( void )
     std::string tmp;
 
     tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
+    // if ((tmp.size()) > this->_Serv.get_client_max_body_size())
+    // return (403);
     if (tmp.size())
         return (Upload_file(tmp));
     if (this->_location_type == 1)
@@ -697,8 +700,9 @@ std::string Response::get_Response( void )
     FirstLine   FirstLine(this->_request);
 
     // help_show_data(this->_request);
-    // help_show_data_serv(this->_Serv);
+    help_show_data_serv(this->_Serv);
     int i = statuscode();
+    this->_request.set_statuscoderesponse(i);
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
         return (this->_Body);
