@@ -280,15 +280,27 @@ std::string get_request_vrs(std::string first_line)
    
     std::string vrs;
     std::vector <std::string > method;
-      size_t found = first_line.find("HTTP");
-      int vrs_length = 0;
-    if(found != string::npos)
+    std::vector<std::string> tmp;
+    std::vector<std::string> first_word;
+    tmp.push_back(first_line);
+    first_word = split_by_space(tmp);
+    for (std::vector<std::string>::iterator it = first_word.begin();it != first_word.end();it++)
+    std::cout << "first_word : " << *it << std::endl;
+    if (first_word.size() == 3)
     {
-        vrs_length = get_vrs_length(first_line,found);
-        vrs.insert(0,first_line,found,vrs_length - 1);
-       //std::cout << "GG =>  " << vrs_length << " " << vrs  << "|" << std::endl;
+      //  std::cout << "WWWWWWWWWWWWWW>  " << first_word[2] << " "   << "|" << std::endl;
+      first_word[2].pop_back();
+      first_word[2].pop_back();
+
+      return (first_word[2]);
+    }
+    if (first_word.size() == 2)
+    {
+       std::cout << "HAHAHAHHAHAHAHAHAHHAHAHAHAHAHGGAJKSJKADSJKDAJKSDJKASJKDSDAKLSDASDJKASDASJDASUFSUSAFUASUFASUFOUASFHOUASFHSAHOFHIASFHOISA =>  " << std::endl;
 
     }
+       std::cout << "VRS AU DESSUS  =>  " << std::endl;
+
     return vrs;
 }
 std::vector<std::string > splitv2(std::string line,std::string delim)
@@ -427,11 +439,11 @@ int get_request_port(std::vector<std::string> full_request)
     int inside = 0;
     std::string body;
     
-       std::cout << "BDY => " << full_request[i]<< std::endl;
+      //  std::cout << "BDY => " << full_request[i]<< std::endl;
 
     while ( i < full_request.size())
     {
-       std::cout << "BDY => " << full_request[i] << "size: " << full_request[i].size() << std::endl;
+      //  std::cout << "BDY => " << full_request[i] << "size: " << full_request[i].size() << std::endl;
            if (inside == 1)
         {
           body.insert(body.size(),full_request[i]);

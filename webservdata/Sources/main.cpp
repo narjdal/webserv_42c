@@ -218,7 +218,7 @@ while(1)
            memset(buf,0,INT_MAX);
             if ((valread == recv(sd,buf,1000000,0)) == 0)
             {
-                    std::cout << " THE BUFFER " << buf << std::endl;
+                    // std::cout << " THE BUFFER " << buf << std::endl;
                   full_request = parsing_request(buf);
                   free(buf);
                  Request parsed_request(full_request);
@@ -226,6 +226,11 @@ while(1)
                  FD_SET(sd,&write_set);
                   std::cout << ("------------------ message -------------------") << std::endl;
         std::cout << ("------------------ CREATING SBOOF RESPONSE HERE  -------------------") << std::endl;
+    //     if (parsed_request.get_host_port() ==  0)
+    //   {
+    //         parsed_request.set_port(multi_server[0].get_listen_port());
+    //         std::cout << "Request found no port in the headers ... " << std::endl;
+    //   }
         for ( int srv_idx = 0;srv_idx < multi_server.size();srv_idx++)
         {
     if (parsed_request.get_host_port() == multi_server[srv_idx].get_listen_port())

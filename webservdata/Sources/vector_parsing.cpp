@@ -97,7 +97,7 @@ std::vector<std::string > extract_server_names(std::vector<std::string> text_vec
         {
               //  std::cerr << "E------------------------------------- !" << std::endl;
         // tmp.push_back
-        parser = ft_split(text_vector[i]," ");
+        parser = split(text_vector[i]," ",(char *)"server_names");
         y = 0;
         while (y < parser.size())
         {
@@ -356,6 +356,8 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
     int y = 0;
     int inside = 0;
     int count = 0;
+    int done = 0;
+    int inside_loc = 0;
     while ( i < text_vector.size())
     {  
            if(text_vector[i].compare("server") == 0)
@@ -365,12 +367,17 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
         if ( count == index)
         {
         if(text_vector[i].find("location") != std::string::npos)
-        return (correct_methods);
+        {
+            inside_loc = 1;
+            // return (correct_methods);
+            }
+        if(text_vector[i].find("}") != std::string::npos && inside_loc == 1)
+        inside_loc = 0;
         parser = split(text_vector[i]," ",(char *)"allow_methods");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("allow_methods") == 0)
+            if (parser[y].compare("allow_methods") == 0 && inside_loc == 0)
             {
                 tmp.push_back(text_vector[i]);
             
@@ -378,13 +385,20 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
                 // tmp.erase(tmp.begin());
                 allowed_methods = split_by_space(tmp);
                 // allowed_methods.erase(allowed_methods.begin());
-             
+                if (done == 1)
+                {
+                    std::cout << "Error ! Too many allowed methods keywork in server "  << text_vector[i]<< std::endl;
+                    exit (1);
+                }
               correct_methods = allowed_methods;
+                done = 1;
+
                 tmp.clear();
                 // std::vector<std::string>::iterator pos = std::find(allowed_methods.begin(),allowed_methods.end(),"allow_methods");
                 // if(pos != allowed_methods.end())
                 correct_methods.erase(std::remove(correct_methods.begin(),correct_methods.end(),"allow_methods"));
                 // correct_methods.assign(allowed_methods.begin() + 1,allowed_methods.end());
+               
                 if(correct_methods.empty())
                 {
                     std::cout<< " Error ! Allowed methods is defined in server but no value is put in it !" << std::endl;
@@ -395,7 +409,7 @@ std::vector<std::string> extract_allowed_methods(std::vector<std::string> text_v
                
                    specified_methods(*it);
                 }
-                return(correct_methods);
+                // return(correct_methods);
                 inside = 1;
             }
             y++;
@@ -468,6 +482,7 @@ std::vector<std::string> parser;
     int y = 0;
     int inside = 0;
     int count = 0;
+    int inside_loc = 0;
     while ( i < text_vector.size())
     {  
                  if(text_vector[i].compare("server") == 0)
@@ -478,17 +493,25 @@ std::vector<std::string> parser;
         {
           if(text_vector[i].find("location") != std::string::npos)
         {
-         if (inside == 1)
-    return (server_upload_path.at(1));
+            inside_loc = 1;
+        //  if (inside == 1)
+        // return (server_upload_path.at(1));
         }
+        if (text_vector[i].find("}") != std::string::npos && inside_loc == 1)
+        inside_loc = 0;
         parser = split(text_vector[i]," ",(char *)"upload_path");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("upload_path") == 0)
+            if (parser[y].compare("upload_path") == 0 && inside_loc == 0)
             {   
                 server_upload_path = split (text_vector[i]," ",(char *)"upload_path");
                 tmp = server_upload_path;
+                if (inside == 1)
+                {
+                    std::cout << "Error ! Upload path already defined ... " << std::endl;
+                    exit(1);
+                }
                 tmp.erase(tmp.begin());
                 if(tmp.size() > 0)
                 upload_path = server_upload_path[1];
@@ -748,6 +771,8 @@ std::string test;
     int inside = 0;
     int num = 0;
     int count = 0;
+    int inside_loc = 0;
+    int done = 0;
     while ( i < text_vector.size())
     {  
         
@@ -759,23 +784,31 @@ std::string test;
         {
           if(text_vector[i].find("location") != std::string::npos)
         {
-
-        return ( num);
+            inside_loc = 1;
+        // return ( num);
         }
+     if (text_vector[i].find("}") != std::string::npos && inside_loc == 1)
+        inside_loc = 0;
         parser = split(text_vector[i]," ",(char *)"client_max_body_size");
         y = 0;
         while (y < parser.size())
         {
-            if (parser[y].compare("client_max_body_size") == 0)
+            if (parser[y].compare("client_max_body_size") == 0 && inside_loc == 0)
             {
+                 if (done == 1)
+                {
+                    std::cout << "Error ! Client max body size is already defined  in the server ... " << std::endl;
+                    exit(1);
+                }
                 tmp = parser;
                 tmp.erase(tmp.begin());
              if(tmp.size() > 0)
             {
+    done = 1;
                 if(isnumber(tmp[0]))
                 {
                     num = std::stoi(tmp[0]);
-                return(num);
+                // return(num);
                 }
                 else
                 {
@@ -799,7 +832,7 @@ std::string test;
             //    }
             //    else
             //    std::cout << "WWWWWWWWWWWWWW C VIDE  EXTRACT SERVER BODY SIZE"<< std::endl;
-
+    
                 
             }
             y++;
@@ -822,6 +855,7 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
     int i = 0;
     int y = 0;
     int inside = 0;
+    int done = 0;
     bool autoindex = false;
     std::vector<std::string> tmp;
     int count = 0;
@@ -836,6 +870,8 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
         parser = split(text_vector[i]," ",(char *)"autoindex");
         if(text_vector[i].find("location") != std::string::npos)
             inside = 1 ;
+          if (text_vector[i].find("}") != std::string::npos && inside == 1)
+        inside = 0;
         y = 0;
         while (y < parser.size())
         {
@@ -843,6 +879,11 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
             {
                 if ( inside == 0)
             {
+                if (done == 1)
+                {
+                    std::cout << "Error ! autoindex is already defined in this server ...." << std::endl;
+                    exit(1);
+                }
                 tmp = parser;
                 tmp.erase(tmp.begin());
     //std::cout << "TMP SIZE" << tmp.size()  <<"index : " << index << std::endl;
@@ -863,6 +904,7 @@ bool extract_server_autoindex(std::vector<std::string > text_vector,int index)
                 std::cout << "autoindex is defined but no value is put in it ! server index : " << index << std::endl;
                 exit(1);
             }
+            done = 1;
             }
             }
             y++;

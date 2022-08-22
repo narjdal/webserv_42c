@@ -87,7 +87,14 @@ Request::Request(std::vector<std::string > full_request)
 }
 Request::~Request()
 {
-
+    this->rqmethod.clear();
+    this->location .clear();
+    this->host_port = 0;
+    this->body.clear();
+    this->query.clear();
+    this->body_len = - 1;
+    this->vrs.clear();
+    this->headers.clear();
 }
 
 //*************************************** GETTERS FUNCTIONS*************************************** 

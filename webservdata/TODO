@@ -26,6 +26,6 @@ SGV LONG BODY FIXED
             listen      √
             root        √
             allow_methods x
-            upload_path DOUBLON EOF , + fixe erreur if doublon empty 
-            autoindex doublon
-            client_max_body_size doublon
+            upload_path √ , 
+            autoindex √
+            client_max_body_size √

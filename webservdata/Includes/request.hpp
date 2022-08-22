@@ -36,6 +36,7 @@ class Request
         map<std::string, std::string> headers;
         std::string body;
         std::string query;
+        int statuscoderesponse;
         int host_port;
         int body_len;
 
@@ -54,5 +55,9 @@ class Request
         std::string& get_query();
         int get_body_len();
         int get_host_port();
+        int get_statuscoderesponse( void ) { return (this->statuscoderesponse);}
+        void    set_statuscoderesponse(int status) {this->statuscoderesponse = status;}
+        void    set_port(int port) {this->host_port = port;}
+        
 
 };
