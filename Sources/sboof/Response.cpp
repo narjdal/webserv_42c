@@ -6,10 +6,9 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 20:23:20 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 00:58:49 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/22 22:24:18 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../Includes/sboof/Response.hpp"
 
@@ -153,6 +152,7 @@ std::string     Response::get_location( void )
 {
     return this->_location;
 }
+
 void            Response::set_Body(std::string str)
 {
     this->_Body = str;
@@ -160,24 +160,36 @@ void            Response::set_Body(std::string str)
 
 //***************************************MEMBER FUNCTIONS***************************************//
 
-Response::Response(Request &request, server &Serv)
+Response::Response(Request &request, server &Serv) : _FILE_chunk(NULL)
 {
     this->_header = new Header(Serv, request);
     this->_request = request;
     this->_Serv = Serv;
     this->_Body = "";
     this->_location = "";
-    this->_is_chanked = false;
+    this->_Upload_Path = "";
     this->_location_index = -404;
     this->_location_type = -404;
-    this->_Bytes_Sent = 0;
+    this->_is_chanked = false;
     this->_File_size = 0;
+    this->_Bytes_Sent = 0;
+    this->_Cgi_Path = "";
     this->_is_cgi = false;
 }
 
 Response::~Response()
 {
     delete this->_header;
+    this->_Body.clear();
+    this->_location.clear();
+    this->_Upload_Path.clear();
+    this->_location_index = -404;
+    this->_location_type = -404;
+    this->_is_chanked = false;
+    this->_File_size = 0;
+    this->_Bytes_Sent = 0;
+    this->_Cgi_Path.clear();
+    this->_is_cgi = false;
 }
 
 bool    Response::get_is_chunked( void )
@@ -213,7 +225,24 @@ bool    Response::check_path()
     return (false);
 }
 
-bool    Response::check_location()
+bool    Response::handleredirection()
+{
+    int i = 0;
+    std::map<std::string, std::string>  tmp = this->_Serv.get_redirections();
+
+    for(std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
+    {
+        if(this->_request.get_location() == it->first)
+        {
+            this->_header->setHeader("Location", it->second);
+            return(true);
+        }
+        i++;
+    }
+    return false;   
+}
+
+int    Response::check_location()
 {
     int pos = 0;
     std::string loc;
@@ -221,6 +250,8 @@ bool    Response::check_location()
     std::vector<location> tmp = this->_Serv.get_location();
     int tmp1 = 0;
 
+    if (this->handleredirection())
+        return(2);
     for (std::vector<location>::iterator  it = tmp.begin(); it != tmp.end(); it++)
     {
         int tmp = return_loc(help, ft_split(it->get_locations_path(), "/"));
@@ -337,7 +368,7 @@ void    Response::check_chancked( void )
     in_file.seekg(0, ios::end);
     this->_File_size = in_file.tellg();
     std::cout << "inside check_chanked" << std::endl;
-    if ( this->_File_size > 100000 ) // CHANGE AFTER TO 1M
+    if ( this->_File_size > 1000 ) // CHANGE AFTER TO 1M
     {
         this->_is_chanked = true;
         this->_Serv.set_response_chunked(true);
@@ -349,7 +380,7 @@ int     Response::file_Is_chancked( void )
 {
     if (this->_Bytes_Sent == 0)
     {
-        this->_header->setHeader("Content-Type", (extension(this->_location))); // check status code
+        this->_header->setHeader("Content-Type", (extension(this->_location)));
         this->_header->setHeader("Content-Length", to_string(this->_File_size));
         this->_FILE_chunk.open(this->_location.c_str(), ios::binary);
     }
@@ -442,7 +473,6 @@ int     Response::check_GET( void )
 
 int     Response::cgi_POST( void )
 {
-    std::cout << " I M IN CGI POST \n";
     if (check_CGI())
         return (CGI());
     else
@@ -478,8 +508,9 @@ int     Response::check_POST( void )
     std::string tmp;
 
     tmp = (this->_location_index == -1) ? this->_Serv.get_upload_path() : this->_Serv.get_location(this->_location_index).get_upload_path();
-    // if ((tmp.size()) > this->_Serv.get_client_max_body_size())
-    // return (403);
+    int help = (this->_location_index == -1) ? (this->_Serv.get_client_max_body_size()) : this->_Serv.get_location(this->_location_index).get_client_max_body_size();
+    if (tmp.size() > help)
+        return (403);
     if (tmp.size())
         return (Upload_file(tmp));
     if (this->_location_type == 1)
@@ -589,7 +620,9 @@ int    Response::statuscode( void )
 {
     if (this->_request.body_len == -1)
         return (400);
-    else if (!check_location())
+    else if (check_location() == 2)
+        return (301);
+    else if (check_location() == 0)
         return (404);
     else
         return (check_methods());
@@ -699,12 +732,16 @@ std::string Response::get_Response( void )
 {
     FirstLine   FirstLine(this->_request);
 
+    std::cout << "QUERY = " << this->_request.query << std::endl;
     // help_show_data(this->_request);
-    help_show_data_serv(this->_Serv);
-    int i = statuscode();
-    this->_request.set_statuscoderesponse(i);
+    // help_show_data_serv(this->_Serv);
+    int i = 0;
+    i = statuscode();
     errorsPages(i);
     if (this->_is_cgi && (i == 200))
+    {
+        std::cout << "I M IN JFHDFJKSAHJKAFHLSJKAFHSLAFHS" << std::endl;
         return (this->_Body);
+    }
     return (FirstLine.First_Line(i) + this->_header->getHeader() + this->_Body);
 }
