@@ -6,7 +6,7 @@
 /*   By: amaach <amaach@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:29:32 by amaach            #+#    #+#             */
-/*   Updated: 2022/08/22 23:56:55 by amaach           ###   ########.fr       */
+/*   Updated: 2022/08/23 01:35:59 by amaach           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,41 +54,38 @@ void    Response_cgi::set_envp(Response& response, Request &request, std::string
 {
     std::vector<std::string>    envp_vect;
 
-    if (extension(response.get_location()) == "php")
+    envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
+    envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
+    envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
+    envp_vect.push_back("PATH_INFO=" + request.get_location());
+    envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
+    envp_vect.push_back("QUERY_STRING=" + request.get_query());
+    envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
+    envp_vect.push_back("REDIRECT_STATUS=true");
+    envp_vect.push_back("FCGI_ROLE=RESPONDER");
+    envp_vect.push_back("REQUEST_SCHEME=http");
+    envp_vect.push_back("REMOTE_PORT=0");
+    envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
+    envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
+    envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
+    envp_vect.push_back("PATH_TRANSLATED=" + root_path);
+    envp_vect.push_back("SERVER_NAME=localhost");
+    envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
+    envp_vect.push_back("REDIRECT_STATUS=200");
+    envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
+    envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
+    if (request.get_headrs()["Cookie"].size() > 0)
+        envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
+	if (request.get_body_len() == 0)
     {
-        envp_vect.push_back("GETAWAY_INTERFACE=CGI/1.1");
-        envp_vect.push_back("SERVER_PROTOCOL=HTTP/1.1");
-        envp_vect.push_back("SERVER_PORT=" + std::to_string(response.get_Server().get_listen_port()));
-        envp_vect.push_back("REMOTE_ADDR=0.0.0.0");
-        envp_vect.push_back("PATH_INFO=" + request.get_location());
-        envp_vect.push_back("SCRIPT_FILENAME=" + root_path);
-        envp_vect.push_back("QUERY_STRING=" + request.get_query());
-        envp_vect.push_back("REQUEST_METHOD=" + request.get_method());
-        envp_vect.push_back("REDIRECT_STATUS=true");
-        envp_vect.push_back("FCGI_ROLE=RESPONDER");
-        envp_vect.push_back("REQUEST_SCHEME=http");
-        envp_vect.push_back("REMOTE_PORT=0");
-        envp_vect.push_back("REQUEST_URI=" + request.get_location().substr(0, request.get_location().find_last_of("/")));
-        envp_vect.push_back("DOCUMENT_URI=" + request.get_location() + request.get_query());
-        envp_vect.push_back("SCRIPT_NAME=" +  request.get_location());
-        envp_vect.push_back("PATH_TRANSLATED=" + root_path);
-        envp_vect.push_back("SERVER_NAME=localhost");
-        envp_vect.push_back("DOCUMENT_ROOT=" + response.get_root());
-        envp_vect.push_back("REDIRECT_STATUS=200");
-        envp_vect.push_back("SERVER_SOFTWARE=webserv/1.1");
-        envp_vect.push_back("PATH=" + std::string(std::getenv("PATH")));
-        if (request.get_headrs()["Cookie"].size() > 0)
-            envp_vect.push_back("HTTP_COOKIE=" + request.get_headrs()["Cookie"]);
-	    if (request.get_body_len() == 0)
-        {
-            envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
-            envp_vect.push_back("CONTENT_LENGTH=0");
-        }
-        else
-        {
-            envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
-            envp_vect.push_back("CONTENT_LENGTH=" + to_string(request.get_body().size()));
-        }
+        envp_vect.push_back("CONTENT_TYPE=text/html; charset=UTF-8");
+        envp_vect.push_back("CONTENT_LENGTH=0");
+    }
+    else
+    {
+        envp_vect.push_back("CONTENT_TYPE=" + request.get_headrs()["Content-Type"]);
+        envp_vect.push_back("CONTENT_LENGTH=" + to_string(request.get_body().size()));
     }
     std::map<std::string, std::string>  tmp = request.get_headrs();
     for (std::map<std::string, std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
@@ -203,9 +200,9 @@ void        Response_cgi::set_header(Response & response)
         size_t                      header_index;
 
         while (getline (FILE, LINE))
-            this->_FILEINLINE += LINE + "\n";
+            this->_FILEINLINE += LINE + "\r\n";
         header_index = this->_FILEINLINE.find("\n\r\n");
-        if (header_index != std::string::npos && (extension(response.get_location()) == "php"))
+        if (header_index != std::string::npos)
         {
             this->_header = this->_FILEINLINE.substr(0, header_index + 3);
             this->_FILEINLINE.erase(0, header_index + 3);
@@ -229,7 +226,9 @@ std::string Response_cgi::set_status( Response & response )
     if (status_index != std::string::npos)
     {
         len = this->_header.find("\r\n", 0);
-        status = _header.substr(status_index + 8, len);
+        std::cout << "The Header = " << this->_header << "The Header end " << std::endl;
+        status = _header.substr(status_index + response.get_Request().get_version().size(), len);
+        std::cout << "I M IN \n";
     }
     return status;
 }
@@ -239,12 +238,9 @@ void        Response_cgi::fillResponseBuffer( Response & response )
     set_header(response);
     std::string     tmp("");
 
-    if (extension(response.get_location()) == "php")
-    {
-        tmp = set_status(response);
-        tmp += "Content-Lenght:" + to_string(this->_FILEINLINE.size()) + "\r\n";
-        tmp += this->_header;
-    }
+    tmp = set_status(response);
+    tmp += "Content-Lenght:" + to_string(this->_FILEINLINE.size()) + "\r\n";
+    tmp += this->_header;
     // std::cout << "THE HEADER = " << tmp << std::endl;
     // std::cout << "THE HEADER IS = " << this->_header << std::endl << "HEADER END\n";
     tmp += this->_FILEINLINE;
